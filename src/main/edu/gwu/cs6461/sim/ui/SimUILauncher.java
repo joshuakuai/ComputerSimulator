@@ -15,19 +15,18 @@ import org.apache.log4j.Logger;
 public class SimUILauncher {
 	private final static Logger logger = Logger.getLogger(SimUILauncher.class);
 
+	private final static Logger simConsole = Logger.getLogger("simulator.console");
+
 	
-	
-	private Panel createControlPanel(){
+	private void createControlPanel(){
 
 		MainSimFrame  mFrame = new MainSimFrame();
 		
+		mFrame.init();
 		mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		mFrame.setSize(500,400);
+		mFrame.setSize(800,700);
 		mFrame.setVisible(true);
 		
-		
-		
-		return new Panel();
 	}
 	
 	

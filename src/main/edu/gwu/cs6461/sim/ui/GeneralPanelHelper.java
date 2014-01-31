@@ -1,7 +1,6 @@
+package edu.gwu.cs6461.sim.ui;
 
-package edu.gwu.cs6461.test;
-
-public class TEST {
+public class GeneralPanelHelper {
 
 	/**
 	 * @param args
