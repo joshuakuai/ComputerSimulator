@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -195,7 +197,21 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				String ObjButtons[] = {"Yes","No"};
+				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
+						"Are you sure you want to exit?", "Simualtor",
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
+						ObjButtons[1]);
+				if (PromptResult == 0) {
+				}
+			}
+		});
+		
+		addWindowListener(new WindowAdapter() {
 
+			@Override
+			public void windowClosing(WindowEvent e) {
 				String ObjButtons[] = {"Yes","No"};
 				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
 						"Are you sure you want to exit?", "Simualtor",
@@ -206,7 +222,9 @@ public class MainSimFrame extends JFrame implements Observer {
 					System.exit(0);
 				}
 			}
+			
 		});
+		
 		
 		setResizable(false);
 		setRegisterEditable(false);

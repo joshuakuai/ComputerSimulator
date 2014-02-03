@@ -18,7 +18,7 @@ public class SimUILauncher {
 		MainSimFrame mFrame = new MainSimFrame();
 
 		mFrame.init();
-		mFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		mFrame.setSize(800, 700);
 		mFrame.setVisible(true);
 
