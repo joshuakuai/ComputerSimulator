@@ -10,23 +10,30 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
@@ -39,7 +46,6 @@ import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.RegisterName;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
-import edu.gwu.cs6461.test.SampleObservable;
 
 /**
  * 
@@ -103,7 +109,6 @@ public class MainSimFrame extends JFrame implements Observer{
 	
 	private JButton btnIPL = new JButton("IPL");
 	private JButton btnTerminate = new JButton("Terminate");
-	private JButton btnExit = new JButton("Exit");
 	
 	private JComboBox<String> cboSwithOptions = new JComboBox<String>();
 	private JButton btnReset = new JButton("Reset");
@@ -115,6 +120,10 @@ public class MainSimFrame extends JFrame implements Observer{
 	
 	
 	private JTextArea txtConsoleText = new JTextArea();
+	private DefaultListModel<String> listModel = new DefaultListModel<String>();
+	private JList<String> lstMemory = new JList<String>(listModel);
+	
+	
 	
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester
@@ -167,15 +176,34 @@ public class MainSimFrame extends JFrame implements Observer{
 		
 
 		
+		JMenuItem iExit = new JMenuItem("Exit");
+		iExit.setMnemonic('x');
+		JMenu mFile = new JMenu("File");
+		mFile.setMnemonic('F');
+		mFile.add(iExit);
+		iExit.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_X, InputEvent.ALT_MASK));
+		JMenuBar menu = new JMenuBar();
+		menu.add(mFile);
+		setJMenuBar(menu);
+		iExit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				String ObjButtons[] = {"Yes","No"};
+				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
+						"Are you sure you want to exit?", "Simualtor",
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
+						ObjButtons[1]);
+				if (PromptResult == 0) {
+					System.exit(0);
+				}
+			}
+		});
 		
-		//THIS IS A TESTER OBSERVABLE
-//		SampleObservable obs = new SampleObservable();
-//		obs.register(this);
-		
-		
-		
-		
-		
+		setResizable(false);
 		
 		setMemorySwitch(false);
 		
@@ -244,7 +272,11 @@ public class MainSimFrame extends JFrame implements Observer{
 		add(regSwPanel, BorderLayout.NORTH);
 		add(createConsolePanel(), BorderLayout.SOUTH);
 //		add(lblWinStatus,BorderLayout.SOUTH);
-		add(new JList(new String[]{"are ","de"}),BorderLayout.CENTER);
+		
+		//memory area
+		JScrollPane sMem =new JScrollPane();
+		sMem.getViewport().add(lstMemory);
+		add(sMem,BorderLayout.CENTER);
 		
 
 		logger.debug(getLayout());
@@ -303,6 +335,7 @@ public class MainSimFrame extends JFrame implements Observer{
 			      "Control Panel"));
 		
 		gPanel.addComponent(btnSingleStep,0,0);
+		gPanel.addFilledComponent(btnRun,1,0);
 		
 		
 		return gPanel;
@@ -329,23 +362,6 @@ public class MainSimFrame extends JFrame implements Observer{
 		JPanel btnPanel = new JPanel(new GridLayout(1,3,5,5));
 		btnPanel.add(btnIPL);
 		btnPanel.add(btnTerminate);
-		btnPanel.add(btnExit);
-		btnExit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				String ObjButtons[] = {"Yes","No"};
-				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
-						"Are you sure you want to exit?", "Simualtor",
-						JOptionPane.DEFAULT_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
-						ObjButtons[1]);
-				if (PromptResult == 0) {
-					System.exit(0);
-				}
-			}
-		});
 		
 		FlowLayout fl = new FlowLayout();
 		JPanel wrap = new JPanel(fl);
@@ -453,7 +469,15 @@ public class MainSimFrame extends JFrame implements Observer{
 			
 			Component parent = (Component) e.getSource();
 			
-			logger.debug(parent);
+			if (parent == btnRun) {
+				logger.debug("Run is clicked");
+			} else if (parent == btnSingleStep) {
+				logger.debug("SingleStep is clicked");
+			} else {
+			
+				logger.debug("start the sim");
+			}
+			
 		}
 		
 	}
@@ -484,6 +508,11 @@ public class MainSimFrame extends JFrame implements Observer{
 			txtPC.setText(val);
 		} else if (dName == RegisterName.IR) {
 			txtIR.setText(val);
+		}
+		
+		//testing
+		if (dName == RegisterName.MEMORY) {
+			listModel.addElement("address \t " + val);
 		}
 	}
 	
