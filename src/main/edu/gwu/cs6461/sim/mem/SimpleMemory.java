@@ -46,6 +46,4 @@ public class SimpleMemory implements Memory<String> {
 		System.out.println(sm);
 
 	}
-
-
 }

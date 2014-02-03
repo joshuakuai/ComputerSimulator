@@ -17,7 +17,7 @@ public enum RegisterName {
 	IR("IR",20),
 	PC("PC",13),
 	MEMORY("MEMORY",20),
-	NOTEXIST("NOTEXIST",-1,false);;
+	NOTEXIST("NOTEXIST",-1,false);
 	
 	private final String name;
 	private final int numOfBit;
@@ -53,6 +53,4 @@ public enum RegisterName {
         }
         return NOTEXIST;
 	}
-	
-	
 }

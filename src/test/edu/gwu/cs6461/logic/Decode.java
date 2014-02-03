@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package javaapplication1;
+package edu.gwu.cs6461.logic;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Decode {
     private int Immediate=0;
     
     
-    
+   
     public void decodeSwitch(IR IRobject){
         OpCode = Integer.parseInt(IRobject.getIRstring().substring(0,6), base);
         IRobject.setOpCode(OpCode);
