@@ -1,19 +1,25 @@
 package edu.gwu.cs6461.logic;
 
 public class CPUController extends Thread {
-	private IR IRobject = new IR();
-	private RF RFtable = new RF();
-	private XF XFtable = new XF();
+	public IR IRobject = new IR();
+	public RF RFtable = new RF();
+	public XF XFtable = new XF();
+	public Register SS = new Register();
+	public Register PC = new Register();
+	public Register MAR = new Register();
+	public Register MBR = new Register();
+	
 	private ALU ALU = new ALU();
-	private Register SS = new Register();
-	private Register PC = new Register();
 	private static final CPUController instance = new CPUController();
+	private boolean suspendflag = false;
 
 	// CPU holds a week reference of the memory but CPU doesn't own the memory
 	private CPUController() {
 		// Set register
 		PC.setSize(13);
 		SS.setSize(1);
+		MAR.setSize(20);
+		MBR.setSize(20);
 	}
 
 	// Singleton method
@@ -23,9 +29,23 @@ public class CPUController extends Thread {
 
 	// This method is deprecated but we'll still use it
 	public void checkSingleStepModel() {
-		if (SS.getData() == 1) {
-			this.suspend();
+		if (SS.getData() == 1 && this.isAlive()) {
+			this.Suspend();
 		}
+	}
+
+	public void Suspend() {
+		suspendflag = true;
+		super.suspend();
+	}
+
+	public void Resume() {
+		suspendflag = false;
+		super.resume();
+	}
+
+	public boolean isSuspended() {
+		return suspendflag;
 	}
 
 	public void run() {

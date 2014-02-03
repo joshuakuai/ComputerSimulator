@@ -102,6 +102,10 @@ public class IR extends Register {
 	public void setTrace(int TraceNew) {
 		Trace = TraceNew;
 	}
+	
+	public void seIRstring(String IRstring){
+		this.IRstring = IRstring;
+	}
 
 	/*
 	 * *****Checking functions********************
