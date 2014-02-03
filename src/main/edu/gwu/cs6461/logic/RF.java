@@ -29,7 +29,7 @@ public class RF {
     	R0.register(obs);
     	R1.register(obs);
     	R2.register(obs);
-    	R2.register(obs);
+    	R3.register(obs);
     }
     
     /*

@@ -19,8 +19,8 @@ public class XF {
     
     public XF(){
     	X1.setName("X1");
-    	X1.setName("X2");
-    	X1.setName("X3");
+    	X2.setName("X2");
+    	X3.setName("X3");
     }
     
     public void setRegisterObserver(Observer obs){
