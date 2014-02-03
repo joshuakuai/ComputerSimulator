@@ -281,7 +281,10 @@ public class MainSimFrame extends JFrame implements Observer {
 		//memory area
 		JScrollPane sMem =new JScrollPane();
 		sMem.getViewport().add(lstMemory);
-		add(sMem,BorderLayout.CENTER);
+		JPanel jmem = new JPanel(new BorderLayout());
+		jmem.add(sMem, BorderLayout.CENTER);
+		jmem.setBorder(new TitledBorder(new EtchedBorder(), "Memory"));
+		add(jmem,BorderLayout.CENTER);
 		
 
 		logger.debug(getLayout());
