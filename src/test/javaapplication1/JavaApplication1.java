@@ -24,8 +24,8 @@ public class JavaApplication1 {
         
         //System.out.println(reg1.getData());
         //System.out.println(reg1.getSize());
-       //IR IRobject = new IR("00000111001000110110");
-       IR IRobject = new IR("00010011011000110110");
+       IR IRobject = new IR("00000111001000110110");
+//       IR IRobject = new IR("00010011011000110110");
        RF RFtable  = new RF();
        XF XFtable  = new XF();
        Memory Mem  = new Memory();
