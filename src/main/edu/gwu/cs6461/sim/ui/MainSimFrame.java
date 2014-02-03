@@ -1,7 +1,6 @@
 package edu.gwu.cs6461.sim.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,12 +12,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -36,16 +34,19 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.sim.bridge.HardwareData;
+import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.RegisterName;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
+import edu.gwu.cs6461.test.SampleObservable;
 
 /**
  * 
  * @author marcoyeung
  * 
  */
-public class MainSimFrame extends JFrame {
+public class MainSimFrame extends JFrame implements Observer{
 	
 	private static final int HIGHESTBIT = 19;
 	private static final int LOWESTBIT = 0;
@@ -163,6 +164,18 @@ public class MainSimFrame extends JFrame {
 		btnHalt.addActionListener(simAct);
 		btnRun.addActionListener(simAct);
 		btnSingleInstr.addActionListener(simAct);
+		
+
+		
+		
+		//THIS IS A TESTER OBSERVABLE
+//		SampleObservable obs = new SampleObservable();
+//		obs.register(this);
+		
+		
+		
+		
+		
 		
 		setMemorySwitch(false);
 		
@@ -622,10 +635,26 @@ public class MainSimFrame extends JFrame {
 					setMemorySwitch(false);
 				}
 			}
-			
 			logger.debug("selcted :  " + selected);
-			
 		}
+	}
+
+	@Override
+	public void refreshData(HardwareData subject) {
+		
+		final HardwareData data = subject;
+		
+		Runnable b = new Runnable() {
+			@Override
+			public void run() {
+				Map<String, String> d = data.getData();
+				for (Map.Entry<String, String> entry : d.entrySet()) {
+					loadToControl(entry.getKey(), entry.getValue());
+				}
+			}
+		};
+		
+		SwingUtilities.invokeLater(b);
 		
 	}
 	
