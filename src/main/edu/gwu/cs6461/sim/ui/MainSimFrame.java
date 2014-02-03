@@ -1,7 +1,6 @@
 package edu.gwu.cs6461.sim.ui;
 
 import java.awt.BorderLayout;
-import java.lang.Integer;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -11,23 +10,30 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
@@ -35,12 +41,13 @@ import javax.swing.border.TitledBorder;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.logic.CPUController;
+import edu.gwu.cs6461.logic.Memory;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.RegisterName;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
-import edu.gwu.cs6461.logic.*;
 
 /**
  * 
@@ -105,7 +112,6 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	private JButton btnIPL = new JButton("IPL");
 	private JButton btnTerminate = new JButton("Terminate");
-	private JButton btnExit = new JButton("Exit");
 
 	private JComboBox<String> cboSwithOptions = new JComboBox<String>();
 	private JButton btnReset = new JButton("Reset");
@@ -116,6 +122,10 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JTextField txtMemAdd = new JTextField(4);
 
 	private JTextArea txtConsoleText = new JTextArea();
+	private DefaultListModel<String> lstModel = new DefaultListModel<String>();
+	private JList<String> lstMemory = new JList<String>(lstModel);
+	
+	
 
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester this is
@@ -169,9 +179,38 @@ public class MainSimFrame extends JFrame implements Observer {
 		btnRun.addActionListener(simAct);
 		btnSingleInstr.addActionListener(simAct);
 
-		// THIS IS A TESTER OBSERVABLE
-		// SampleObservable obs = new SampleObservable();
-		// obs.register(this);
+
+		
+		JMenuItem iExit = new JMenuItem("Exit");
+		iExit.setMnemonic('x');
+		JMenu mFile = new JMenu("File");
+		mFile.setMnemonic('F');
+		mFile.add(iExit);
+		iExit.setAccelerator(KeyStroke.getKeyStroke(
+				KeyEvent.VK_X, InputEvent.ALT_MASK));
+		JMenuBar menu = new JMenuBar();
+		menu.add(mFile);
+		setJMenuBar(menu);
+		iExit.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				String ObjButtons[] = {"Yes","No"};
+				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
+						"Are you sure you want to exit?", "Simualtor",
+						JOptionPane.DEFAULT_OPTION,
+						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
+						ObjButtons[1]);
+				if (PromptResult == 0) {
+					System.exit(0);
+				}
+			}
+		});
+		
+		setResizable(false);
+		setRegisterEditable(false);
+		resetSimulator(false);
 
 		setMemorySwitch(false);
 
@@ -238,7 +277,12 @@ public class MainSimFrame extends JFrame implements Observer {
 		add(regSwPanel, BorderLayout.NORTH);
 		add(createConsolePanel(), BorderLayout.SOUTH);
 		// add(lblWinStatus,BorderLayout.SOUTH);
-		add(new JList(new String[] { "are ", "de" }), BorderLayout.CENTER);
+		
+		//memory area
+		JScrollPane sMem =new JScrollPane();
+		sMem.getViewport().add(lstMemory);
+		add(sMem,BorderLayout.CENTER);
+		
 
 		logger.debug(getLayout());
 
@@ -300,6 +344,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Control Panel"));
 
 		gPanel.addComponent(btnSingleStep, 0, 0);
+		gPanel.addFilledComponent(btnRun,1,0);
+		
 
 		return gPanel;
 	}
@@ -325,23 +371,6 @@ public class MainSimFrame extends JFrame implements Observer {
 		JPanel btnPanel = new JPanel(new GridLayout(1, 3, 5, 5));
 		btnPanel.add(btnIPL);
 		btnPanel.add(btnTerminate);
-		btnPanel.add(btnExit);
-		btnExit.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				String ObjButtons[] = { "Yes", "No" };
-				int PromptResult = JOptionPane.showOptionDialog(
-						MainSimFrame.this, "Are you sure you want to exit?",
-						"Simualtor", JOptionPane.DEFAULT_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
-						ObjButtons[1]);
-				if (PromptResult == 0) {
-					System.exit(0);
-				}
-			}
-		});
 
 		FlowLayout fl = new FlowLayout();
 		JPanel wrap = new JPanel(fl);
@@ -393,22 +422,14 @@ public class MainSimFrame extends JFrame implements Observer {
 			lblBinPosInfo[i] = new JLabel(String.valueOf(i));
 			lblBinPosInfo[i].setHorizontalAlignment(SwingConstants.CENTER);
 			lblBinPosInfo[i].setAlignmentY(RIGHT_ALIGNMENT);
-			// lblBinPosInfo[i].setBorder(new
-			// TitledBorder(BorderFactory.createLineBorder(Color.GREEN)));
 			tmp.add(lblBinPosInfo[i]);
 
 			radBinData[i] = new JRadioButton();
-			// radBinData[i].setBorder(BorderFactory.createEmptyBorder());
 			tmp.add(radBinData[i]);
-			// tmp.setBorder(new
-			// TitledBorder(BorderFactory.createLineBorder(Color.blue)));
 			pBinPanel.add(tmp);
 
 		}
 		tmp.setBorder(BorderFactory.createEmptyBorder());
-
-		// pBinPanel.setBorder(new
-		// TitledBorder(BorderFactory.createLineBorder(Color.blue)));
 
 		return pBinPanel;
 	}
@@ -416,9 +437,6 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JPanel createSwitchPanel(int start, int end) {
 		// Button only
 		JPanel btnPanel = new JPanel();
-		// btnPanel.setBorder(new
-		// TitledBorder(BorderFactory.createLineBorder(Color.blue)));
-
 		btnPanel.add(lblMemAddress);
 		btnPanel.add(txtMemAdd);
 		btnPanel.add(cboSwithOptions);
@@ -452,8 +470,9 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			Component parent = (Component) e.getSource();
 
-			logger.debug(parent);
-			if (parent == btnSingleStep) {
+			if (parent == btnRun) {
+				logger.debug("Run is clicked");
+			} else if (parent == btnSingleStep) {
 
 				// If this thread is alive and is suspended, the button will
 				// resume the thread
@@ -473,10 +492,15 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
-	private void loadToControl(String dest, String val) {
+	private void loadToControl(String dest, String... vals) {
 
 		RegisterName dName = RegisterName.fromName(dest);
 
+		String val ="";
+		if (dName != RegisterName.MEMORY) {
+			val = vals[0];
+		}
+		
 		if (dName == RegisterName.R0) {
 			txtR0.setText(val);
 		} else if (dName == RegisterName.R1) {
@@ -499,7 +523,12 @@ public class MainSimFrame extends JFrame implements Observer {
 			txtPC.setText(val);
 		} else if (dName == RegisterName.IR) {
 			txtIR.setText(val);
+		} else if (dName == RegisterName.MEMORY) {
+			String key = vals[0];
+			val = vals[1];
+			lstModel.addElement(key + "\t " + val);
 		}
+
 	}
 
 	private void loadToLogicLayer(String dest, String val) {
@@ -507,22 +536,12 @@ public class MainSimFrame extends JFrame implements Observer {
 		// This val will be binary code string
 		Integer data = Integer.parseInt(val, 2);
 
-		if (dest.equals("MEMORY")) {
-			if (txtMemAdd.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(this,
-						"Please input the address first.", "Missing Content",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-
+		RegisterName dName = RegisterName.fromName(dest);
+		
+		if (dName == RegisterName.MEMORY) {
 			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
 			Memory.shareInstance().setMem(addressLocation, data);
-			return;
-		}
-
-		RegisterName dName = RegisterName.fromName(dest);
-
-		if (dName == RegisterName.R0) {
+		} else if (dName == RegisterName.R0) {
 			cpuController.RFtable.setR0(data);
 		} else if (dName == RegisterName.R1) {
 			cpuController.RFtable.setR1(data);
@@ -557,15 +576,28 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (parent == btnLoad) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
 
-				int numBit = RegisterName.fromName(sel).getBit();
+				RegisterName rName = RegisterName.fromName(sel);
+				int numBit = rName.getBit();
 
 				String res = "";
 				for (int i = 0; i < numBit; i++) {
 					res += radBinData[i].isSelected() ? "1" : "0";
 				}
 				logger.debug("value got: " + res);
+				
+				if (rName == RegisterName.MEMORY && txtMemAdd.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(MainSimFrame.this,
+							"Please input the memory address.", "Missing Content",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
 				loadToLogicLayer(sel, res);
-				loadToControl(sel, res);
+				
+				if (rName == RegisterName.MEMORY) {
+					String k= txtMemAdd.getText();
+					loadToControl(sel, k, res);
+				}else loadToControl(sel, res);
 
 			} else if (parent == btnReset) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
@@ -577,8 +609,8 @@ public class MainSimFrame extends JFrame implements Observer {
 				new Thread(new Runnable() {
 					public void run() {
 						try {
-							Thread.sleep(2000);
-							resetSimulator();
+							Thread.sleep(1000);
+							resetSimulator(true);
 							simConsole.info("Simulator started....");
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -598,7 +630,7 @@ public class MainSimFrame extends JFrame implements Observer {
 								JOptionPane.WARNING_MESSAGE, null, ObjButtons,
 								ObjButtons[1]);
 				if (PromptResult == 0) {
-					resetSimulator();
+					resetSimulator(false);
 					simConsole.info("Simulator terminated....");
 					resetMainCtrlBtn(false);
 
@@ -644,7 +676,25 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
-	private void resetSimulator() {
+	
+	private void setRegisterEditable(boolean b){
+		txtR0.setEditable(b);
+		txtR1.setEditable(b);
+		txtR2.setEditable(b);
+		txtR3.setEditable(b);
+		txtX1.setEditable(b);
+		txtX2.setEditable(b);
+		txtX3.setEditable(b);
+		txtMAR.setEditable(b);
+		txtMBR.setEditable(b);
+		txtMSR.setEditable(b);
+		txtMFR.setEditable(b);
+		txtCC.setEditable(b);
+		txtIR.setEditable(b);
+		txtPC.setEditable(b);
+		
+	}
+	private void resetSimulator(boolean isStart) {
 		txtR0.setText("");
 		txtR1.setText("");
 		txtR2.setText("");
@@ -666,6 +716,16 @@ public class MainSimFrame extends JFrame implements Observer {
 			setMemorySwitch(true);
 		} else
 			setMemorySwitch(false);
+		
+		cboSwithOptions.setEnabled(isStart);
+		btnReset.setEnabled(isStart);
+		btnLoad.setEnabled(isStart);
+		
+		btnSingleStep.setEnabled(isStart);
+		btnRun.setEnabled(isStart);
+		
+		lstModel.clear();
+		
 	}
 
 	private void maskSwitches(int start, int end, boolean b) {
@@ -711,7 +771,18 @@ public class MainSimFrame extends JFrame implements Observer {
 			public void run() {
 				Map<String, String> d = data.getData();
 				for (Map.Entry<String, String> entry : d.entrySet()) {
-					loadToControl(entry.getKey(), entry.getValue());
+					String k = entry.getKey();
+					String v = entry.getValue();
+					
+					if (RegisterName.fromName(k)==RegisterName.MEMORY) {
+						//memory value passed in with 'address, content');
+						//presume the content is passed in one by one
+						String[] mVal =  v.split(",");
+						loadToControl(k, mVal[0], mVal[1]);
+					} else { 
+						loadToControl(k,v);
+					}
+					
 				}
 			}
 		};
