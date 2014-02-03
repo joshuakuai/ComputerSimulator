@@ -6,44 +6,61 @@
 
 package edu.gwu.cs6461.logic;
 
+import edu.gwu.cs6461.sim.bridge.Observer;
+
 /**
  *
  * @author Ahmed
  */
 public class RF {
-    private int R0=0;
-    private int R1=0;
-    private int R2=0;
-    private int R3=0;
+    private Register R0 = new Register();
+    private Register R1 = new Register();
+    private Register R2 = new Register();
+    private Register R3 = new Register();
+    
+    public RF(){
+    	R0.setName("R0");
+    	R1.setName("R1");
+    	R2.setName("R2");
+    	R3.setName("R3");
+    }
+    
+    public void setRegisterObserver(Observer obs){
+    	R0.register(obs);
+    	R1.register(obs);
+    	R2.register(obs);
+    	R2.register(obs);
+    }
+    
     /*
     ******get functions
     */
     public int getR0(){
-        return R0;
+        return R0.getData();
     }
     public int getR1(){
-        return R1;
+        return R1.getData();
     }
     public int getR2(){
-        return R2;
+        return R2.getData();
     }
     public int getR3(){
-        return R3;
+        return R3.getData();
     }
     /*
     ******set functions
     */
     public void setR0(int R){
-        R0=R;
+        R0.setData(R);
     }
     public void setR1(int R){
-        R1=R;
+        R1.setData(R);
     }
     public void setR2(int R){
-        R2=R;
+        R2.setData(R);
     }
     public void setR3(int R){
-        R3=R;
+        R3.setData(R);
     }
     
     public void setSwitch(int RFI,int Data){

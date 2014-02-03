@@ -6,35 +6,49 @@
 
 package edu.gwu.cs6461.logic;
 
+import edu.gwu.cs6461.sim.bridge.Observer;
+
 /**
  *
  * @author Ahmed
  */
 public class XF {
-    private int X1=0;
-    private int X2=0;
-    private int X3=0;
+    private Register X1 = new Register();
+    private Register X2 = new Register();
+    private Register X3 = new Register();
+    
+    public XF(){
+    	X1.setName("X1");
+    	X1.setName("X2");
+    	X1.setName("X3");
+    }
+    
+    public void setRegisterObserver(Observer obs){
+    	X1.register(obs);
+    	X2.register(obs);
+    	X3.register(obs);
+    }
     
     public int getX1(){
-        return X1;
+        return X1.getData();
     }
     public int getX2(){
-        return X2;
+        return X2.getData();
     }
     public int getX3(){
-        return X3;
+        return X3.getData();
     }
     /*
     *****set functions
     */
     public void setX1(int X){
-        X1=X;
+        X1.setData(X);
     }
     public void setX2(int X){
-        X2=X;
+        X2.setData(X);
     }
     public void setX3(int X){
-        X3=X;
+        X3.setData(X);
     }
     
     //***********************************//

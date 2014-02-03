@@ -40,7 +40,6 @@ import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.RegisterName;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
-import edu.gwu.cs6461.test.SampleObservable;
 import edu.gwu.cs6461.logic.*;
 
 /**
@@ -242,6 +241,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		add(new JList(new String[] { "are ", "de" }), BorderLayout.CENTER);
 
 		logger.debug(getLayout());
+
+		cpuController.setRegisterObserver(this);
+		cpuController.setMainFrame(this);
 	}
 
 	private JPanel createMiscRPanel() {
@@ -460,10 +462,12 @@ public class MainSimFrame extends JFrame implements Observer {
 				} else if (!cpuController.isAlive()
 						&& !cpuController.isSuspended()) {
 					// then if the the thread is dead and is not suspended,
-					// start the process
+					// set the debug model on and start the process
+					cpuController.SS.setData(1);
 					cpuController.start();
+
 				}
-				// For other situation just ignore this event
+				// For other situation just ignore this touch event
 			}
 		}
 
@@ -500,10 +504,23 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	private void loadToLogicLayer(String dest, String val) {
 
-		RegisterName dName = RegisterName.fromName(dest);
+		// This val will be binary code string
+		Integer data = Integer.parseInt(val, 2);
 
-		//This val will be binary code string
-		Integer data = Integer.parseInt(val,2);
+		if (dest.equals("MEMORY")) {
+			if (txtMemAdd.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(this,
+						"Please input the address first.", "Missing Content",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
+			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
+			Memory.shareInstance().setMem(addressLocation, data);
+			return;
+		}
+
+		RegisterName dName = RegisterName.fromName(dest);
 
 		if (dName == RegisterName.R0) {
 			cpuController.RFtable.setR0(data);
@@ -520,9 +537,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		} else if (dName == RegisterName.X3) {
 			cpuController.XFtable.setX3(data);
 		} else if (dName == RegisterName.MAR) {
-			cpuController.MAR.setData(data);
+			cpuController.cpuControl.MAR.setData(data);
 		} else if (dName == RegisterName.MBR) {
-			cpuController.MBR.setData(data);
+			cpuController.cpuControl.MDR.setData(data);
 		} else if (dName == RegisterName.PC) {
 			cpuController.PC.setData(data);
 		} else if (dName == RegisterName.IR) {
@@ -701,6 +718,11 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		SwingUtilities.invokeLater(b);
 
+	}
+	
+	public void showProgrameFinishDialog(){
+		JOptionPane.showMessageDialog(this,
+			    "All instructions are executed.");
 	}
 
 }

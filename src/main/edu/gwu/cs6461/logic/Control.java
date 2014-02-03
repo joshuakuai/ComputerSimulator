@@ -6,14 +6,29 @@
 
 package edu.gwu.cs6461.logic;
 
+import edu.gwu.cs6461.sim.bridge.Observer;
+
 /**
  * 
  * @author Ahmed
  */
 public class Control {
-	private Register MAR = new Register();
-	private Register MDR = new Register();
+	public Register MAR = new Register();
+	public Register MDR = new Register();
 	private Register RES = new Register();
+	
+	public Control(){
+		MAR.setSize(20);
+		MDR.setSize(20);
+		
+		MAR.setName("MAR");
+		MDR.setName("MDR");
+	}
+	
+	public void setRegisterObserver(Observer obs){
+		MAR.register(obs);
+		MDR.register(obs);
+	}
 
 	// /TODO (PART2) Fetch IR from memory
 	public void FetchIR(int PC, IR IRobject) {
@@ -29,8 +44,22 @@ public class Control {
 			ALU ALU) {
 		if (IRobject.getOpCode() == 1)
 			LDR(IRobject, RFtable, XFtable, Mem);
+		else if (IRobject.getOpCode() == 2)
+			STR(IRobject, RFtable, XFtable, Mem);
+		else if (IRobject.getOpCode() == 3)
+			LDA(IRobject, RFtable, XFtable, Mem);
 		else if (IRobject.getOpCode() == 4)
 			AMR(IRobject, RFtable, XFtable, Mem, ALU);
+		else if (IRobject.getOpCode() == 5)
+			SMR(IRobject, RFtable, XFtable, Mem, ALU);
+		else if (IRobject.getOpCode() == 6)
+			AIR(IRobject, RFtable, ALU);
+		else if (IRobject.getOpCode() == 7)
+			SIR(IRobject, RFtable, ALU);
+		else if (IRobject.getOpCode() == 41)
+			LDX(IRobject, XFtable, Mem);
+		else if (IRobject.getOpCode() == 42)
+			STX(IRobject, XFtable, Mem);
 	}
 
 	public void LDR(IR IRobject, RF RFtable, XF XFtable, Memory Mem) {
@@ -85,11 +114,11 @@ public class Control {
 			MDR.setData(Mem.getMem(MAR.getData()));
 		}
 		// ////
-		System.out.println(RES.getData());
+		// System.out.println(RES.getData());
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
 				IRobject.getOpCode(), RES);
 		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
-		System.out.println(RES.getData());
+		// System.out.println(RES.getData());
 	}
 
 	// /WOrk in progess
@@ -205,8 +234,24 @@ public class Control {
 	}
 
 	// /////
-	public void LDA(IR IRobject, RF RFtable, Memory Mem) {
-		MAR.setData(IRobject.getAddress());
+	public void LDA(IR IRobject, RF RFtable, XF XFtable, Memory Mem) {
+		if (IRobject.getXFI() != 0) {
+			if (IRobject.getXFI() == 1) {
+				RES.setData(IRobject.getAddress()
+						+ XFtable.getSwitch(IRobject.getXFI()));
+				MAR.setData(RES.getData());
+			} else if (IRobject.getXFI() == 2) {
+				RES.setData(IRobject.getAddress()
+						+ XFtable.getSwitch(IRobject.getXFI()));
+				MAR.setData(RES.getData());
+			} else if (IRobject.getXFI() == 3) {
+				RES.setData(IRobject.getAddress()
+						+ XFtable.getSwitch(IRobject.getXFI()));
+				MAR.setData(RES.getData());
+			}
+		} else {
+			MAR.setData(IRobject.getAddress());
+		}
 		if (IRobject.getIndirect() == 0) {
 			RFtable.setSwitch(IRobject.getRFI1(), MAR.getData());
 		}

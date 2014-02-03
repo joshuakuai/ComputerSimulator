@@ -23,10 +23,12 @@ public class IR extends Register {
 
 	IR(String IR) {
 		IRstring = IR;
+		this.setName("IR");
 	}
 
 	IR() {
 		IRstring = "";
+		this.setName("IR");
 	}
 
 	/*
@@ -104,6 +106,7 @@ public class IR extends Register {
 	}
 	
 	public void seIRstring(String IRstring){
+		super.setData(Integer.parseInt(IRstring,2));
 		this.IRstring = IRstring;
 	}
 
@@ -112,8 +115,8 @@ public class IR extends Register {
 	 */
 	public boolean isEmpty() {
 		if (IRstring == null || "".equals(IRstring.trim())) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 }

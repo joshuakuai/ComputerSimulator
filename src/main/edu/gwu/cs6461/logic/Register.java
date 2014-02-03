@@ -6,14 +6,25 @@
 
 package edu.gwu.cs6461.logic;
 
+import edu.gwu.cs6461.sim.bridge.*;
+
 /**
  * 
  * @author Ahmed
  */
-public class Register {
+public class Register extends Observable{
 
 	private int data = 0;
 	private int size = 0;
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public int getData() {
 		return data;
@@ -25,6 +36,11 @@ public class Register {
 
 	public void setData(int newData) {
 		data = newData;
+		
+		HardwareData hardwareData = new HardwareData();
+		hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
+		this.notifyObservers(hardwareData);
+		
 		CPUController.shareInstance().checkSingleStepModel();
 	}
 

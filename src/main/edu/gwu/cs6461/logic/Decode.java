@@ -7,86 +7,81 @@
 package edu.gwu.cs6461.logic;
 
 /**
- *
+ * 
  * @author Ahmed
  */
 public class Decode {
-    private int OpCode=0;
-    private int base=2;
-    private int RFI1=0;
-    private int XFI=0;
-    private int Address=0;
-    private int Indirect=0;
-    private int Immediate=0;
-    
-    
-   
-    public void decodeSwitch(IR IRobject){
-        OpCode = Integer.parseInt(IRobject.getIRstring().substring(0,6), base);
-        IRobject.setOpCode(OpCode);
-        System.out.println("OpCode="+OpCode);
-        if(OpCode==1)
-            function1(IRobject);
-        else if(OpCode==2)
-            function1(IRobject);
-        else if(OpCode==3)
-            function2(IRobject);
-        else if(OpCode==41)
-            function3(IRobject);  
-        else if(OpCode==42)
-            function3(IRobject);
-        else if(OpCode==4)
-            function1(IRobject);
-        else if(OpCode==5)
-            function1(IRobject);
-        else if(OpCode==6)
-            function4(IRobject);
-        else if(OpCode==7)
-            function4(IRobject);
-    }
-    public void function1(IR IRobject){
-        RFI1= Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
-        IRobject.setRFI1(RFI1);
-        System.out.println("RFI="+RFI1);
-        XFI= Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
-        IRobject.setXFI(XFI);
-        System.out.println("XFI="+XFI);
-        Indirect= Integer.parseInt(IRobject.getIRstring().substring(10, 11), base);
-        IRobject.setIndirect(Indirect);
-        System.out.println("Indirect="+Indirect);
-        Address= Integer.parseInt(IRobject.getIRstring().substring(12, 20), base);
-        IRobject.setAddress(Address);
-        System.out.println("Address="+Address);
-    }
-    public void function2(IR IRobject){
-        RFI1= Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
-        IRobject.setRFI1(RFI1);
-        System.out.println("RFI="+RFI1);       
-        Indirect= Integer.parseInt(IRobject.getIRstring().substring(10, 11), base);
-        IRobject.setIndirect(Indirect);
-        System.out.println("Indirect="+Indirect);
-        Address= Integer.parseInt(IRobject.getIRstring().substring(12, 20), base);
-        IRobject.setAddress(Address);
-        System.out.println("Address="+Address);
-    }
-    public void function3(IR IRobject){
-        XFI= Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
-        IRobject.setXFI(XFI);
-        System.out.println("XFI="+XFI);    
-        Indirect= Integer.parseInt(IRobject.getIRstring().substring(10, 11), base);
-        IRobject.setIndirect(Indirect);
-        System.out.println("Indirect="+Indirect);
-        Address= Integer.parseInt(IRobject.getIRstring().substring(12, 20), base);
-        IRobject.setAddress(Address);
-        System.out.println("Address="+Address);
-    }
-    public void function4(IR IRobject){
-        RFI1= Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
-        IRobject.setRFI1(RFI1);
-        System.out.println("RFI="+RFI1);        
-        Immediate= Integer.parseInt(IRobject.getIRstring().substring(12, 20), base);
-        IRobject.setImmed(Immediate);
-        System.out.println("Immediate="+Immediate);
-    }
-    
+	private int OpCode = 0;
+	private int base = 2;
+	private int RFI1 = 0;
+	private int XFI = 0;
+	private int Address = 0;
+	private int Indirect = 0;
+	private int Immediate = 0;
+
+	public void decodeSwitch(IR IRobject) {
+		OpCode = Integer.parseInt(IRobject.getIRstring().substring(0, 6), base);
+		IRobject.setOpCode(OpCode);
+		System.out.println("OpCode=" + OpCode);
+		if (OpCode == 1)
+			function1(IRobject);
+		else if (OpCode == 2)
+			function1(IRobject);
+		else if (OpCode == 3)
+			function1(IRobject);
+		else if (OpCode == 41)
+			function3(IRobject);
+		else if (OpCode == 42)
+			function3(IRobject);
+		else if (OpCode == 4)
+			function1(IRobject);
+		else if (OpCode == 5)
+			function1(IRobject);
+		else if (OpCode == 6)
+			function4(IRobject);
+		else if (OpCode == 7)
+			function4(IRobject);
+	}
+
+	public void function1(IR IRobject) {
+		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
+		IRobject.setRFI1(RFI1);
+		System.out.println("RFI=" + RFI1);
+		XFI = Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
+		IRobject.setXFI(XFI);
+		System.out.println("XFI=" + XFI);
+		Indirect = Integer.parseInt(IRobject.getIRstring().substring(10, 11),
+				base);
+		IRobject.setIndirect(Indirect);
+		System.out.println("Indirect=" + Indirect);
+		Address = Integer.parseInt(IRobject.getIRstring().substring(12, 20),
+				base);
+		IRobject.setAddress(Address);
+		System.out.println("Address=" + Address);
+	}
+
+	public void function3(IR IRobject) {
+		XFI = Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
+		IRobject.setXFI(XFI);
+		System.out.println("XFI=" + XFI);
+		Indirect = Integer.parseInt(IRobject.getIRstring().substring(10, 11),
+				base);
+		IRobject.setIndirect(Indirect);
+		System.out.println("Indirect=" + Indirect);
+		Address = Integer.parseInt(IRobject.getIRstring().substring(12, 20),
+				base);
+		IRobject.setAddress(Address);
+		System.out.println("Address=" + Address);
+	}
+
+	public void function4(IR IRobject) {
+		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
+		IRobject.setRFI1(RFI1);
+		System.out.println("RFI=" + RFI1);
+		Immediate = Integer.parseInt(IRobject.getIRstring().substring(12, 20),
+				base);
+		IRobject.setImmed(Immediate);
+		System.out.println("Immediate=" + Immediate);
+	}
+
 }

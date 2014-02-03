@@ -16,18 +16,16 @@ public class HardwareData {
 
 	public void put(String key, String val) {
 		data.put(key, val);
-		
 	}
 
-	public String get(String key){
-		
-		if (data.get(key)!=null) {
+	public String get(String key) {
+
+		if (data.get(key) != null) {
 			return data.get(key);
 		}
-		
+
 		return "";
-		
+
 	}
-	
-	
+
 }
