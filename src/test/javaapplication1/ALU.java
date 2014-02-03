@@ -11,21 +11,15 @@ package javaapplication1;
  * @author Ahmed
  */
 public class ALU {
-    private int Operand1=0;
-    private int Operand2=0;
+   
     private String Operation="";
     private int Result=0;
-    
-    public void setOperand1(String Operand){
-        Operand1 = Integer.parseInt(Operand);
-    }
-    public void setOperand2(String Operand){
-        Operand2 = Integer.parseInt(Operand);
-    }
-    public void setOperation(String OperationNew){
-        Operation = OperationNew;
-    }
-    public String Calculate(){
+       
+    public void Calculate(int Operand1, int Operand2, int Opcode, Register RES){
+        if(Opcode==4 || Opcode==6)
+            Operation="+";
+        else if(Opcode==5 || Opcode==7)
+            Operation="-";
         switch (Operation) {
             case "+":
                 Result =Operand1+Operand2;
@@ -39,9 +33,8 @@ public class ALU {
             case "/":
                 Result =Operand1/Operand2;
                 break;
-        }
-        
-        return Integer.toString(Result);
+        }      
+        RES.setData(Result);
     }
     
 }

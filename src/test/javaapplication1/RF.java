@@ -46,7 +46,7 @@ public class RF {
         R3=R;
     }
     
-    public void tableSwitch(int RFI,int Data){
+    public void setSwitch(int RFI,int Data){
         if (RFI==0)
             setR0(Data);
         else if (RFI==1)
@@ -55,5 +55,16 @@ public class RF {
             setR2(Data);
         else if (RFI==3)
             setR3(Data);
+    }
+    public int getSwitch(int RFI){
+        if (RFI==0)
+           return getR0();
+        else if (RFI==1)
+           return getR1();
+        else if (RFI==2)
+           return getR2();
+        else if (RFI==3)
+           return getR3();
+        return -1;
     }
 }

@@ -1,6 +1,7 @@
 package edu.gwu.cs6461.sim.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -14,12 +15,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -51,7 +54,6 @@ public class MainSimFrame extends JFrame {
 	private final static Logger logger = Logger.getLogger(MainSimFrame.class);
 	private final static Logger simConsole = Logger.getLogger("simulator.console");
 
-	private JCheckBox[] chkBinData  = new JCheckBox[20]; 
 	private JRadioButton[] radBinData  = new JRadioButton[20];
 	private JLabel[] lblBinPosInfo = new JLabel[20];
 	private Dimension shortField = new Dimension( 100, 50 );
@@ -104,14 +106,26 @@ public class MainSimFrame extends JFrame {
 	
 	private JComboBox<String> cboSwithOptions = new JComboBox<String>();
 	private JButton btnReset = new JButton("Reset");
-	private JButton btnLoad = new JButton("Load");
+	private JButton btnLoad = new JButton("Deposit");
 	
-	private JLabel lblWinStatus = new JLabel(" "); 
+	//set memory
+	private JLabel lblMemAddress = new JLabel("Address:");
+	private JTextField txtMemAdd = new JTextField(4);
+	
 	
 	private JTextArea txtConsoleText = new JTextArea();
+	
+	/**
+	 * The first switch, in ComboBox ,to be allow to edit by the tester
+	 * this is will be default IR.
+	 * Terminate and reset button will reset back to IR
+	 */
 	private int mainSwitchIdx = 0;
 	
 	
+	/**
+	 * Constructor:init GUI component; register GUi component event listeners
+	 */
 	public MainSimFrame() {
 		// setLayout(new MigLayout());
 
@@ -121,7 +135,7 @@ public class MainSimFrame extends JFrame {
 
 		int i=0;
 		for (RegisterName n : names) {
-			if (n.isOperator()) {
+			if (n.isEditable()) {
 				tmp.add(n.getVal());
 				if (n == RegisterName.IR) {
 					mainSwitchIdx = i;
@@ -150,7 +164,8 @@ public class MainSimFrame extends JFrame {
 		btnRun.addActionListener(simAct);
 		btnSingleInstr.addActionListener(simAct);
 		
-
+		setMemorySwitch(false);
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				TextAreaAppender.setTextArea(txtConsoleText);
@@ -159,6 +174,13 @@ public class MainSimFrame extends JFrame {
 		
 	}
 	
+	
+	/**
+	 * Create and arrange the main window components
+	 * ie all the registers are at the upper portion of window
+	 * swithes and control panel are in the middle
+	 * 
+	 */
 	public void init(){
 		
 		JPanel regSwPanel = new JPanel();
@@ -207,8 +229,9 @@ public class MainSimFrame extends JFrame {
 		
 //		setLayout(new FlowLayout(FlowLayout.LEFT));
 		add(regSwPanel, BorderLayout.NORTH);
-		add(createConsolePanel(), BorderLayout.CENTER);
-		add(lblWinStatus,BorderLayout.SOUTH);
+		add(createConsolePanel(), BorderLayout.SOUTH);
+//		add(lblWinStatus,BorderLayout.SOUTH);
+		add(new JList(new String[]{"are ","de"}),BorderLayout.CENTER);
 		
 
 		logger.debug(getLayout());
@@ -277,7 +300,7 @@ public class MainSimFrame extends JFrame {
 		txtConsoleText.setFont( new Font("consolas", Font.PLAIN, 13));
 		txtConsoleText.setEditable(false);
 		JScrollPane scroll = new JScrollPane( txtConsoleText );
-//		scroll.setPreferredSize(new Dimension( 240, 180 ) );
+		scroll.setPreferredSize(new Dimension( 240, 80 ) );
 		
 		JPanel gPanel = new JPanel();
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Console"));
@@ -345,8 +368,12 @@ public class MainSimFrame extends JFrame {
 	private JPanel createBinPanel(int start, int end) {
 		JPanel pBinPanel = new JPanel();
 		
-//		pBinPanel.setLayout(new GridBagLayout());
 		pBinPanel.setLayout(new BoxLayout(pBinPanel,BoxLayout.X_AXIS));
+		pBinPanel.setBorder(new TitledBorder(new EtchedBorder(), "Bits"));
+		
+		//TODO
+		radBinData  = new JRadioButton[end+1];
+		lblBinPosInfo = new JLabel[end+1];
 		
 		JPanel tmp = null;
 		for (int i = start; i <= end; i++) {
@@ -364,6 +391,7 @@ public class MainSimFrame extends JFrame {
 			tmp.add(radBinData[i]);
 //			tmp.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.blue)));
 			pBinPanel.add(tmp);
+
 		}
 		tmp.setBorder(BorderFactory.createEmptyBorder());
 		
@@ -375,7 +403,10 @@ public class MainSimFrame extends JFrame {
 	private JPanel createSwitchPanel(int start, int end){
 		//Button only
 		JPanel btnPanel = new JPanel();
+//		btnPanel.setBorder(new TitledBorder(BorderFactory.createLineBorder(Color.blue)));
 		
+		btnPanel.add(lblMemAddress);
+		btnPanel.add(txtMemAdd);
 		btnPanel.add(cboSwithOptions);
 		cboSwithOptions.addActionListener(new SwitchComboActionListener());
 		btnPanel.add(btnReset);
@@ -397,6 +428,7 @@ public class MainSimFrame extends JFrame {
 		wrapPanel.add(createBinPanel(start, end),c);
 		c.gridy = 1;
 		wrapPanel.add(btnPanel,c);
+		
 		
 		return wrapPanel;
 	}
@@ -469,18 +501,18 @@ public class MainSimFrame extends JFrame {
 			}else if (parent == btnIPL) {
 				
 					
-			     /*   SwingUtilities.invokeLater(new Runnable() {
+			    new Thread(new Runnable() {
 			            public void run() {
 			                try {
-			                	simConsole.info("Simulator starting....");
+			                	Thread.sleep(2000);
 			                	resetSimulator();
-								Thread.sleep(2000);
+			                	simConsole.info("Simulator started....");
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 			            }
-			        });*/
-				simConsole.info("Simulator started....");
+			     }).start();
+			    simConsole.info("Simulator starting....");
 				resetMainCtrlBtn(true);
 				
 			}else if (parent == btnTerminate) {
@@ -504,7 +536,14 @@ public class MainSimFrame extends JFrame {
 		}
 		
 	}
+
 	
+	private void setMemorySwitch(boolean b ){
+		
+		lblMemAddress.setVisible(b);
+		txtMemAdd.setVisible(b);
+		
+	}
 	private void resetMainCtrlBtn(boolean isStart){
 		
 		if (isStart) {
@@ -523,6 +562,12 @@ public class MainSimFrame extends JFrame {
 				radBinData[i].setSelected(b);
 			}
 		}
+		String sel = (String)cboSwithOptions.getSelectedItem();
+		if (RegisterName.fromName(sel)==RegisterName.MEMORY) {
+			txtMemAdd.setText("");
+		} else 
+			setMemorySwitch(false);
+		
 	}
 
 	private void resetSimulator() {
@@ -542,7 +587,11 @@ public class MainSimFrame extends JFrame {
 		txtPC.setText("");
 		cboSwithOptions.setSelectedIndex(mainSwitchIdx);
 		resetSwitches(LOWESTBIT,  HIGHESTBIT, false);
-		
+		String sel = (String)cboSwithOptions.getSelectedItem();
+		if (RegisterName.fromName(sel)==RegisterName.MEMORY) {
+			setMemorySwitch(true);
+		} else 
+			setMemorySwitch(false);
 	}
 
 	private void maskSwitches(int start, int end,boolean b){
@@ -562,10 +611,16 @@ public class MainSimFrame extends JFrame {
 			
 			String selected = (String)((JComboBox)e.getSource()).getSelectedItem();
 			RegisterName reg =RegisterName.fromName(selected); 
-			if (reg!= RegisterName.NOTEXIST) {
+			if (reg != RegisterName.NOTEXIST) {
 				int numBit = reg.getBit();
 				maskSwitches(0, numBit-1, true);
 				maskSwitches(numBit, 19, false);
+				
+				if (reg == RegisterName.MEMORY) {
+					setMemorySwitch(true);
+				} else {
+					setMemorySwitch(false);
+				}
 			}
 			
 			logger.debug("selcted :  " + selected);

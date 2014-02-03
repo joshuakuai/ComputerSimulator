@@ -1,6 +1,6 @@
-package edu.gwu.cs6461.sim.ui;
+package edu.gwu.cs6461.sim.unit;
 
-public class GeneralPanelHelper {
+public class CentralProcessor {
 
 	/**
 	 * @param args

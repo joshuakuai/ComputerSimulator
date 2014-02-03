@@ -36,4 +36,23 @@ public class XF {
     public void setX3(int X){
         X3=X;
     }
+    
+    //***********************************//
+    public void setSwitch(int XFI,int Data){      
+        if (XFI==1)
+            setX1(Data);
+        else if (XFI==2)
+            setX2(Data);
+        else if (XFI==3)
+            setX3(Data);
+    }
+    public int getSwitch(int XFI){      
+        if (XFI==1)
+           return getX1();
+        else if (XFI==2)
+           return getX2();
+        else if (XFI==3)
+           return getX3();
+        return -1;
+    }
 }

@@ -16,15 +16,16 @@ public enum RegisterName {
 	CC("CC",4,false),
 	IR("IR",20),
 	PC("PC",13),
+	MEMORY("MEMORY",20),
 	NOTEXIST("NOTEXIST",-1,false);;
 	
 	private final String name;
 	private final int numOfBit;
-	private final boolean operator;
-	private RegisterName(String name, int numOfbit, boolean operator){
+	private final boolean editable;
+	private RegisterName(String name, int numOfbit, boolean edit){
 		this.name= name;
 		this.numOfBit = numOfbit;
-		this.operator = operator;
+		this.editable = edit;
 	}
 	private RegisterName(String name, int numOfbit){
 		this(name, numOfbit, true);
@@ -37,8 +38,8 @@ public enum RegisterName {
 	public int getBit(){
 		return numOfBit;
 	}
-	public boolean isOperator(){
-		return operator;
+	public boolean isEditable(){
+		return editable;
 	}
 	public static RegisterName fromName(String name){
 		if (name == null || "".equals(name.trim())) {

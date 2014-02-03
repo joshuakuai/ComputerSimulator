@@ -24,12 +24,22 @@ public class JavaApplication1 {
         
         //System.out.println(reg1.getData());
         //System.out.println(reg1.getSize());
-       IR IRobject =  new IR("00000111001000110110");
-       RF RFtable   = new RF();
-       InstructionRun CPURun = new InstructionRun();
+       //IR IRobject = new IR("00000111001000110110");
+       IR IRobject = new IR("00010011011000110110");
+       RF RFtable  = new RF();
+       XF XFtable  = new XF();
+       Memory Mem  = new Memory();
+       ALU    ALU = new ALU();
+       Mem.initMem();
+       Mem.setMem(54, 100);
+       Mem.setMem(100, 1023);
+       Mem.setMem(204,512);
+       Mem.setMem(512, 513);
+       RFtable.setSwitch(3, 10);
+       Control CPURun = new Control();
        CPURun.Decode(IRobject);
-       CPURun.RunInstruction(IRobject, RFtable);
-       System.out.println("R3="+RFtable.getR3());
-        
+       XFtable.setX1(150);
+       CPURun.RunInstruction(IRobject, RFtable, XFtable, Mem, ALU);
+       System.out.println("R3="+RFtable.getSwitch(IRobject.getRFI1()));  
     }
 }
