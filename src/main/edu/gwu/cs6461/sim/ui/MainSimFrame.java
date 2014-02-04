@@ -15,6 +15,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -303,6 +304,10 @@ public class MainSimFrame extends JFrame implements Observer {
 		add(jmem, BorderLayout.CENTER);
 
 		logger.debug(getLayout());
+
+		Memory.shareInstance().register(this);
+		cpuController.setRegisterObserver(MainSimFrame.this);
+		cpuController.setMainFrame(MainSimFrame.this);
 	}
 
 	private JPanel createMiscRPanel() {
@@ -495,18 +500,17 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	// Model, 0: Run 1: Single Step
 	private void beginCPUProcessWithModel(int model) {
-		if(model == 1 && cpuController.isAlive() && cpuController.isSuspended()){
-			//For Single step model
+		if (model == 1 && cpuController.isAlive()
+				&& cpuController.isSuspended()) {
+			// For Single step model
 			// If this thread is alive and is suspended, the button will
 			// resume the thread
 			cpuController.Resume();
 			return;
 		}
-		
-		
-		//For all model 
-		 if (!cpuController.isAlive()
-				&& !cpuController.isSuspended()) {
+
+		// For all model
+		if (!cpuController.isAlive() && !cpuController.isSuspended()) {
 			// then if the the thread is dead and is not suspended,
 			// recreate the cpucontroller thread and
 			// set the debug model on and start the process
@@ -514,11 +518,11 @@ public class MainSimFrame extends JFrame implements Observer {
 			cpuController = CPUController.shareInstance();
 			cpuController.setRegisterObserver(MainSimFrame.this);
 			cpuController.setMainFrame(MainSimFrame.this);
-			
-			if(model == 1){
+
+			if (model == 1) {
 				cpuController.SS.setData(1);
 			}
-			
+
 			cpuController.start();
 		}
 		// For other situation just ignore this touch event
@@ -558,9 +562,22 @@ public class MainSimFrame extends JFrame implements Observer {
 		} else if (dName == RegisterName.MEMORY) {
 			String key = vals[0];
 			val = vals[1];
-			lstModel.addElement(key + "\t " + val);
-		}
 
+			String newElementString = key + "\t " + val;
+
+			// Check if the Element has contained the address
+			for (int i = 0; i < lstModel.getSize(); i++) {
+				String addString = lstModel.getElementAt(i);
+				String[] mVal = addString.split("\t");
+
+				if (mVal[0].equals(key)) {
+					lstModel.setElementAt(newElementString, i);
+					return;
+				}
+			}
+
+			lstModel.addElement(newElementString);
+		}
 	}
 
 	private void loadToLogicLayer(String dest, String val) {
@@ -626,12 +643,6 @@ public class MainSimFrame extends JFrame implements Observer {
 				}
 
 				loadToLogicLayer(sel, res);
-
-				if (rName == RegisterName.MEMORY) {
-					String k = txtMemAdd.getText();
-					loadToControl(sel, k, res);
-				} else
-					loadToControl(sel, res);
 
 			} else if (parent == btnReset) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
