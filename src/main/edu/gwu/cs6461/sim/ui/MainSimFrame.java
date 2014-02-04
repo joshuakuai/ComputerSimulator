@@ -15,7 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +50,6 @@ import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
-import edu.gwu.cs6461.test.SampleObservable;
 
 /**
  * 
@@ -698,7 +696,6 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			}
 
-			logger.debug(parent);
 		}
 
 	}

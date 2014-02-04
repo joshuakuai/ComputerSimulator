@@ -1,0 +1,91 @@
+package edu.gwu.cs6461.sim.util;
+
+import org.apache.log4j.Logger;
+
+/**
+ * Utility class for data conversion
+ * 
+ * @author marcoyeung
+ * 
+ */
+public class Convertor {
+	private final static Logger logger = Logger.getLogger(Convertor.class);
+
+	/**
+	 * Given a binary two's complement form, the method returns the signed
+	 * integer value
+	 * 
+	 * eg  <br>
+	 * 	String binVal = "01111000000000000000"; <br>
+	 *	int numOfBit = 20;       <br>
+	 *	
+	 *	output: 01111000000000000000:491520
+	 *		<br><br> 
+     *
+	 *	String binVal = "11111000000000000000";<br>
+	 *	int numOfBit = 20;<br>
+	 *	output: 11111000000000000000:-32768
+	 *	
+	 * 
+	 * @param val
+	 *            two's complement in binary bit form
+	 * @param numOfBit
+	 *            number of bit to represent the value
+	 * @return signed int that reflect the value in val
+	 */
+	public static int getSignedValFromBin(String binVal, int numOfBit) {
+		if (binVal == null || "".equals(binVal)) {
+			return 0;
+		}
+		try {
+
+			Integer iRes = Integer.parseInt(binVal, 2);
+			if (binVal.charAt(0) == '1' && binVal.length() == numOfBit)
+				iRes -= (1 << numOfBit);
+
+			return iRes;
+		} catch (Exception e) {
+			logger.error("failed to complete the conversion", e);
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Return two's complement value in String form with the length specified
+	 * 
+	 * @param iVal
+	 *            int value (+ve or -ve)
+	 * @param numOfBit
+	 *            since int is 32 bit, numOfBit specify the required number of bit.
+	 * 
+	 * @return return the two's int value in String form
+	 */
+	public static String getSignedBinFromInt(int iVal, int numOfBit) {
+
+		String binV = Integer.toBinaryString(iVal);
+		int len = binV.length();
+
+		String resBin = binV;
+		if (numOfBit >= len) {
+			return padZero(resBin,numOfBit);
+		}
+
+		resBin = binV.substring(len - numOfBit);
+
+		return resBin;
+	}
+	private static String padZero(String val, int length){
+		if (val==null || "".equals(val) || val.length() >= length) {
+			return val;
+		}
+		int padLen = length-val.length();
+		for (int i = 0; i < padLen; i++) {
+			val = "0" + val;
+		} 
+		
+		return val;
+	}
+	
+
+}
