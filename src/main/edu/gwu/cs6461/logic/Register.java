@@ -38,7 +38,8 @@ public class Register extends Observable{
 		data = newData;
 		
 		HardwareData hardwareData = new HardwareData();
-		hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
+		//hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
+		hardwareData.put(this.name, Integer.toString(newData));
 		this.notifyObservers(hardwareData);
 		
 		CPUController.shareInstance().checkSingleStepModel();
