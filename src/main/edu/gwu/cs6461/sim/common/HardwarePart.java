@@ -1,7 +1,7 @@
 package edu.gwu.cs6461.sim.common;
 
 
-public enum RegisterName {
+public enum HardwarePart {
 	R0("R0",20),
 	R1("R1",20),
 	R2("R2",20),
@@ -22,12 +22,12 @@ public enum RegisterName {
 	private final String name;
 	private final int numOfBit;
 	private final boolean editable;
-	private RegisterName(String name, int numOfbit, boolean edit){
+	private HardwarePart(String name, int numOfbit, boolean edit){
 		this.name= name;
 		this.numOfBit = numOfbit;
 		this.editable = edit;
 	}
-	private RegisterName(String name, int numOfbit){
+	private HardwarePart(String name, int numOfbit){
 		this(name, numOfbit, true);
 	}
 	
@@ -41,12 +41,12 @@ public enum RegisterName {
 	public boolean isEditable(){
 		return editable;
 	}
-	public static RegisterName fromName(String name){
+	public static HardwarePart fromName(String name){
 		if (name == null || "".equals(name.trim())) {
 			return NOTEXIST;
 		}
 		
-        for (RegisterName value : RegisterName.values()) {
+        for (HardwarePart value : HardwarePart.values()) {
             if (value.getVal().equals(name)) {
                 return value;
             }

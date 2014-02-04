@@ -23,7 +23,7 @@ public class ALU {
 
 		if (Operation.equals("+")) {
 			Result = Operand1 + Operand2;
-		} else if (Operation.equals("+")) {
+		} else if (Operation.equals("-")) {
 			Result = Operand1 - Operand2;
 		} else if (Operation.equals("*")) {
 			Result = Operand1 * Operand2;
