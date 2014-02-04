@@ -60,11 +60,18 @@ public class TEST {
 		
 		System.out.println(BigInteger.valueOf(2L).pow(4 - 1));
 	}
+	
+	void testHex(){
+		int val = 0x100000;
+		System.out.println(val);
+		System.out.println(Integer.toBinaryString(val));
+	}
+	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new TEST().testOverFlow();
+		new TEST().testHex();
 	}
 
 }

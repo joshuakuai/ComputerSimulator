@@ -143,9 +143,11 @@ public class MainSimFrame extends JFrame implements Observer {
 	/**
 	 * Constructor:init GUI component; register GUi component event listeners
 	 */
-	public MainSimFrame() {
+	public MainSimFrame(String title) {
 		// setLayout(new MigLayout());
 
+		setTitle(title);
+		
 		RegisterName[] names = RegisterName.values();
 
 		List<String> tmp = new ArrayList<String>();
@@ -204,6 +206,7 @@ public class MainSimFrame extends JFrame implements Observer {
 						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
 						ObjButtons[1]);
 				if (PromptResult == 0) {
+					System.exit(0);
 				}
 			}
 		});
