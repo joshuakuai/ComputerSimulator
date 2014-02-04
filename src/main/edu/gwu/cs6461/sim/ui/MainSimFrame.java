@@ -647,11 +647,9 @@ public class MainSimFrame extends JFrame implements Observer {
 				for (int i = HIGHESTBIT - numBit + 1; i <= HIGHESTBIT; i++) {
 					res += radBinData[i].isSelected() ? "1" : "0";
 				}
+				logger.debug("value from UI: " + res);
 
-				logger.debug("value got: " + res);
-
-				if (rName == HardwarePart.MEMORY
-						&& txtMemAdd.getText().isEmpty()) {
+				if (rName == HardwarePart.MEMORY && txtMemAdd.getText().isEmpty()) {
 
 					JOptionPane.showMessageDialog(MainSimFrame.this,
 							"Please input the memory address.",
