@@ -3,6 +3,8 @@ package edu.gwu.cs6461.logic;
 import edu.gwu.cs6461.sim.bridge.*;
 import edu.gwu.cs6461.sim.ui.*;
 
+import org.apache.log4j.Logger;
+
 public class CPUController extends Thread {
 	public IR IRobject = new IR();
 	public RF RFtable = new RF();
@@ -10,12 +12,13 @@ public class CPUController extends Thread {
 	public Register SS = new Register();
 	public Register PC = new Register();
 	public Control cpuControl = new Control();
+	public ALU ALU = new ALU();
+	public static CPUController instance = new CPUController();
 	
-	private ALU ALU = new ALU();
-	private static final CPUController instance = new CPUController();
 	private boolean suspendflag = false;
-	
-	//Keep a weak reference of mainSimFrame
+	private final static Logger logger = Logger.getLogger(MainSimFrame.class);
+
+	// Keep a weak reference of mainSimFrame
 	private MainSimFrame mainFrame = null;
 
 	// CPU holds a week reference of the memory but CPU doesn't own the memory
@@ -23,10 +26,23 @@ public class CPUController extends Thread {
 		// Set register size
 		PC.setSize(13);
 		SS.setSize(1);
-		
+
 		// Set register name
 		SS.setName("SS");
 		PC.setName("PC");
+	}
+
+	//In java a thread can't excrete twice so we have to recreate it after done.
+	public static void recreateCPUController() {
+		CPUController tmpController = new CPUController();
+		tmpController.IRobject = instance.IRobject;
+		tmpController.RFtable = instance.RFtable;
+		tmpController.XFtable = instance.XFtable;
+		tmpController.SS = instance.SS;
+		tmpController.PC = instance.PC;
+		tmpController.cpuControl = instance.cpuControl;
+		
+		instance = tmpController;
 	}
 
 	// Singleton method
@@ -40,12 +56,12 @@ public class CPUController extends Thread {
 			this.Suspend();
 		}
 	}
-	
-	public void setMainFrame(MainSimFrame mf){
+
+	public void setMainFrame(MainSimFrame mf) {
 		mainFrame = mf;
 	}
-	
-	public void setRegisterObserver(Observer obs){
+
+	public void setRegisterObserver(Observer obs) {
 		PC.register(obs);
 		IRobject.register(obs);
 		RFtable.setRegisterObserver(obs);
@@ -68,6 +84,8 @@ public class CPUController extends Thread {
 	}
 
 	public void run() {
+		logger.debug("CPU thread begins.");
+
 		// For the first time we begin the process, we'll check if the IR is
 		// empty or not
 		// TODO:If the IR is Empty then fetch the instruction from the
@@ -81,8 +99,10 @@ public class CPUController extends Thread {
 				Memory.shareInstance(), ALU);
 
 		// PC+1 then loop the whole process(Phase 2)
-		
-		//Finish all instructions, show message to user to let it know
+
+		// Finish all instructions, show message to user to let it know
 		mainFrame.showProgrameFinishDialog();
+
+		logger.debug("CPU thread ends.");
 	}
 }

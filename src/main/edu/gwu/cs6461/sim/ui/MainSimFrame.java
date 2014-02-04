@@ -306,9 +306,6 @@ public class MainSimFrame extends JFrame implements Observer {
 		
 
 		logger.debug(getLayout());
-
-		cpuController.setRegisterObserver(this);
-		cpuController.setMainFrame(this);
 	}
 
 	private JPanel createMiscRPanel() {
@@ -502,7 +499,12 @@ public class MainSimFrame extends JFrame implements Observer {
 				} else if (!cpuController.isAlive()
 						&& !cpuController.isSuspended()) {
 					// then if the the thread is dead and is not suspended,
+					// recreate the cpucontroller thread and
 					// set the debug model on and start the process
+					CPUController.recreateCPUController();
+					cpuController = CPUController.shareInstance();
+					cpuController.setRegisterObserver(MainSimFrame.this);
+					cpuController.setMainFrame(MainSimFrame.this);
 					cpuController.SS.setData(1);
 					cpuController.start();
 
