@@ -47,9 +47,10 @@ import edu.gwu.cs6461.logic.CPUController;
 import edu.gwu.cs6461.logic.Memory;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observer;
-import edu.gwu.cs6461.sim.common.RegisterName;
+import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
+import edu.gwu.cs6461.test.SampleObservable;
 
 /**
  * 
@@ -69,37 +70,37 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JLabel[] lblBinPosInfo = new JLabel[20];
 	private Dimension shortField = new Dimension(100, 50);
 
-	private JLabel lblR0 = new JLabel(RegisterName.R0.getVal());
-	private JLabel lblR1 = new JLabel(RegisterName.R1.getVal());
-	private JLabel lblR2 = new JLabel(RegisterName.R2.getVal());
-	private JLabel lblR3 = new JLabel(RegisterName.R3.getVal());
+	private JLabel lblR0 = new JLabel(HardwarePart.R0.getVal());
+	private JLabel lblR1 = new JLabel(HardwarePart.R1.getVal());
+	private JLabel lblR2 = new JLabel(HardwarePart.R2.getVal());
+	private JLabel lblR3 = new JLabel(HardwarePart.R3.getVal());
 
 	private JTextField txtR0 = new JTextField(20);
 	private JTextField txtR1 = new JTextField(20);
 	private JTextField txtR2 = new JTextField(20);
 	private JTextField txtR3 = new JTextField(20);
 
-	private JLabel lblX1 = new JLabel(RegisterName.X1.getVal());
-	private JLabel lblX2 = new JLabel(RegisterName.X2.getVal());
-	private JLabel lblX3 = new JLabel(RegisterName.X3.getVal());
+	private JLabel lblX1 = new JLabel(HardwarePart.X1.getVal());
+	private JLabel lblX2 = new JLabel(HardwarePart.X2.getVal());
+	private JLabel lblX3 = new JLabel(HardwarePart.X3.getVal());
 
 	private JTextField txtX1 = new JTextField(15);
 	private JTextField txtX2 = new JTextField(15);
 	private JTextField txtX3 = new JTextField(15);
 
-	private JLabel lblMAR = new JLabel(RegisterName.MAR.getVal());
-	private JLabel lblMBR = new JLabel(RegisterName.MBR.getVal());
-	private JLabel lblMSR = new JLabel(RegisterName.MSR.getVal());
-	private JLabel lblMFR = new JLabel(RegisterName.MFR.getVal());
+	private JLabel lblMAR = new JLabel(HardwarePart.MAR.getVal());
+	private JLabel lblMBR = new JLabel(HardwarePart.MBR.getVal());
+	private JLabel lblMSR = new JLabel(HardwarePart.MSR.getVal());
+	private JLabel lblMFR = new JLabel(HardwarePart.MFR.getVal());
 
 	private JTextField txtMAR = new JTextField(13);
 	private JTextField txtMBR = new JTextField(20);
 	private JTextField txtMSR = new JTextField(20);
 	private JTextField txtMFR = new JTextField(20);
 
-	private JLabel lblCC = new JLabel(RegisterName.CC.getVal());
-	private JLabel lblIR = new JLabel(RegisterName.IR.getVal());
-	private JLabel lblPC = new JLabel(RegisterName.PC.getVal());
+	private JLabel lblCC = new JLabel(HardwarePart.CC.getVal());
+	private JLabel lblIR = new JLabel(HardwarePart.IR.getVal());
+	private JLabel lblPC = new JLabel(HardwarePart.PC.getVal());
 
 	private JTextField txtCC = new JTextField(4); // condition code //UNDERFLOW
 													// or
@@ -145,16 +146,15 @@ public class MainSimFrame extends JFrame implements Observer {
 		// setLayout(new MigLayout());
 
 		setTitle(title);
-
-		RegisterName[] names = RegisterName.values();
-
+		
+		HardwarePart[] names = HardwarePart.values();
 		List<String> tmp = new ArrayList<String>();
 
 		int i = 0;
-		for (RegisterName n : names) {
+		for (HardwarePart n : names) {
 			if (n.isEditable()) {
 				tmp.add(n.getVal());
-				if (n == RegisterName.IR) {
+				if (n == HardwarePart.IR) {
 					mainSwitchIdx = i;
 				}
 				i++;
@@ -181,6 +181,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		btnRun.addActionListener(simAct);
 		btnSingleInstr.addActionListener(simAct);
 
+		lstMemory.setFont(new Font("consolas", Font.PLAIN, 13));
+		
 		JMenuItem iExit = new JMenuItem("Exit");
 		iExit.setMnemonic('x');
 		JMenu mFile = new JMenu("File");
@@ -223,7 +225,6 @@ public class MainSimFrame extends JFrame implements Observer {
 			}
 
 		});
-
 		setResizable(false);
 		setRegisterEditable(false);
 		resetSimulator(false);
@@ -433,7 +434,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			tmp = new JPanel();
 			tmp.setLayout(new GridLayout(2, 1, 0, 0));
 
-			lblBinPosInfo[i] = new JLabel(String.valueOf(i));
+			lblBinPosInfo[i] = new JLabel(String.valueOf(end-i));
 			lblBinPosInfo[i].setHorizontalAlignment(SwingConstants.CENTER);
 			lblBinPosInfo[i].setAlignmentY(RIGHT_ALIGNMENT);
 			tmp.add(lblBinPosInfo[i]);
@@ -526,41 +527,54 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	private void loadToControl(String dest, String... vals) {
 
-		RegisterName dName = RegisterName.fromName(dest);
+		HardwarePart dName = HardwarePart.fromName(dest);
 
-		String val = "";
-		if (dName != RegisterName.MEMORY) {
+		String val ="";
+		if (dName != HardwarePart.MEMORY) {
 			val = vals[0];
 		}
-
-		if (dName == RegisterName.R0) {
+		
+		if (dName == HardwarePart.R0) {
 			txtR0.setText(val);
-		} else if (dName == RegisterName.R1) {
+		} else if (dName == HardwarePart.R1) {
 			txtR1.setText(val);
-		} else if (dName == RegisterName.R2) {
+		} else if (dName == HardwarePart.R2) {
 			txtR2.setText(val);
-		} else if (dName == RegisterName.R3) {
+		} else if (dName == HardwarePart.R3) {
 			txtR3.setText(val);
-		} else if (dName == RegisterName.X1) {
+		} else if (dName == HardwarePart.X1) {
 			txtX1.setText(val);
-		} else if (dName == RegisterName.X2) {
+		} else if (dName == HardwarePart.X2) {
 			txtX2.setText(val);
-		} else if (dName == RegisterName.X3) {
+		} else if (dName == HardwarePart.X3) {
 			txtX3.setText(val);
-		} else if (dName == RegisterName.MAR) {
+		} else if (dName == HardwarePart.MAR) {
 			txtMAR.setText(val);
-		} else if (dName == RegisterName.MBR) {
+		} else if (dName == HardwarePart.MBR) {
 			txtMBR.setText(val);
-		} else if (dName == RegisterName.PC) {
+		} else if (dName == HardwarePart.PC) {
 			txtPC.setText(val);
-		} else if (dName == RegisterName.IR) {
+		} else if (dName == HardwarePart.IR) {
 			txtIR.setText(val);
-		} else if (dName == RegisterName.MEMORY) {
+		} else if (dName == HardwarePart.MEMORY) {
 			String key = vals[0];
 			val = vals[1];
-			lstModel.addElement(key + "\t " + val);
+//			lstModel.add(Integer.parseInt(key), padSpace(key,8) +val);
+			lstModel.addElement(padSpace(key,9) +val);
 		}
 
+	}
+	private String padSpace(String key,int space){
+		
+		if (key ==null&&"".equals(key)) {
+			return "";
+		}
+		int sp = space-key.length();
+		for (int i = 0; i <= sp; i++) {
+			key+=" ";
+		}
+		logger.debug(":" + key +':');
+		return key;
 	}
 
 	private void loadToLogicLayer(String dest, String val) {
@@ -568,32 +582,32 @@ public class MainSimFrame extends JFrame implements Observer {
 		// This val will be binary code string
 		Integer data = Integer.parseInt(val, 2);
 
-		RegisterName dName = RegisterName.fromName(dest);
-
-		if (dName == RegisterName.MEMORY) {
+		HardwarePart dName = HardwarePart.fromName(dest);
+		
+		if (dName == HardwarePart.MEMORY) {
 			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
 			Memory.shareInstance().setMem(addressLocation, data);
-		} else if (dName == RegisterName.R0) {
+		} else if (dName == HardwarePart.R0) {
 			cpuController.RFtable.setR0(data);
-		} else if (dName == RegisterName.R1) {
+		} else if (dName == HardwarePart.R1) {
 			cpuController.RFtable.setR1(data);
-		} else if (dName == RegisterName.R2) {
+		} else if (dName == HardwarePart.R2) {
 			cpuController.RFtable.setR2(data);
-		} else if (dName == RegisterName.R3) {
+		} else if (dName == HardwarePart.R3) {
 			cpuController.RFtable.setR3(data);
-		} else if (dName == RegisterName.X1) {
+		} else if (dName == HardwarePart.X1) {
 			cpuController.XFtable.setX1(data);
-		} else if (dName == RegisterName.X2) {
+		} else if (dName == HardwarePart.X2) {
 			cpuController.XFtable.setX2(data);
-		} else if (dName == RegisterName.X3) {
+		} else if (dName == HardwarePart.X3) {
 			cpuController.XFtable.setX3(data);
-		} else if (dName == RegisterName.MAR) {
+		} else if (dName == HardwarePart.MAR) {
 			cpuController.cpuControl.MAR.setData(data);
-		} else if (dName == RegisterName.MBR) {
+		} else if (dName == HardwarePart.MBR) {
 			cpuController.cpuControl.MDR.setData(data);
-		} else if (dName == RegisterName.PC) {
+		} else if (dName == HardwarePart.PC) {
 			cpuController.PC.setData(data);
-		} else if (dName == RegisterName.IR) {
+		} else if (dName == HardwarePart.IR) {
 			cpuController.IRobject.seIRstring(val);
 		}
 	}
@@ -608,17 +622,18 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (parent == btnLoad) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
 
-				RegisterName rName = RegisterName.fromName(sel);
+				HardwarePart rName = HardwarePart.fromName(sel);
 				int numBit = rName.getBit();
 
 				String res = "";
-				for (int i = 0; i < numBit; i++) {
+				//for (int i = 0; i < numBit; i++) {
+				for (int i = HIGHESTBIT-numBit+1; i <= HIGHESTBIT; i++) {
 					res += radBinData[i].isSelected() ? "1" : "0";
 				}
 				logger.debug("value got: " + res);
+				
+				if (rName == HardwarePart.MEMORY && txtMemAdd.getText().isEmpty()) {
 
-				if (rName == RegisterName.MEMORY
-						&& txtMemAdd.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(MainSimFrame.this,
 							"Please input the memory address.",
 							"Missing Content", JOptionPane.ERROR_MESSAGE);
@@ -626,18 +641,20 @@ public class MainSimFrame extends JFrame implements Observer {
 				}
 
 				loadToLogicLayer(sel, res);
+				
+				if (rName == HardwarePart.MEMORY) {
+					String k= txtMemAdd.getText();
 
-				if (rName == RegisterName.MEMORY) {
-					String k = txtMemAdd.getText();
 					loadToControl(sel, k, res);
 				} else
 					loadToControl(sel, res);
 
 			} else if (parent == btnReset) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
-				int numBit = RegisterName.fromName(sel).getBit();
+				int numBit = HardwarePart.fromName(sel).getBit();
 
-				resetSwitches(0, numBit - 1, false);
+				resetSwitches(HIGHESTBIT-numBit + 1,19, false);
+				
 			} else if (parent == btnIPL) {
 
 				new Thread(new Runnable() {
@@ -703,7 +720,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			}
 		}
 		String sel = (String) cboSwithOptions.getSelectedItem();
-		if (RegisterName.fromName(sel) == RegisterName.MEMORY) {
+		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
 			txtMemAdd.setText("");
 		} else
 			setMemorySwitch(false);
@@ -746,7 +763,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		cboSwithOptions.setSelectedIndex(mainSwitchIdx);
 		resetSwitches(LOWESTBIT, HIGHESTBIT, false);
 		String sel = (String) cboSwithOptions.getSelectedItem();
-		if (RegisterName.fromName(sel) == RegisterName.MEMORY) {
+		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
 			setMemorySwitch(true);
 		} else
 			setMemorySwitch(false);
@@ -760,16 +777,34 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		lstModel.clear();
 
+		lstModel.addElement("Address   Content");
+		lstModel.addElement("---------------------------------------");
+
+		//		try {
+//			lstModel.clear();
+//			for (int j = 0; j < 2048; j++) {
+//				lstModel.addElement(" ");
+//			}
+//			
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		
+//		lstMemory = new JList<String>(lstModel);
+		
+		
 	}
 
 	private void maskSwitches(int start, int end, boolean b) {
 
 		for (int i = start; i <= end; i++) {
 			if (radBinData[i] != null) {
-				radBinData[i].setEnabled(b);
+				radBinData[i].setVisible(b);
 				lblBinPosInfo[i].setVisible(b);
+				logger.debug("start: "+ start + ", end: "+ end + ": " + i);
 			}
 		}
+		
 	}
 
 	private class SwitchComboActionListener implements ActionListener {
@@ -779,13 +814,15 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			String selected = (String) ((JComboBox) e.getSource())
 					.getSelectedItem();
-			RegisterName reg = RegisterName.fromName(selected);
-			if (reg != RegisterName.NOTEXIST) {
+			HardwarePart reg = HardwarePart.fromName(selected);
+			if (reg != HardwarePart.NOTEXIST) {
 				int numBit = reg.getBit();
-				maskSwitches(0, numBit - 1, true);
-				maskSwitches(numBit, 19, false);
+				
+				maskSwitches(0, HIGHESTBIT-numBit, false);
+				maskSwitches(HIGHESTBIT-numBit+1, 19, true);
+				
 
-				if (reg == RegisterName.MEMORY) {
+				if (reg == HardwarePart.MEMORY) {
 					setMemorySwitch(true);
 				} else {
 					setMemorySwitch(false);
@@ -807,14 +844,19 @@ public class MainSimFrame extends JFrame implements Observer {
 				for (Map.Entry<String, String> entry : d.entrySet()) {
 					String k = entry.getKey();
 					String v = entry.getValue();
+					try {
+						if (HardwarePart.fromName(k) == HardwarePart.MEMORY) {
+							// memory value passed in with 'address, content');
+							// presume the content is passed in one by one
+							String[] mVal = v.split(",");
+							loadToControl(k, mVal[0], mVal[1]);
+						} else {
+							loadToControl(k, v);
+						}
+						logger.debug("data from hw:" + k +","+v);
+					} catch (Exception e) {
+						logger.error("failed to publish data to GUI.",e);
 
-					if (RegisterName.fromName(k) == RegisterName.MEMORY) {
-						// memory value passed in with 'address, content');
-						// presume the content is passed in one by one
-						String[] mVal = v.split(",");
-						loadToControl(k, mVal[0], mVal[1]);
-					} else {
-						loadToControl(k, v);
 					}
 
 				}

@@ -278,6 +278,7 @@ public class Control {
 			MAR.setData(IRobject.getAddress());
 			Mem.setMem(MAR.getData(), XFtable.getSwitch(IRobject.getXFI()));
 		} else if (IRobject.getIndirect() == 1) {
+			MAR.setData(IRobject.getAddress());
 			MDR.setData(Mem.getMem(MAR.getData()));
 			Mem.setMem(MDR.getData(), XFtable.getSwitch(IRobject.getXFI()));
 		}

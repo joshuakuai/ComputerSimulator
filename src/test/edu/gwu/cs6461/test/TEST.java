@@ -4,7 +4,7 @@ package edu.gwu.cs6461.test;
 import java.math.BigInteger;
 
 import edu.gwu.cs6461.sim.common.OpCode;
-import edu.gwu.cs6461.sim.common.RegisterName;
+import edu.gwu.cs6461.sim.common.HardwarePart;
 
 public class TEST {
 
@@ -40,7 +40,7 @@ public class TEST {
 	
 	void testEnum(){
 		
-		RegisterName register = RegisterName.IR;
+		HardwarePart register = HardwarePart.IR;
 		System.out.println(register);
 		
 		
