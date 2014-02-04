@@ -145,7 +145,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		// setLayout(new MigLayout());
 
 		setTitle(title);
-		
+
 		HardwarePart[] names = HardwarePart.values();
 		List<String> tmp = new ArrayList<String>();
 
@@ -181,7 +181,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		btnSingleInstr.addActionListener(simAct);
 
 		lstMemory.setFont(new Font("consolas", Font.PLAIN, 13));
-		
+
 		JMenuItem iExit = new JMenuItem("Exit");
 		iExit.setMnemonic('x');
 		JMenu mFile = new JMenu("File");
@@ -437,7 +437,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			tmp = new JPanel();
 			tmp.setLayout(new GridLayout(2, 1, 0, 0));
 
-			lblBinPosInfo[i] = new JLabel(String.valueOf(end-i));
+			lblBinPosInfo[i] = new JLabel(String.valueOf(end - i));
 			lblBinPosInfo[i].setHorizontalAlignment(SwingConstants.CENTER);
 			lblBinPosInfo[i].setAlignmentY(RIGHT_ALIGNMENT);
 			tmp.add(lblBinPosInfo[i]);
@@ -520,6 +520,8 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			if (model == 1) {
 				cpuController.SS.setData(1);
+			}else if(model == 0){
+				cpuController.SS.setData(0);
 			}
 
 			cpuController.start();
@@ -531,11 +533,11 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		HardwarePart dName = HardwarePart.fromName(dest);
 
-		String val ="";
+		String val = "";
 		if (dName != HardwarePart.MEMORY) {
 			val = vals[0];
 		}
-		
+
 		if (dName == HardwarePart.R0) {
 			txtR0.setText(val);
 		} else if (dName == HardwarePart.R1) {
@@ -578,16 +580,17 @@ public class MainSimFrame extends JFrame implements Observer {
 			lstModel.addElement(newElementString);
 		}
 	}
-	private String padSpace(String key,int space){
-		
-		if (key ==null&&"".equals(key)) {
+
+	private String padSpace(String key, int space) {
+
+		if (key == null && "".equals(key)) {
 			return "";
 		}
-		int sp = space-key.length();
+		int sp = space - key.length();
 		for (int i = 0; i <= sp; i++) {
-			key+=" ";
+			key += " ";
 		}
-		logger.debug(":" + key +':');
+		logger.debug(":" + key + ':');
 		return key;
 	}
 
@@ -597,7 +600,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		Integer data = Integer.parseInt(val, 2);
 
 		HardwarePart dName = HardwarePart.fromName(dest);
-		
+
 		if (dName == HardwarePart.MEMORY) {
 			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
 			Memory.shareInstance().setMem(addressLocation, data);
@@ -640,13 +643,15 @@ public class MainSimFrame extends JFrame implements Observer {
 				int numBit = rName.getBit();
 
 				String res = "";
-				//for (int i = 0; i < numBit; i++) {
-				for (int i = HIGHESTBIT-numBit+1; i <= HIGHESTBIT; i++) {
+				// for (int i = 0; i < numBit; i++) {
+				for (int i = HIGHESTBIT - numBit + 1; i <= HIGHESTBIT; i++) {
 					res += radBinData[i].isSelected() ? "1" : "0";
 				}
+
 				logger.debug("value got: " + res);
-				
-				if (rName == HardwarePart.MEMORY && txtMemAdd.getText().isEmpty()) {
+
+				if (rName == HardwarePart.MEMORY
+						&& txtMemAdd.getText().isEmpty()) {
 
 					JOptionPane.showMessageDialog(MainSimFrame.this,
 							"Please input the memory address.",
@@ -655,13 +660,13 @@ public class MainSimFrame extends JFrame implements Observer {
 				}
 
 				loadToLogicLayer(sel, res);
-				
+
 			} else if (parent == btnReset) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
 				int numBit = HardwarePart.fromName(sel).getBit();
 
-				resetSwitches(HIGHESTBIT-numBit + 1,19, false);
-				
+				resetSwitches(HIGHESTBIT - numBit + 1, 19, false);
+
 			} else if (parent == btnIPL) {
 
 				new Thread(new Runnable() {
@@ -786,19 +791,18 @@ public class MainSimFrame extends JFrame implements Observer {
 		lstModel.addElement("Address   Content");
 		lstModel.addElement("---------------------------------------");
 
-		//		try {
-//			lstModel.clear();
-//			for (int j = 0; j < 2048; j++) {
-//				lstModel.addElement(" ");
-//			}
-//			
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		
-//		lstMemory = new JList<String>(lstModel);
-		
-		
+		// try {
+		// lstModel.clear();
+		// for (int j = 0; j < 2048; j++) {
+		// lstModel.addElement(" ");
+		// }
+		//
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+
+		// lstMemory = new JList<String>(lstModel);
+
 	}
 
 	private void maskSwitches(int start, int end, boolean b) {
@@ -809,7 +813,7 @@ public class MainSimFrame extends JFrame implements Observer {
 				lblBinPosInfo[i].setVisible(b);
 			}
 		}
-		
+
 	}
 
 	private class SwitchComboActionListener implements ActionListener {
@@ -822,10 +826,9 @@ public class MainSimFrame extends JFrame implements Observer {
 			HardwarePart reg = HardwarePart.fromName(selected);
 			if (reg != HardwarePart.NOTEXIST) {
 				int numBit = reg.getBit();
-				
-				maskSwitches(0, HIGHESTBIT-numBit, false);
-				maskSwitches(HIGHESTBIT-numBit+1, 19, true);
-				
+
+				maskSwitches(0, HIGHESTBIT - numBit, false);
+				maskSwitches(HIGHESTBIT - numBit + 1, 19, true);
 
 				if (reg == HardwarePart.MEMORY) {
 					setMemorySwitch(true);
@@ -858,9 +861,9 @@ public class MainSimFrame extends JFrame implements Observer {
 						} else {
 							loadToControl(k, v);
 						}
-						logger.debug("data from hw:" + k +","+v);
+						logger.debug("data from hw:" + k + "," + v);
 					} catch (Exception e) {
-						logger.error("failed to publish data to GUI.",e);
+						logger.error("failed to publish data to GUI.", e);
 
 					}
 
