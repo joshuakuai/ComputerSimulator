@@ -801,7 +801,6 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (radBinData[i] != null) {
 				radBinData[i].setVisible(b);
 				lblBinPosInfo[i].setVisible(b);
-				logger.debug("start: "+ start + ", end: "+ end + ": " + i);
 			}
 		}
 		
