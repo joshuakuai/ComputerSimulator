@@ -126,8 +126,6 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JTextArea txtConsoleText = new JTextArea();
 	private DefaultListModel<String> lstModel = new DefaultListModel<String>();
 	private JList<String> lstMemory = new JList<String>(lstModel);
-	
-	
 
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester this is
@@ -147,7 +145,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		// setLayout(new MigLayout());
 
 		setTitle(title);
-		
+
 		RegisterName[] names = RegisterName.values();
 
 		List<String> tmp = new ArrayList<String>();
@@ -183,15 +181,13 @@ public class MainSimFrame extends JFrame implements Observer {
 		btnRun.addActionListener(simAct);
 		btnSingleInstr.addActionListener(simAct);
 
-
-		
 		JMenuItem iExit = new JMenuItem("Exit");
 		iExit.setMnemonic('x');
 		JMenu mFile = new JMenu("File");
 		mFile.setMnemonic('F');
 		mFile.add(iExit);
-		iExit.setAccelerator(KeyStroke.getKeyStroke(
-				KeyEvent.VK_X, InputEvent.ALT_MASK));
+		iExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
+				InputEvent.ALT_MASK));
 		JMenuBar menu = new JMenuBar();
 		menu.add(mFile);
 		setJMenuBar(menu);
@@ -199,10 +195,10 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String ObjButtons[] = {"Yes","No"};
-				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
-						"Are you sure you want to exit?", "Simualtor",
-						JOptionPane.DEFAULT_OPTION,
+				String ObjButtons[] = { "Yes", "No" };
+				int PromptResult = JOptionPane.showOptionDialog(
+						MainSimFrame.this, "Are you sure you want to exit?",
+						"Simualtor", JOptionPane.DEFAULT_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
 						ObjButtons[1]);
 				if (PromptResult == 0) {
@@ -210,25 +206,24 @@ public class MainSimFrame extends JFrame implements Observer {
 				}
 			}
 		});
-		
+
 		addWindowListener(new WindowAdapter() {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				String ObjButtons[] = {"Yes","No"};
-				int PromptResult = JOptionPane.showOptionDialog(MainSimFrame.this,
-						"Are you sure you want to exit?", "Simualtor",
-						JOptionPane.DEFAULT_OPTION,
+				String ObjButtons[] = { "Yes", "No" };
+				int PromptResult = JOptionPane.showOptionDialog(
+						MainSimFrame.this, "Are you sure you want to exit?",
+						"Simualtor", JOptionPane.DEFAULT_OPTION,
 						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
 						ObjButtons[1]);
 				if (PromptResult == 0) {
 					System.exit(0);
 				}
 			}
-			
+
 		});
-		
-		
+
 		setResizable(false);
 		setRegisterEditable(false);
 		resetSimulator(false);
@@ -298,15 +293,14 @@ public class MainSimFrame extends JFrame implements Observer {
 		add(regSwPanel, BorderLayout.NORTH);
 		add(createConsolePanel(), BorderLayout.SOUTH);
 		// add(lblWinStatus,BorderLayout.SOUTH);
-		
-		//memory area
-		JScrollPane sMem =new JScrollPane();
+
+		// memory area
+		JScrollPane sMem = new JScrollPane();
 		sMem.getViewport().add(lstMemory);
 		JPanel jmem = new JPanel(new BorderLayout());
 		jmem.add(sMem, BorderLayout.CENTER);
 		jmem.setBorder(new TitledBorder(new EtchedBorder(), "Memory"));
-		add(jmem,BorderLayout.CENTER);
-		
+		add(jmem, BorderLayout.CENTER);
 
 		logger.debug(getLayout());
 	}
@@ -365,8 +359,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Control Panel"));
 
 		gPanel.addComponent(btnSingleStep, 0, 0);
-		gPanel.addFilledComponent(btnRun,1,0);
-		
+		gPanel.addFilledComponent(btnRun, 1, 0);
 
 		return gPanel;
 	}
@@ -492,41 +485,54 @@ public class MainSimFrame extends JFrame implements Observer {
 			Component parent = (Component) e.getSource();
 
 			if (parent == btnRun) {
-				logger.debug("Run is clicked");
+				beginCPUProcessWithModel(0);
 			} else if (parent == btnSingleStep) {
-
-				// If this thread is alive and is suspended, the button will
-				// resume the thread
-				if (cpuController.isAlive() && cpuController.isSuspended()) {
-					cpuController.Resume();
-				} else if (!cpuController.isAlive()
-						&& !cpuController.isSuspended()) {
-					// then if the the thread is dead and is not suspended,
-					// recreate the cpucontroller thread and
-					// set the debug model on and start the process
-					CPUController.recreateCPUController();
-					cpuController = CPUController.shareInstance();
-					cpuController.setRegisterObserver(MainSimFrame.this);
-					cpuController.setMainFrame(MainSimFrame.this);
-					cpuController.SS.setData(1);
-					cpuController.start();
-
-				}
-				// For other situation just ignore this touch event
+				beginCPUProcessWithModel(1);
 			}
 		}
 
+	}
+
+	// Model, 0: Run 1: Single Step
+	private void beginCPUProcessWithModel(int model) {
+		if(model == 1 && cpuController.isAlive() && cpuController.isSuspended()){
+			//For Single step model
+			// If this thread is alive and is suspended, the button will
+			// resume the thread
+			cpuController.Resume();
+			return;
+		}
+		
+		
+		//For all model 
+		 if (!cpuController.isAlive()
+				&& !cpuController.isSuspended()) {
+			// then if the the thread is dead and is not suspended,
+			// recreate the cpucontroller thread and
+			// set the debug model on and start the process
+			CPUController.recreateCPUController();
+			cpuController = CPUController.shareInstance();
+			cpuController.setRegisterObserver(MainSimFrame.this);
+			cpuController.setMainFrame(MainSimFrame.this);
+			
+			if(model == 1){
+				cpuController.SS.setData(1);
+			}
+			
+			cpuController.start();
+		}
+		// For other situation just ignore this touch event
 	}
 
 	private void loadToControl(String dest, String... vals) {
 
 		RegisterName dName = RegisterName.fromName(dest);
 
-		String val ="";
+		String val = "";
 		if (dName != RegisterName.MEMORY) {
 			val = vals[0];
 		}
-		
+
 		if (dName == RegisterName.R0) {
 			txtR0.setText(val);
 		} else if (dName == RegisterName.R1) {
@@ -563,7 +569,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		Integer data = Integer.parseInt(val, 2);
 
 		RegisterName dName = RegisterName.fromName(dest);
-		
+
 		if (dName == RegisterName.MEMORY) {
 			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
 			Memory.shareInstance().setMem(addressLocation, data);
@@ -610,20 +616,22 @@ public class MainSimFrame extends JFrame implements Observer {
 					res += radBinData[i].isSelected() ? "1" : "0";
 				}
 				logger.debug("value got: " + res);
-				
-				if (rName == RegisterName.MEMORY && txtMemAdd.getText().isEmpty()) {
+
+				if (rName == RegisterName.MEMORY
+						&& txtMemAdd.getText().isEmpty()) {
 					JOptionPane.showMessageDialog(MainSimFrame.this,
-							"Please input the memory address.", "Missing Content",
-							JOptionPane.ERROR_MESSAGE);
+							"Please input the memory address.",
+							"Missing Content", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
-				
+
 				loadToLogicLayer(sel, res);
-				
+
 				if (rName == RegisterName.MEMORY) {
-					String k= txtMemAdd.getText();
+					String k = txtMemAdd.getText();
 					loadToControl(sel, k, res);
-				}else loadToControl(sel, res);
+				} else
+					loadToControl(sel, res);
 
 			} else if (parent == btnReset) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
@@ -702,8 +710,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
-	
-	private void setRegisterEditable(boolean b){
+	private void setRegisterEditable(boolean b) {
 		txtR0.setEditable(b);
 		txtR1.setEditable(b);
 		txtR2.setEditable(b);
@@ -718,8 +725,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtCC.setEditable(b);
 		txtIR.setEditable(b);
 		txtPC.setEditable(b);
-		
+
 	}
+
 	private void resetSimulator(boolean isStart) {
 		txtR0.setText("");
 		txtR1.setText("");
@@ -742,16 +750,16 @@ public class MainSimFrame extends JFrame implements Observer {
 			setMemorySwitch(true);
 		} else
 			setMemorySwitch(false);
-		
+
 		cboSwithOptions.setEnabled(isStart);
 		btnReset.setEnabled(isStart);
 		btnLoad.setEnabled(isStart);
-		
+
 		btnSingleStep.setEnabled(isStart);
 		btnRun.setEnabled(isStart);
-		
+
 		lstModel.clear();
-		
+
 	}
 
 	private void maskSwitches(int start, int end, boolean b) {
@@ -799,16 +807,16 @@ public class MainSimFrame extends JFrame implements Observer {
 				for (Map.Entry<String, String> entry : d.entrySet()) {
 					String k = entry.getKey();
 					String v = entry.getValue();
-					
-					if (RegisterName.fromName(k)==RegisterName.MEMORY) {
-						//memory value passed in with 'address, content');
-						//presume the content is passed in one by one
-						String[] mVal =  v.split(",");
+
+					if (RegisterName.fromName(k) == RegisterName.MEMORY) {
+						// memory value passed in with 'address, content');
+						// presume the content is passed in one by one
+						String[] mVal = v.split(",");
 						loadToControl(k, mVal[0], mVal[1]);
-					} else { 
-						loadToControl(k,v);
+					} else {
+						loadToControl(k, v);
 					}
-					
+
 				}
 			}
 		};
@@ -816,10 +824,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		SwingUtilities.invokeLater(b);
 
 	}
-	
-	public void showProgrameFinishDialog(){
-		JOptionPane.showMessageDialog(this,
-			    "All instructions are executed.");
+
+	public void showProgrameFinishDialog() {
+		JOptionPane.showMessageDialog(this, "All instructions are executed.");
 	}
 
 }
