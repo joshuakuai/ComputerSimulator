@@ -7,8 +7,7 @@
 package edu.gwu.cs6461.logic;
 
 /**
- * 
- * @author Ahmed
+ * Decode the IR instructions into the various part opcode r x address I T
  */
 public class Decode {
 	private int OpCode = 0;
@@ -18,7 +17,8 @@ public class Decode {
 	private int Address = 0;
 	private int Indirect = 0;
 	private int Immediate = 0;
-
+	//depending on the opcode the functions decided which decode function to use to break down
+	//the instruction
 	public void decodeSwitch(IR IRobject) {
 		OpCode = Integer.parseInt(IRobject.getIRstring().substring(0, 6), base);
 		IRobject.setOpCode(OpCode);
@@ -42,7 +42,8 @@ public class Decode {
 		else if (OpCode == 7)
 			function4(IRobject);
 	}
-
+//shared function1, function3, function4 shared functions between the different 
+//instructions
 	public void function1(IR IRobject) {
 		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
 		IRobject.setRFI1(RFI1);

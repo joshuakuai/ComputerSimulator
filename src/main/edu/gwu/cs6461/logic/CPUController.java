@@ -1,17 +1,30 @@
 package edu.gwu.cs6461.logic;
-
+/**
+ * This class holds most of the objects need to run the CPU. 
+ * To run it first checks if the user clicked single mode or run which would set its debug
+ * Register (SS), which is used as a condition to control the CPU thread by suspending it
+ * after each microcode step is finished. Example after decode, effective address
+ * ALU calculation etc.
+ * 
+ */
 import edu.gwu.cs6461.sim.bridge.*;
 import edu.gwu.cs6461.sim.ui.*;
 
 import org.apache.log4j.Logger;
 
 public class CPUController extends Thread {
+	//Create registers that are shared between the different
+	//cpu classes
 	public IR IRobject = new IR();
-	public RF RFtable = new RF();
-	public XF XFtable = new XF();
-	public Register SS = new Register();
 	public Register PC = new Register();
 	public Register CC = new Register();
+	//Debug register when set run program in single step mode
+	public Register SS = new Register();
+	
+	//create RF and XF tables
+	public RF RFtable = new RF();
+	public XF XFtable = new XF();
+	
 	public Control cpuControl = new Control();
 	public ALU ALU = new ALU();
 	public static CPUController instance = new CPUController();
@@ -22,7 +35,7 @@ public class CPUController extends Thread {
 	// Keep a weak reference of mainSimFrame
 	private MainSimFrame mainFrame = null;
 
-	// CPU holds a week reference of the memory but CPU doesn't own the memory
+	// CPU holds a weak reference of the memory but CPU doesn't own the memory
 	private CPUController() {
 		// Set register size
 		PC.setSize(13);
@@ -35,7 +48,8 @@ public class CPUController extends Thread {
 		CC.setName("CC");
 	}
 
-	//In java a thread can't excrete twice so we have to recreate it after done.
+	//This recreates the cpu thread after an instruction is finished
+	//and a new one is started
 	public static void recreateCPUController(boolean isReserveData) {
 		CPUController tmpController = new CPUController();
 		

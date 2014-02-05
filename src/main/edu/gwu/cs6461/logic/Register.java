@@ -9,8 +9,8 @@ package edu.gwu.cs6461.logic;
 import edu.gwu.cs6461.sim.bridge.*;
 
 /**
- * 
- * @author Ahmed
+ * Register class
+ * Holds the size, value, and name of the register
  */
 public class Register extends Observable{
 
@@ -33,7 +33,7 @@ public class Register extends Observable{
 	public int getSize() {
 		return size;
 	}
-
+	//sets the value of the register both internally and on the GUI
 	public void setData(int newData) {
 		data = newData;
 		String signBit=Integer.toBinaryString(newData);
@@ -41,8 +41,6 @@ public class Register extends Observable{
 		if ("IR".equals(this.name)) {
 			hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
 		} else {
-		//	System.out.println("new data="+newData);
-			//System.out.println("sign bit set="+signBit.substring(0,1));
 			if(signBit.substring(0,1).equals("1")&&signBit.length()==20){
 				newData=Integer.parseInt(signBit.substring(1),2);
 				newData*=-1;

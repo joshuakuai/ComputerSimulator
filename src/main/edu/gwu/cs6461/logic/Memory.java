@@ -12,14 +12,13 @@ import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observable;
 
 /**
- * 
- * @author Ahmed
+ * Memory class to store instructions and values
  */
 public class Memory extends Observable {
 	private Vector<Integer> Mem = new Vector<Integer>();
 	private int size = 8192;
 	private static final Memory instance = new Memory();
-
+//initialize the memory
 	private Memory() {
 		for (int i = 0; i < size; i++) {
 			Mem.addElement(0);

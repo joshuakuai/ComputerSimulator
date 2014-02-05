@@ -7,8 +7,11 @@
 package edu.gwu.cs6461.logic;
 
 /**
- * 
- * @author Ahmed
+ * This class holds the IR instruction binary string.
+ * The decode parts are sent back to it for storage 
+ * to be used by other classes.
+ * it extends the Register class so has the normal properties of Register
+ * but has the extension of holding the break down of the instruction 
  */
 public class IR extends Register {
 	private String IRstring = "";

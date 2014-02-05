@@ -9,8 +9,8 @@ package edu.gwu.cs6461.logic;
 import edu.gwu.cs6461.sim.bridge.Observer;
 
 /**
- *
- * @author Ahmed
+ *RF table class
+ *creates all the General registers and updates them
  */
 public class RF {
     private Register R0 = new Register();
@@ -24,7 +24,7 @@ public class RF {
     	R2.setName("R2");
     	R3.setName("R3");
     }
-    
+    //updates values to GUI
     public void setRegisterObserver(Observer obs){
     	R0.register(obs);
     	R1.register(obs);
@@ -62,7 +62,7 @@ public class RF {
     public void setR3(int R){
         R3.setData(R);
     }
-    
+    //takes the index (RFI) of the register and puts the passed value(Data) into it
     public void setSwitch(int RFI,int Data){
         if (RFI==0)
             setR0(Data);
@@ -73,6 +73,7 @@ public class RF {
         else if (RFI==3)
             setR3(Data);
     }
+    //takes the index (RFI) and returns the value of that register
     public int getSwitch(int RFI){
         if (RFI==0)
            return getR0();

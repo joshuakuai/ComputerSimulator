@@ -9,8 +9,8 @@ package edu.gwu.cs6461.logic;
 import edu.gwu.cs6461.sim.bridge.Observer;
 
 /**
- *
- * @author Ahmed
+ *XF table class
+ *creates all the index registers and updates them
  */
 public class XF {
     private Register X1 = new Register();
@@ -22,13 +22,13 @@ public class XF {
     	X2.setName("X2");
     	X3.setName("X3");
     }
-    
+    //update the values to GUI
     public void setRegisterObserver(Observer obs){
     	X1.register(obs);
     	X2.register(obs);
     	X3.register(obs);
     }
-    
+    //get functions
     public int getX1(){
         return X1.getData();
     }
@@ -52,6 +52,7 @@ public class XF {
     }
     
     //***********************************//
+    //inserts Data into the index register with index XFI
     public void setSwitch(int XFI,int Data){      
         if (XFI==1)
             setX1(Data);
@@ -60,6 +61,7 @@ public class XF {
         else if (XFI==3)
             setX3(Data);
     }
+    //gets index register with index XFI
     public int getSwitch(int XFI){      
         if (XFI==1)
            return getX1();
