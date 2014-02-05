@@ -15,7 +15,7 @@ public enum HardwarePart {
 	MFR("MFR",4,false),
 	CC("CC",4,false),
 	IR("IR",20),
-	PC("PC",13),
+	PC("PC",13,false),
 	MEMORY("MEMORY",20),
 	NOTEXIST("NOTEXIST",-1,false);
 	

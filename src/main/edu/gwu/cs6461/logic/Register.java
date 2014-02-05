@@ -36,13 +36,24 @@ public class Register extends Observable{
 
 	public void setData(int newData) {
 		data = newData;
-		
+		String signBit=Integer.toBinaryString(newData);
 		HardwareData hardwareData = new HardwareData();
 		if ("IR".equals(this.name)) {
 			hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
-		} else 
-			hardwareData.put(this.name, Integer.toString(newData));
-		
+		} else {
+		//	System.out.println("new data="+newData);
+			//System.out.println("sign bit set="+signBit.substring(0,1));
+			if(signBit.substring(0,1).equals("1")&&signBit.length()==20){
+				newData=Integer.parseInt(signBit.substring(1),2);
+				newData*=-1;
+				hardwareData.put(this.name, Integer.toString(newData));
+				System.out.println("inside set");
+			}
+			else{
+
+				hardwareData.put(this.name, Integer.toString(newData));
+			}
+		}
 		this.notifyObservers(hardwareData);
 		
 		CPUController.shareInstance().checkSingleStepModel();

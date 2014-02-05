@@ -11,6 +11,7 @@ public class CPUController extends Thread {
 	public XF XFtable = new XF();
 	public Register SS = new Register();
 	public Register PC = new Register();
+	public Register CC = new Register();
 	public Control cpuControl = new Control();
 	public ALU ALU = new ALU();
 	public static CPUController instance = new CPUController();
@@ -26,10 +27,12 @@ public class CPUController extends Thread {
 		// Set register size
 		PC.setSize(13);
 		SS.setSize(1);
+		CC.setSize(4);
 
 		// Set register name
 		SS.setName("SS");
 		PC.setName("PC");
+		CC.setName("CC");
 	}
 
 	//In java a thread can't excrete twice so we have to recreate it after done.
@@ -43,6 +46,7 @@ public class CPUController extends Thread {
 			tmpController.SS = instance.SS;
 			tmpController.PC = instance.PC;
 			tmpController.cpuControl = instance.cpuControl;
+tmpController.CC=instance.CC;
 		}
 		
 		instance = tmpController;
@@ -70,6 +74,7 @@ public class CPUController extends Thread {
 		RFtable.setRegisterObserver(obs);
 		XFtable.setRegisterObserver(obs);
 		cpuControl.setRegisterObserver(obs);
+		CC.register(obs);
 	}
 
 	public void Suspend() {
@@ -99,7 +104,7 @@ public class CPUController extends Thread {
 
 		cpuControl.Decode(IRobject);
 		cpuControl.RunInstruction(IRobject, RFtable, XFtable,
-				Memory.shareInstance(), ALU);
+				Memory.shareInstance(), ALU,CC);
 
 		// PC+1 then loop the whole process(Phase 2)
 

@@ -26,14 +26,14 @@ public class TEST {
 //			System.out.print(bins[i] + ":");
 //		}
 		
-		String bin = "10000000000000000110";
+		String bin = "10000000000000000000";
 		
 		System.out.println(Convertor.getSignedValFromBin(bin,20));
 		
 		
 		bin = "01110000000000000000";
 		int n = 20;
-		System.out.println(Convertor.getSignedValFromBin(bin, n));
+		System.out.println(Convertor.getSignedBinFromInt(6, n));
 		
 		
 		Long res = Long.parseLong(bin, 2);

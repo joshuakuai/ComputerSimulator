@@ -41,7 +41,7 @@ public class Control {
 	}
 
 	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, Memory Mem,
-			ALU ALU) {
+			ALU ALU, Register CC) {
 		if (IRobject.getOpCode() == 1)
 			LDR(IRobject, RFtable, XFtable, Mem);
 		else if (IRobject.getOpCode() == 2)
@@ -49,13 +49,13 @@ public class Control {
 		else if (IRobject.getOpCode() == 3)
 			LDA(IRobject, RFtable, XFtable, Mem);
 		else if (IRobject.getOpCode() == 4)
-			AMR(IRobject, RFtable, XFtable, Mem, ALU);
+			AMR(IRobject, RFtable, XFtable, Mem, ALU,CC);
 		else if (IRobject.getOpCode() == 5)
-			SMR(IRobject, RFtable, XFtable, Mem, ALU);
+			SMR(IRobject, RFtable, XFtable, Mem, ALU,CC);
 		else if (IRobject.getOpCode() == 6)
-			AIR(IRobject, RFtable, ALU);
+			AIR(IRobject, RFtable, ALU,CC);
 		else if (IRobject.getOpCode() == 7)
-			SIR(IRobject, RFtable, ALU);
+			SIR(IRobject, RFtable, ALU, CC);
 		else if (IRobject.getOpCode() == 41)
 			LDX(IRobject, XFtable, Mem);
 		else if (IRobject.getOpCode() == 42)
@@ -64,7 +64,7 @@ public class Control {
 
 	public void LDR(IR IRobject, RF RFtable, XF XFtable, Memory Mem) {
 		// TODO (part 2) create an adder class with over flow detection
-		// ************ for effective address calcution
+		// ************ for effective address calculation
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
 				RES.setData(IRobject.getAddress()
@@ -89,7 +89,7 @@ public class Control {
 		RFtable.setSwitch(IRobject.getRFI1(), MDR.getData());
 	}
 
-	public void AMR(IR IRobject, RF RFtable, XF XFtable, Memory Mem, ALU ALU) {
+	public void AMR(IR IRobject, RF RFtable, XF XFtable, Memory Mem, ALU ALU, Register CC) {
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
 				RES.setData(IRobject.getAddress()
@@ -116,8 +116,10 @@ public class Control {
 		// ////
 		// System.out.println(RES.getData());
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
-				IRobject.getOpCode(), RES);
-		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+				IRobject.getOpCode(), RES,CC);
+		if(CC.getData()==0){
+			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+		}
 		// System.out.println(RES.getData());
 	}
 
@@ -153,7 +155,7 @@ public class Control {
 	}
 
 	// ////
-	public void SMR(IR IRobject, RF RFtable, XF XFtable, Memory Mem, ALU ALU) {
+	public void SMR(IR IRobject, RF RFtable, XF XFtable, Memory Mem, ALU ALU, Register CC) {
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
 				RES.setData(IRobject.getAddress()
@@ -180,13 +182,15 @@ public class Control {
 		// ////
 		System.out.println(RES.getData());
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
-				IRobject.getOpCode(), RES);
-		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+				IRobject.getOpCode(), RES,CC);
+		if(CC.getData()==0){
+			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+		}
 		System.out.println(RES.getData());
 	}
 
 	// //////
-	public void AIR(IR IRobject, RF RFtable, ALU ALU) {
+	public void AIR(IR IRobject, RF RFtable, ALU ALU, Register CC) {
 		// if immed is zero no need to change register but the value is
 		// reinserted into
 		// the register because the single step mode only works when the set
@@ -204,13 +208,15 @@ public class Control {
 		// register
 		else {
 			ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
-					IRobject.getImmed(), IRobject.getOpCode(), RES);
-			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
+			if(CC.getData()==0){
+				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+			}
 		}
 	}
 
 	// /
-	public void SIR(IR IRobject, RF RFtable, ALU ALU) {
+	public void SIR(IR IRobject, RF RFtable, ALU ALU, Register CC) {
 		// if immed is zero no need to change register but the value is
 		// reinserted into
 		// the register because the single step mode only works when the set
@@ -228,9 +234,12 @@ public class Control {
 		// register
 		else {
 			ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
-					IRobject.getImmed(), IRobject.getOpCode(), RES);
-			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
+			if(CC.getData()==0){
+				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+			}
 		}
+		
 	}
 
 	// /////
