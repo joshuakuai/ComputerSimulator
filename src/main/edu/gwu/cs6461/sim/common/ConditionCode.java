@@ -18,7 +18,7 @@ public enum ConditionCode {
 		return code;
 	}
 
-	public ConditionCode fromCode(int code) {
+	public static ConditionCode fromCode(int code) {
 
 		for (ConditionCode value : ConditionCode.values()) {
 			if (value.getCode() == code) {

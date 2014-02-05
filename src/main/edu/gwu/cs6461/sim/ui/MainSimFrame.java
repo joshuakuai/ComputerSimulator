@@ -47,6 +47,7 @@ import edu.gwu.cs6461.logic.CPUController;
 import edu.gwu.cs6461.logic.Memory;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
@@ -561,20 +562,27 @@ public class MainSimFrame extends JFrame implements Observer {
 			String key = vals[0];
 			val = vals[1];
 
-			String newElementString = key + "\t " + val;
+			String newElementString = padSpace(key,9) + val;
 
 			// Check if the Element has contained the address
 			for (int i = 0; i < lstModel.getSize(); i++) {
 				String addString = lstModel.getElementAt(i);
-				String[] mVal = addString.split("\t");
 
-				if (mVal[0].equals(key)) {
+				if (addString.startsWith(key)) { //further enhance in the next phase
 					lstModel.setElementAt(newElementString, i);
 					return;
 				}
+				
+//				String[] mVal = addString.split("----------");
+//				if (mVal[0].equals(key)) {
+//					lstModel.setElementAt(newElementString, i);
+//					return;
+//				}
 			}
 
 			lstModel.addElement(newElementString);
+		} else if (dName == HardwarePart.CC) {
+			txtCC.setText(ConditionCode.fromCode(Integer.valueOf(val)).name());
 		}
 	}
 

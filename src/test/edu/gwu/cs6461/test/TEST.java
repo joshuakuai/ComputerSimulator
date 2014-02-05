@@ -13,7 +13,35 @@ public class TEST {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new TEST().testOverFlow();
+		new TEST().testBit();
+	}
+	
+	
+	void testBit(){
+		
+		int number = 54;
+		
+//		char[] bins = Integer.toBinaryString(number).toCharArray();
+//		for (int i = 0; i < bins.length; i++) {
+//			System.out.print(bins[i] + ":");
+//		}
+		
+		String bin = "10000000000000000110";
+		
+		System.out.println(Convertor.getSignedValFromBin(bin,20));
+		
+		
+		bin = "01110000000000000000";
+		int n = 20;
+		System.out.println(Convertor.getSignedValFromBin(bin, n));
+		
+		
+		Long res = Long.parseLong(bin, 2);
+		System.out.println(": " + res);
+		if (bin.charAt(0) == '1' && bin.length() == n)
+			res -= (1L << n);
+		
+		System.out.println(res);
 	}
 	void testOverFlow (){
 		
@@ -41,28 +69,6 @@ public class TEST {
 	
 	
 	
-	void testBit(){
-		
-		int number = 54;
-		
-//		char[] bins = Integer.toBinaryString(number).toCharArray();
-//		for (int i = 0; i < bins.length; i++) {
-//			System.out.print(bins[i] + ":");
-//		}
-		
-		String bin = "11110000000000000000";
-		bin = "01110000000000000000";
-		int n = 20;
-		System.out.println(Convertor.getSignedValFromBin(bin, n));
-
-		
-		Long res = Long.parseLong(bin, 2);
-		System.out.println(": " + res);
-		if (bin.charAt(0) == '1' && bin.length() == n)
-			res -= (1L << n);
-		
-		System.out.println(res);
-	}
 	
 	void testEnum(){
 		
