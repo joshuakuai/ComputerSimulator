@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Created-By: Marco Yeung
+Sealed: true                           
+Main-Class: edu.gwu.cs6461.sim.ui.SimUILauncher

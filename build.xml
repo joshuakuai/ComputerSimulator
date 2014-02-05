@@ -5,8 +5,10 @@
 	<property name="build.folder" 		value="${basedir}/build"/>
 	<property name="deploy.folder" 		value="${basedir}/deploy"/>
 	<property name="deploy.jarfilename" value="ciscsimulator.jar" />
+	<property name="deploy.srcjarfilename" value="ciscsimulator-src.jar" />
 	<property name="lib" 				value="${basedir}/lib"/>
 	<property name="resources" 			value="${basedir}/src/resources"/>
+	<property name="java.doc.folder" 			value="${basedir}/deploy/doc"/>
 
 	<target name="usage">
 		<echo message=""/>
@@ -22,6 +24,7 @@
 	<target name="init">
 		<mkdir dir="${build.folder}"/>
 		<mkdir dir="${deploy.folder}"/>
+		<mkdir dir="${java.doc.folder}"/>
 	</target>
 	<!-- - - - - - - - - - - - - - - - - - 
           target: cleanup                      
@@ -51,11 +54,26 @@
 		</javac>
 	</target>
 
+	<target name="doc" depends="init" >
+		<javadoc destdir="${java.doc.folder}"   
+	             sourcepath="${src.main}"          
+	             packagenames="edu.*">
+			<classpath refid="classpath" />
+		</javadoc>
+	</target>
+
+	<target name="jar.src" depends="init">
+		<jar jarfile="${deploy.folder}/${deploy.srcjarfilename}">
+			<fileset dir="${src.main}" />
+			<fileset dir="${resources}/" />
+		</jar>
+	</target>
+	
 	<!-- ================================= 
           target: create jar for deployment              
          ================================= -->
 	<target name="Deployment Simulator" depends="compile" description="Deployment Simulator">
-		<jar jarfile="${deploy.folder}/${deploy.jarfilename}">
+		<jar jarfile="${deploy.folder}/${deploy.jarfilename}" manifest="${resources}/MANIFEST.MF">
 			<fileset dir="${build.folder}" />
 		</jar>
 
@@ -69,6 +87,9 @@
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
+		
+		<antcall target="doc"/>
+		<antcall target="jar.src"/>
 	</target>
 
 </project>

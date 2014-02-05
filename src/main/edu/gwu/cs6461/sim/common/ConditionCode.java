@@ -1,5 +1,12 @@
 package edu.gwu.cs6461.sim.common;
 
+
+/**
+ *  A constants class for ConditionCode handling
+ *  
+ * @author marcoyeung
+ *
+ */
 public enum ConditionCode {
 
 	OVERFLOW(1), 

@@ -2,6 +2,15 @@ package edu.gwu.cs6461.sim.bridge;
 
 import java.util.*;
 
+
+/** 
+ * 
+ * Observer pattern for data communication between GUI and back-end hareware logic  
+ * 
+ * Each hardware pieces, like Registers, memory, that have data to publish to GUI will extends 
+ * this class, and will later publish data back to GUI by calling observer's refreshdata method
+ * 
+ */
 public class Observable {
 	public List<Observer> observerList = new ArrayList<Observer>();
 

@@ -33,6 +33,11 @@ public class SimUILauncher {
 
 	}
 
+	
+	/**
+	 * Main method to launch the simulator
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		logger.debug("Launching computer simulator");
 

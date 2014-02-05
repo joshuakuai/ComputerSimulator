@@ -54,17 +54,35 @@ import edu.gwu.cs6461.sim.util.TextAreaAppender;
 
 /**
  * 
+ * Main GUI Frame
+ * 
+ * This is the first screen to be displayed when user starts the simulator.
+ * 
+ * This Frame class displays all the hardware parts for user to see the status and data; it also
+ * displays the switches to allow user to input values, control panel to allow user to Run and do the 
+ * Single Step for the simulator, IPL button to start the simulator, Terminate button to 
+ * terminate or reset simlator, memory area to show the content in simulator memory, console area 
+ * to show the system message.
+ * 
+ * 
  * @author marcoyeung
  * 
  */
 public class MainSimFrame extends JFrame implements Observer {
-
-	private static final int HIGHESTBIT = 19;
-	private static final int LOWESTBIT = 0;
-
+	
+	/**
+	 * object to logging purpose
+	 */
 	private final static Logger logger = Logger.getLogger(MainSimFrame.class);
 	private final static Logger simConsole = Logger
 			.getLogger("simulator.console");
+
+	/**
+	 * lowest and higtest bit for switches
+	 */
+	private static final int HIGHESTBIT = 19;
+	private static final int LOWESTBIT = 0;
+
 
 	private JRadioButton[] radBinData = new JRadioButton[20];
 	private JLabel[] lblBinPosInfo = new JLabel[20];
@@ -102,7 +120,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JLabel lblIR = new JLabel(HardwarePart.IR.getVal());
 	private JLabel lblPC = new JLabel(HardwarePart.PC.getVal());
 
-	private JTextField txtCC = new JTextField(4); // condition code //UNDERFLOW
+	private JTextField txtCC = new JTextField(10); // condition code //UNDERFLOW
 													// or
 	private JTextField txtIR = new JTextField(20); // current instruction
 	private JTextField txtPC = new JTextField(13); // address of next
@@ -482,6 +500,11 @@ public class MainSimFrame extends JFrame implements Observer {
 		return wrapPanel;
 	}
 
+	/**
+	 * button event listener for Run and Single step buttons
+	 * @author marcoyeung
+	 *
+	 */
 	private class SimActListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -497,7 +520,12 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
-	// Model, 0: Run 1: Single Step
+	/**
+	 * signal the back-end logic to run the instruction till the end or
+	 * run as single step mode
+	 * 
+	 * @param Model, 0: Run 1: Single Step
+	 */
 	private void beginCPUProcessWithModel(int model) {
 		if (model == 1 && cpuController.isAlive()
 				&& cpuController.isSuspended()) {
@@ -527,6 +555,14 @@ public class MainSimFrame extends JFrame implements Observer {
 		// For other situation just ignore this touch event
 	}
 
+	/**
+	 * 
+	 * hardware data from back-end or switches are published to the corresponding
+	 * UI components.
+	 * 
+	 * @param dest
+	 * @param vals
+	 */
 	private void loadToControl(String dest, String... vals) {
 
 		HardwarePart dName = HardwarePart.fromName(dest);
@@ -582,7 +618,11 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			lstModel.addElement(newElementString);
 		} else if (dName == HardwarePart.CC) {
-			txtCC.setText(ConditionCode.fromCode(Integer.valueOf(val)).name());
+			ConditionCode cc = ConditionCode.fromCode(Integer.valueOf(val)); 
+			if (cc != ConditionCode.NOTEXIST) 
+					txtCC.setText(cc.name());
+			else 
+				txtCC.setText("");
 		}
 	}
 
@@ -599,6 +639,12 @@ public class MainSimFrame extends JFrame implements Observer {
 		return key;
 	}
 
+	/**
+	 * Data input through UI switches are passed to back-end simulator logic
+	 * 
+	 * @param dest
+	 * @param val
+	 */
 	private void loadToLogicLayer(String dest, String val) {
 
 		// This val will be binary code string
@@ -640,6 +686,12 @@ public class MainSimFrame extends JFrame implements Observer {
 		cpuController.setMainFrame(MainSimFrame.this);
 	}
 
+	/**
+	 * Button event listeners for Deposit, Reset , IPL, and Terminate buttons
+	 * 
+	 * @author marcoyeung
+	 *
+	 */
 	private class BtnActListener implements ActionListener {
 
 		@Override
@@ -851,6 +903,12 @@ public class MainSimFrame extends JFrame implements Observer {
 		}
 	}
 
+	
+	
+	/**
+	 * Receive data from observable objects and publish to GUI components
+	 * 
+	 */
 	@Override
 	public void refreshData(HardwareData subject) {
 

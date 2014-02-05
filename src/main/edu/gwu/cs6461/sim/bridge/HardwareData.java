@@ -3,6 +3,13 @@ package edu.gwu.cs6461.sim.bridge;
 import java.util.HashMap;
 import java.util.Map;
 
+
+/**
+ * A data carrier for transferring data between observable objects and observer objects
+ * 
+ * @author marcoyeung
+ *
+ */
 public class HardwareData {
 	Map<String, String> data = new HashMap<String, String>();
 

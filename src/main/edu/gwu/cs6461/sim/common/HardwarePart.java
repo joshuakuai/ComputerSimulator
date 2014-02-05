@@ -1,6 +1,13 @@
 package edu.gwu.cs6461.sim.common;
 
 
+/**
+ * A constants class represents all the hardware parts that're supported by this 
+ * simulator
+ * 
+ * @author marcoyeung
+ *
+ */
 public enum HardwarePart {
 	R0("R0",20),
 	R1("R1",20),
@@ -19,6 +26,9 @@ public enum HardwarePart {
 	MEMORY("MEMORY",20),
 	NOTEXIST("NOTEXIST",-1,false);
 	
+	/**
+	 * hardware part name, this is used to show on the GUI
+	 */
 	private final String name;
 	private final int numOfBit;
 	private final boolean editable;
@@ -31,16 +41,37 @@ public enum HardwarePart {
 		this(name, numOfbit, true);
 	}
 	
+	/**
+	 * returns the hardware part name
+	 * @return
+	 */
 	public String getVal(){
 		return name;
 	}
 	
+	/**
+	 * return the number of bits is used for this hardware part in memory or program
+	 * 
+	 * @return
+	 */
 	public int getBit(){
 		return numOfBit;
 	}
+	
+	/**
+	 * Whether or not to allow this hardware component to be edited through
+	 * switches in GUI 
+	 * 
+	 * @return
+	 */
 	public boolean isEditable(){
 		return editable;
 	}
+	
+	/**
+	 * return hardwarePart enum object by lookup the hardware part name.
+	 * 
+	 */
 	public static HardwarePart fromName(String name){
 		if (name == null || "".equals(name.trim())) {
 			return NOTEXIST;

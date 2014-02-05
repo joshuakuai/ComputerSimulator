@@ -17,7 +17,7 @@ public class CPUController extends Thread {
 	public static CPUController instance = new CPUController();
 	
 	private boolean suspendflag = false;
-	private final static Logger logger = Logger.getLogger(MainSimFrame.class);
+	private final static Logger logger = Logger.getLogger(CPUController.class);
 
 	// Keep a weak reference of mainSimFrame
 	private MainSimFrame mainFrame = null;

@@ -1,5 +1,12 @@
 package edu.gwu.cs6461.sim.common;
 
+
+/**
+ * Opcode constants supported by this simulator
+ * 
+ * @author marcoyeung
+ *
+ */
 public enum OpCode {
 
 	LDR(1,"000001"),

@@ -11,6 +11,7 @@ import java.util.Observable;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 
 /**
+ * ALU to support arithmetic logics
  * 
  * @author Ahmed
  */
