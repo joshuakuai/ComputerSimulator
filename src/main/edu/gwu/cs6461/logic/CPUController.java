@@ -33,14 +33,17 @@ public class CPUController extends Thread {
 	}
 
 	//In java a thread can't excrete twice so we have to recreate it after done.
-	public static void recreateCPUController() {
+	public static void recreateCPUController(boolean isReserveData) {
 		CPUController tmpController = new CPUController();
-		tmpController.IRobject = instance.IRobject;
-		tmpController.RFtable = instance.RFtable;
-		tmpController.XFtable = instance.XFtable;
-		tmpController.SS = instance.SS;
-		tmpController.PC = instance.PC;
-		tmpController.cpuControl = instance.cpuControl;
+		
+		if(isReserveData){
+			tmpController.IRobject = instance.IRobject;
+			tmpController.RFtable = instance.RFtable;
+			tmpController.XFtable = instance.XFtable;
+			tmpController.SS = instance.SS;
+			tmpController.PC = instance.PC;
+			tmpController.cpuControl = instance.cpuControl;
+		}
 		
 		instance = tmpController;
 	}

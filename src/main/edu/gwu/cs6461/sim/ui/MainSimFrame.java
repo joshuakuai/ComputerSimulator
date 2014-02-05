@@ -305,8 +305,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		logger.debug(getLayout());
 
 		Memory.shareInstance().register(this);
-		cpuController.setRegisterObserver(MainSimFrame.this);
-		cpuController.setMainFrame(MainSimFrame.this);
+		reSetCPUController();
 	}
 
 	private JPanel createMiscRPanel() {
@@ -513,10 +512,8 @@ public class MainSimFrame extends JFrame implements Observer {
 			// then if the the thread is dead and is not suspended,
 			// recreate the cpucontroller thread and
 			// set the debug model on and start the process
-			CPUController.recreateCPUController();
-			cpuController = CPUController.shareInstance();
-			cpuController.setRegisterObserver(MainSimFrame.this);
-			cpuController.setMainFrame(MainSimFrame.this);
+			CPUController.recreateCPUController(true);
+			reSetCPUController();
 
 			if (model == 1) {
 				cpuController.SS.setData(1);
@@ -628,6 +625,12 @@ public class MainSimFrame extends JFrame implements Observer {
 			cpuController.IRobject.seIRstring(val);
 		}
 	}
+	
+	private void reSetCPUController(){
+		cpuController = CPUController.shareInstance();
+		cpuController.setRegisterObserver(MainSimFrame.this);
+		cpuController.setMainFrame(MainSimFrame.this);
+	}
 
 	private class BtnActListener implements ActionListener {
 
@@ -670,6 +673,8 @@ public class MainSimFrame extends JFrame implements Observer {
 				new Thread(new Runnable() {
 					public void run() {
 						try {
+							CPUController.recreateCPUController(false);
+							reSetCPUController();
 							Thread.sleep(1000);
 							resetSimulator(true);
 							simConsole.info("Simulator started....");
