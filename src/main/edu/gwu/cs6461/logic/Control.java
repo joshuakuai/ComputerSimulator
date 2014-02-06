@@ -139,7 +139,7 @@ public class Control {
 			MAR.setData(MDR.getData());
 			MDR.setData(Mem.getMem(MAR.getData()));
 		}
-		//send General Register selected as operand1 and MDR value(memory value)
+		//send General Register as operand1 and MDR value(memory value)
 		//as operand2 two to ALU.
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
 				IRobject.getOpCode(), RES,CC);
@@ -171,14 +171,14 @@ public class Control {
 			}
 		} else
 			MAR.setData(IRobject.getAddress());
-		//if indirect is not set than put the register value in the effective address
-		//else put the register value in the indirect address
-		if (IRobject.getIndirect() == 0) {
-			Mem.setMem(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
-		} else if (IRobject.getIndirect() == 1) {
+		//if indirect is set put the memory value at MAR in MDR and then pass MDR value
+		//to MAR then use MAR address to store General register into memory
+		if (IRobject.getIndirect() == 1) {
 			MDR.setData(Mem.getMem(MAR.getData()));
-			Mem.setMem(MDR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
-		}
+			MAR.setData(MDR.getData());
+			Mem.setMem(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
+		}else
+			Mem.setMem(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
 	}
 /**
  * @param IRobject IR object with decoded instruction
@@ -210,9 +210,7 @@ public class Control {
 			MAR.setData(MDR.getData());
 			MDR.setData(Mem.getMem(MAR.getData()));
 		}
-		// ////
-		System.out.println(RES.getData());
-		//send General Register selected as operand1 and MDR value(memory value)
+		//send General Register as operand1 and MDR value(memory value)
 		//as operand2 two to ALU.
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
 				IRobject.getOpCode(), RES,CC);
@@ -221,7 +219,6 @@ public class Control {
 		if(CC.getData()==0){
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
-		//System.out.println(RES.getData());
 	}
 /**
  * @param IRobject IR object with decoded instruction
@@ -247,6 +244,8 @@ public class Control {
 		else {
 			//send General Register selected as operand1 and immediate
 			//as operand2 two to ALU.
+			// ALU: add the register to the immediate and put back the value in the
+			// register
 			ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
 					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
 			//if CC register is 0 it means the calculation was ok with no errors
@@ -312,16 +311,18 @@ public class Control {
 		} else {
 			MAR.setData(IRobject.getAddress());
 		}
-		//if indirect is not set than but effective address into general register
-		if (IRobject.getIndirect() == 0) {
-			RFtable.setSwitch(IRobject.getRFI1(), MAR.getData());
-		}
+				
 		//if indirect is set than get the contents of memory at location MAR and pass it to MDR
-		//than pass MDR value to general register
+		//than pass MDR value To MAR and pass MAR value to general register
 		if (IRobject.getIndirect() == 1) {
 			MDR.setData(Mem.getMem(MAR.getData()));
-			RFtable.setSwitch(IRobject.getRFI1(), MDR.getData());
+			MAR.setData(MDR.getData());
+			RFtable.setSwitch(IRobject.getRFI1(), MAR.getData());
 		}
+		else
+			//if indirect is not set than put effective address into general register
+			RFtable.setSwitch(IRobject.getRFI1(), MAR.getData());
+		
 	}
 	/**
 	 * @param IRobject IR object with decoded instruction
@@ -345,19 +346,18 @@ public class Control {
 	 * @run	Store Index Register to Memory
 	 */
 	public void STX(IR IRobject, XF XFtable, Memory Mem) {
+		MAR.setData(IRobject.getAddress());
 		//if indirect is not set than just put the index register content into memory
-		//IR address location
-		if (IRobject.getIndirect() == 0) {
-			MAR.setData(IRobject.getAddress());
-			Mem.setMem(MAR.getData(), XFtable.getSwitch(IRobject.getXFI()));
-		}
+		//IR address location		
+		Mem.setMem(MAR.getData(), XFtable.getSwitch(IRobject.getXFI()));		
 		//if indirect is set than put IR address in MAR and than get the contents of the memory at MAR address
-		//put that in MDR
-		//then the index register value is insert into memory at indirect location MDR
-		else if (IRobject.getIndirect() == 1) {
-			MAR.setData(IRobject.getAddress());
+		//put that in MDR then put MDR value into MAR
+		//then the index register value is insert into memory at indirect location MAR
+		if (IRobject.getIndirect() == 1) {
+			//MAR.setData(IRobject.getAddress());
 			MDR.setData(Mem.getMem(MAR.getData()));
-			Mem.setMem(MDR.getData(), XFtable.getSwitch(IRobject.getXFI()));
+			MAR.setData(MDR.getData());
+			Mem.setMem(MAR.getData(), XFtable.getSwitch(IRobject.getXFI()));
 		}
 	}
 }
