@@ -60,7 +60,7 @@ public class CPUController extends Thread {
 			tmpController.SS = instance.SS;
 			tmpController.PC = instance.PC;
 			tmpController.cpuControl = instance.cpuControl;
-tmpController.CC=instance.CC;
+			tmpController.CC=instance.CC;
 		}
 		
 		instance = tmpController;
@@ -80,6 +80,16 @@ tmpController.CC=instance.CC;
 
 	public void setMainFrame(MainSimFrame mf) {
 		mainFrame = mf;
+	}
+	
+	public void clearObserver(){
+		PC.clear();
+		IRobject.clear();
+		RFtable.clearObserver();
+		XFtable.clearObserver();
+		cpuControl.clearObserver();
+		CC.clear();
+		
 	}
 
 	public void setRegisterObserver(Observer obs) {

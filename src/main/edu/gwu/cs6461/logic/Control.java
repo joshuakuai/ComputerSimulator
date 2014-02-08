@@ -36,6 +36,11 @@ public class Control {
 		MAR.register(obs);
 		MDR.register(obs);
 	}
+    public void clearObserver(){
+    	MAR.clear();
+    	MDR.clear();
+    }
+	
 
 	//TODO (PART2) Fetch IR from memory
 	public void FetchIR(int PC, IR IRobject) {

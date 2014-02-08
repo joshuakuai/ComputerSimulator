@@ -10,6 +10,9 @@ import java.util.*;
 
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observable;
+import edu.gwu.cs6461.sim.common.HardwarePart;
+import edu.gwu.cs6461.sim.common.SimConstants;
+import edu.gwu.cs6461.sim.util.Convertor;
 
 /**
  * Memory class to store instructions and values
@@ -35,12 +38,20 @@ public class Memory extends Observable {
 		return Mem.elementAt(Address);
 	}
 
-	public void setMem(int Address, int Data) {
-		Mem.set(Address, Data);
-
+	/**
+	 * 
+	 * @param Address
+	 * @param data  this simulator is 20bit only, int is enough to accommodate
+	 */
+	public void setMem(int Address, int data) {
+		Mem.set(Address, data);
+		
+		String signedD = Integer.toBinaryString(data);
+		int iVal = Convertor.getSignedValFromBin(signedD, SimConstants.WORD_SIZE);
+		
 		HardwareData hardwareData = new HardwareData();
-		hardwareData.put("MEMORY",
-				Integer.toString(Address) + "," + Integer.toString(Data));
+		hardwareData.put(HardwarePart.MEMORY.getName(),
+				Integer.toString(Address) + "," + Integer.toString(iVal));
 
 		this.notifyObservers(hardwareData);
 	}

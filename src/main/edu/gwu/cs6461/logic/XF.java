@@ -28,6 +28,12 @@ public class XF {
     	X2.register(obs);
     	X3.register(obs);
     }
+    public void clearObserver(){
+    	X1.clear();
+    	X2.clear();
+    	X3.clear();
+    }
+    
     //get functions
     public int getX1(){
         return X1.getData();

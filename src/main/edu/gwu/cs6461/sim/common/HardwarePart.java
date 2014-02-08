@@ -45,7 +45,7 @@ public enum HardwarePart {
 	 * returns the hardware part name
 	 * @return
 	 */
-	public String getVal(){
+	public String getName(){
 		return name;
 	}
 	
@@ -78,7 +78,7 @@ public enum HardwarePart {
 		}
 		
         for (HardwarePart value : HardwarePart.values()) {
-            if (value.getVal().equals(name)) {
+            if (value.getName().equals(name)) {
                 return value;
             }
         }

@@ -88,37 +88,37 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JLabel[] lblBinPosInfo = new JLabel[20];
 	private Dimension shortField = new Dimension(100, 50);
 
-	private JLabel lblR0 = new JLabel(HardwarePart.R0.getVal());
-	private JLabel lblR1 = new JLabel(HardwarePart.R1.getVal());
-	private JLabel lblR2 = new JLabel(HardwarePart.R2.getVal());
-	private JLabel lblR3 = new JLabel(HardwarePart.R3.getVal());
+	private JLabel lblR0 = new JLabel(HardwarePart.R0.getName());
+	private JLabel lblR1 = new JLabel(HardwarePart.R1.getName());
+	private JLabel lblR2 = new JLabel(HardwarePart.R2.getName());
+	private JLabel lblR3 = new JLabel(HardwarePart.R3.getName());
 
 	private JTextField txtR0 = new JTextField(20);
 	private JTextField txtR1 = new JTextField(20);
 	private JTextField txtR2 = new JTextField(20);
 	private JTextField txtR3 = new JTextField(20);
 
-	private JLabel lblX1 = new JLabel(HardwarePart.X1.getVal());
-	private JLabel lblX2 = new JLabel(HardwarePart.X2.getVal());
-	private JLabel lblX3 = new JLabel(HardwarePart.X3.getVal());
+	private JLabel lblX1 = new JLabel(HardwarePart.X1.getName());
+	private JLabel lblX2 = new JLabel(HardwarePart.X2.getName());
+	private JLabel lblX3 = new JLabel(HardwarePart.X3.getName());
 
 	private JTextField txtX1 = new JTextField(15);
 	private JTextField txtX2 = new JTextField(15);
 	private JTextField txtX3 = new JTextField(15);
 
-	private JLabel lblMAR = new JLabel(HardwarePart.MAR.getVal());
-	private JLabel lblMBR = new JLabel(HardwarePart.MBR.getVal());
-	private JLabel lblMSR = new JLabel(HardwarePart.MSR.getVal());
-	private JLabel lblMFR = new JLabel(HardwarePart.MFR.getVal());
+	private JLabel lblMAR = new JLabel(HardwarePart.MAR.getName());
+	private JLabel lblMBR = new JLabel(HardwarePart.MBR.getName());
+	private JLabel lblMSR = new JLabel(HardwarePart.MSR.getName());
+	private JLabel lblMFR = new JLabel(HardwarePart.MFR.getName());
 
 	private JTextField txtMAR = new JTextField(13);
 	private JTextField txtMBR = new JTextField(20);
 	private JTextField txtMSR = new JTextField(20);
 	private JTextField txtMFR = new JTextField(20);
 
-	private JLabel lblCC = new JLabel(HardwarePart.CC.getVal());
-	private JLabel lblIR = new JLabel(HardwarePart.IR.getVal());
-	private JLabel lblPC = new JLabel(HardwarePart.PC.getVal());
+	private JLabel lblCC = new JLabel(HardwarePart.CC.getName());
+	private JLabel lblIR = new JLabel(HardwarePart.IR.getName());
+	private JLabel lblPC = new JLabel(HardwarePart.PC.getName());
 
 	private JTextField txtCC = new JTextField(10); // condition code //UNDERFLOW
 													// or
@@ -136,7 +136,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	private JComboBox<String> cboSwithOptions = new JComboBox<String>();
 	private JButton btnReset = new JButton("Reset");
-	private JButton btnLoad = new JButton("Deposit");
+	private JButton btnDeposit = new JButton("Deposit");
 
 	// set memory
 	private JLabel lblMemAddress = new JLabel("Address:");
@@ -171,7 +171,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		int i = 0;
 		for (HardwarePart n : names) {
 			if (n.isEditable()) {
-				tmp.add(n.getVal());
+				tmp.add(n.getName());
 				if (n == HardwarePart.IR) {
 					mainSwitchIdx = i;
 				}
@@ -187,7 +187,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		BtnActListener btnAct = new BtnActListener();
 
 		btnReset.addActionListener(btnAct);
-		btnLoad.addActionListener(btnAct);
+		btnDeposit.addActionListener(btnAct);
 		btnIPL.addActionListener(btnAct);
 		btnTerminate.addActionListener(btnAct);
 
@@ -478,7 +478,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		btnPanel.add(cboSwithOptions);
 		cboSwithOptions.addActionListener(new SwitchComboActionListener());
 		btnPanel.add(btnReset);
-		btnPanel.add(btnLoad);
+		btnPanel.add(btnDeposit);
 		FlowLayout fl = new FlowLayout();
 		fl.setAlignment(FlowLayout.RIGHT);
 		btnPanel.setLayout(fl);
@@ -619,7 +619,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			lstModel.addElement(newElementString);
 		} else if (dName == HardwarePart.CC) {
 			ConditionCode cc = ConditionCode.fromCode(Integer.valueOf(val)); 
-			if (cc != ConditionCode.NOTEXIST) 
+			if (cc != ConditionCode.NOTEXIST && cc != ConditionCode.NORMAL) 
 					txtCC.setText(cc.name());
 			else 
 				txtCC.setText("");
@@ -682,6 +682,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	
 	private void reSetCPUController(){
 		cpuController = CPUController.shareInstance();
+		cpuController.clearObserver();
 		cpuController.setRegisterObserver(MainSimFrame.this);
 		cpuController.setMainFrame(MainSimFrame.this);
 	}
@@ -699,7 +700,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			Component parent = (Component) e.getSource();
 
-			if (parent == btnLoad) {
+			if (parent == btnDeposit) {
 				String sel = (String) cboSwithOptions.getSelectedItem();
 
 				HardwarePart rName = HardwarePart.fromName(sel);
@@ -844,7 +845,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		cboSwithOptions.setEnabled(isStart);
 		btnReset.setEnabled(isStart);
-		btnLoad.setEnabled(isStart);
+		btnDeposit.setEnabled(isStart);
 
 		btnSingleStep.setEnabled(isStart);
 		btnRun.setEnabled(isStart);

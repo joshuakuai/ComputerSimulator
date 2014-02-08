@@ -16,9 +16,9 @@ public class SampleObservable extends Observable {
 	public SampleObservable() {
 		data = new HardwareData();
 		
-		data.put(HardwarePart.MEMORY.getVal(), "10,001010100");
-		data.put(HardwarePart.MEMORY.getVal(), "8,001010100");
-		data.put(HardwarePart.MEMORY.getVal(), "0,001010100");
+		data.put(HardwarePart.MEMORY.getName(), "10,001010100");
+		data.put(HardwarePart.MEMORY.getName(), "8,001010100");
+		data.put(HardwarePart.MEMORY.getName(), "0,001010100");
 		
 		new Thread(new Runnable() {
 			
@@ -28,9 +28,9 @@ public class SampleObservable extends Observable {
 					for (int i = 0; i < 2; i++) {
 						Thread.sleep(3000);
 						if (i==0) {
-							data.put(HardwarePart.MEMORY.getVal(), "10,001010100");
+							data.put(HardwarePart.MEMORY.getName(), "10,001010100");
 						} else if (i==1) {
-							data.put(HardwarePart.MEMORY.getVal(), "9,001010100");
+							data.put(HardwarePart.MEMORY.getName(), "9,001010100");
 						}
 						notifyObservers(data);
 					}

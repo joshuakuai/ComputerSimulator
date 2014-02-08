@@ -56,13 +56,22 @@ public enum OpCode {
 	 * @param bits
 	 * @return
 	 */
-	public OpCode fromBit(String bits){
+	public static OpCode fromBit(String bits){
 		if (bits == null || "".equals(bits.trim())) {
 			return NOTEXIST;
 		}
 		
         for (OpCode value : OpCode.values()) {
             if (value.getbVal().equals(bits)) {
+                return value;
+            }
+        }
+        return NOTEXIST;
+	}
+	public static OpCode fromCode(int code) {
+		
+        for (OpCode value : OpCode.values()) {
+            if (value.getiVal()== code) {
                 return value;
             }
         }

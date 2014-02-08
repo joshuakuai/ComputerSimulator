@@ -31,7 +31,12 @@ public class RF {
     	R2.register(obs);
     	R3.register(obs);
     }
-    
+    public void clearObserver(){
+    	R0.clear();
+    	R1.clear();
+    	R2.clear();
+    	R3.clear();
+    }
     /*
     ******get functions
     */

@@ -8,19 +8,77 @@ package edu.gwu.cs6461.logic;
 
 import java.util.Observable;
 
+import org.apache.log4j.Logger;
+
 import edu.gwu.cs6461.sim.bridge.HardwareData;
+import edu.gwu.cs6461.sim.common.ConditionCode;
+import edu.gwu.cs6461.sim.common.OpCode;
+import edu.gwu.cs6461.sim.common.SimConstants;
+import edu.gwu.cs6461.sim.util.Convertor;
 
 /**
  * ALU to support arithmetic logics
  * Two functionalities available subtract and add
  */
 public class ALU extends Observable {
+	private final static Logger logger = Logger.getLogger(ALU.class);
+	
 	//type of operation + , -
-	private String Operation = "";
+	private String operation = "";
 	private int Result = 0;
 	//final result sign bit
 	private int RSignBit=0;
-	public void Calculate(int Operand1, int Operand2, int Opcode, Register RES, Register CC) {
+	
+	/**
+	 * TODO
+	 * calculate method should depend on number of bit
+	 * 
+	 * @param operand1
+	 * @param operand2
+	 * @param opcode
+	 * @param RES
+	 * @param CC
+	 */
+	public void Calculate(int operand1, int operand2, int opcode, Register RES, Register CC) {
+		Calculate(operand1, operand2, SimConstants.WORD_SIZE, opcode, RES, CC);
+	}
+	public void Calculate(int operand1, int operand2, int bitSize, int opcode, Register RES, Register CC) {
+		String op1="", op2="";
+		op1=Integer.toBinaryString(operand1);
+		op2=Integer.toBinaryString(operand2);
+		logger.debug("opt1:"+ op1+",opt2:"+ op2);
+		
+		int opt1 = Convertor.getSignedValFromBin(op1, bitSize);
+		int opt2 = Convertor.getSignedValFromBin(op2, bitSize);
+		
+		
+		//check the opcode to decide what arithmetic operation to be done
+		if (OpCode.fromCode(opcode) == OpCode.AMR || OpCode.fromCode(opcode) == OpCode.AIR)
+			operation = "+";
+		else if (OpCode.fromCode(opcode) == OpCode.SMR || OpCode.fromCode(opcode) == OpCode.SIR){
+			operation = "-";
+		}
+		
+		int ret=0; 
+		if ("+".equals(operation)) {
+			ret = opt1+opt2;
+		} else if ("-".equals(operation)) {
+			ret = opt1-opt2;
+		}
+		if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
+			setCC(ConditionCode.OVERFLOW.getCode(),CC);
+		} else {
+			setCC(ConditionCode.NORMAL.getCode(),CC);
+		}
+		
+		RES.setData(ret);
+		
+		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);
+		
+	}
+	
+	@Deprecated
+	private void Calculate_deprecate(int Operand1, int Operand2, int Opcode, Register RES, Register CC) {
 		
 		String Op1="", Op2="";
 		String Res="";
@@ -41,14 +99,8 @@ public class ALU extends Observable {
 			Operand2 = Integer.parseInt(Op2.substring(1),2);
 		}
 
-		//check the opcode to decide what arithmetic operation to be done
-		if (Opcode == 4 || Opcode == 6)
-			Operation = "+";
-		else if (Opcode == 5 || Opcode == 7){
-			Operation = "-";
-		}
 		//for instructions that require addition
-		if (Operation.equals("+")) {
+		if (operation.equals("+")) {
 			Result = Operand1 + Operand2;
 		//including sign bit in calculation	
 			//if both operands are positive add them
@@ -106,7 +158,7 @@ public class ALU extends Observable {
 				setCC(0,CC);
 		} 
 		//for instructions that require subtraction
-		else if (Operation.equals("-")) {
+		else if (operation.equals("-")) {
 		//including sign bit in calculation
 			//if first operand1 is positive and second positive while first is bigger than second
 			//than subtract first from second and final sign bit is positive

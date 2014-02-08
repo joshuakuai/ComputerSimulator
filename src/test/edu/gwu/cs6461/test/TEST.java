@@ -10,6 +10,14 @@ import edu.gwu.cs6461.sim.util.Convertor;
 public class TEST {
 
 	/**
+	 * 
+	 * 
+	 * http://stackoverflow.com/questions/15837899/java-twos-complement-binary-to-integer
+	 * 
+	 * 
+	 * short res = (short)Integer.parseInt("1111111111001110", 2);
+System.out.println(res);
+	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -26,7 +34,7 @@ public class TEST {
 //			System.out.print(bins[i] + ":");
 //		}
 		
-		String bin = "10000000000000000000";
+		String bin = "11000000000000001000";
 		
 		System.out.println(Convertor.getSignedValFromBin(bin,20));
 		
