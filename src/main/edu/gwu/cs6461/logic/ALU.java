@@ -79,7 +79,7 @@ public class ALU extends Observable {
 	
 	@Deprecated
 	private void Calculate_deprecate(int Operand1, int Operand2, int Opcode, Register RES, Register CC) {
-		
+		int test=0;
 		String Op1="", Op2="";
 		String Res="";
 		//sign bits of operand1 and operand2
