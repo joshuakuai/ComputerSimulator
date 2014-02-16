@@ -40,19 +40,20 @@ public class Memory extends Observable {
 
 	/**
 	 * 
-	 * @param Address
+	 * @param address
 	 * @param data  this simulator is 20bit only, int is enough to accommodate
 	 */
-	public void setMem(int Address, int data) {
-		Mem.set(Address, data);
+	public void setMem(int address, int data) {
+		Mem.set(address, data);
 		
 		String signedD = Integer.toBinaryString(data);
 		int iVal = Convertor.getSignedValFromBin(signedD, SimConstants.WORD_SIZE);
 		
 		HardwareData hardwareData = new HardwareData();
 		hardwareData.put(HardwarePart.MEMORY.getName(),
-				Integer.toString(Address) + "," + Integer.toString(iVal));
+				Integer.toString(address) + "," + Integer.toString(iVal));
 
 		this.notifyObservers(hardwareData);
 	}
+	
 }

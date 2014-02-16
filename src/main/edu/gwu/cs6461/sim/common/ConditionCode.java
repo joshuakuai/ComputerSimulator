@@ -8,11 +8,11 @@ package edu.gwu.cs6461.sim.common;
  *
  */
 public enum ConditionCode {
-	NORMAL(0),
-	OVERFLOW(1), 
-	UNDERFLOW(2), 
-	DIVZERO(3), 
-	EQWUALORNOT(4), 
+	OVERFLOW(0),
+	UNDERFLOW(1), 
+	DIVZERO(2), 
+	EQWUALORNOT(3), 
+	NORMAL(5), 
 	NOTEXIST(-1);
 
 	private final int code;

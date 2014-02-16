@@ -7,22 +7,19 @@
 package edu.gwu.cs6461.logic;
 
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.HardwarePart;
 
 /**
  *RF table class
  *creates all the General registers and updates them
  */
 public class RF {
-    private Register R0 = new Register();
-    private Register R1 = new Register();
-    private Register R2 = new Register();
-    private Register R3 = new Register();
+    private Register R0 = new Register(HardwarePart.R0.getBit(),HardwarePart.R0.getName(), true);
+    private Register R1 = new Register(HardwarePart.R1.getBit(),HardwarePart.R1.getName(),true);
+    private Register R2 = new Register(HardwarePart.R2.getBit(),HardwarePart.R2.getName(),true);
+    private Register R3 = new Register(HardwarePart.R3.getBit(),HardwarePart.R3.getName(),true);
     
     public RF(){
-    	R0.setName("R0");
-    	R1.setName("R1");
-    	R2.setName("R2");
-    	R3.setName("R3");
     }
     //updates values to GUI
     public void setRegisterObserver(Observer obs){

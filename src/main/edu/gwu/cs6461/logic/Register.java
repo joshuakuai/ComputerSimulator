@@ -20,9 +20,20 @@ import edu.gwu.cs6461.sim.util.Convertor;
 public class Register extends Observable{
 	private final static Logger logger = Logger.getLogger(Register.class);
 	private int data = 0;
+	private String dataStr = "";
+	private boolean signedVal = false;
 	private int size = 0;
 	private String name;
 
+	public Register(int size, String name) {
+		this(size,name, false);
+	}
+	public Register(int size,String name, boolean signed) {
+		this.size = size;
+		this.name = name;
+		this.signedVal = signed;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -32,7 +43,16 @@ public class Register extends Observable{
 	}
 
 	public int getData() {
-		return data;
+		int dData=data;
+		
+		if (signedVal) {
+			String signedData=Integer.toBinaryString(data);			
+			if(signedData.substring(0,1).equals("1")&&signedData.length()== size){
+				dData = Convertor.getSignedValFromBin(signedData, size);
+			}
+		}
+		
+		return dData;
 	}
 
 	public int getSize() {
@@ -41,22 +61,12 @@ public class Register extends Observable{
 	//sets the value of the register both internally and on the GUI
 	public void setData(int newData) {
 		data = newData;
-		String signedData=Integer.toBinaryString(newData);
+		
 		HardwareData hardwareData = new HardwareData();
 		if (HardwarePart.IR.getName().equals(this.name)) {
 			hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
 		} else {
-			
-			//there needs a way to distinct number of bits the data actaully represents
-			if(signedData.substring(0,1).equals("1")&&signedData.length()== SimConstants.WORD_SIZE){
-				
-				int val = Convertor.getSignedValFromBin(signedData, SimConstants.WORD_SIZE);
-				
-				hardwareData.put(this.name, Integer.toString(val));
-			}
-			else{
-				hardwareData.put(this.name, Integer.toString(newData));
-			}
+			hardwareData.put(this.name, Integer.toString(getData()));
 		}
 		this.notifyObservers(hardwareData);
 		
@@ -65,7 +75,8 @@ public class Register extends Observable{
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("name:").append(name).append(",").append("data:").append(data).append(",size:").append(size);
+		sb.append("name:").append(name).append(",").append("data:")
+				.append(data).append(",size:").append(size);
 		return sb.toString();
 	}
 	public void setSize(int newSize) {

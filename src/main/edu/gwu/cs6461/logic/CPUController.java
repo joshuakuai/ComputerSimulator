@@ -8,6 +8,7 @@ package edu.gwu.cs6461.logic;
  * 
  */
 import edu.gwu.cs6461.sim.bridge.*;
+import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.ui.*;
 
 import org.apache.log4j.Logger;
@@ -16,10 +17,10 @@ public class CPUController extends Thread {
 	//Create registers that are shared between the different
 	//cpu classes
 	public IR IRobject = new IR();
-	public Register PC = new Register();
-	public Register CC = new Register();
+	public Register PC = new Register(HardwarePart.PC.getBit(),HardwarePart.PC.getName());
+	public Register CC = new Register(HardwarePart.CC.getBit(),HardwarePart.CC.getName());
 	//Debug register when set run program in single step mode
-	public Register SS = new Register();
+	public Register SS = new Register(1,"SS");
 	
 	//create RF and XF tables
 	public RF RFtable = new RF();
@@ -37,15 +38,6 @@ public class CPUController extends Thread {
 
 	// CPU holds a weak reference of the memory but CPU doesn't own the memory
 	private CPUController() {
-		// Set register size
-		PC.setSize(13);
-		SS.setSize(1);
-		CC.setSize(4);
-
-		// Set register name
-		SS.setName("SS");
-		PC.setName("PC");
-		CC.setName("CC");
 	}
 
 	//This recreates the cpu thread after an instruction is finished

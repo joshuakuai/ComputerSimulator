@@ -6,6 +6,8 @@
 
 package edu.gwu.cs6461.logic;
 
+import edu.gwu.cs6461.sim.common.HardwarePart;
+
 /**
  * This class holds the IR instruction binary string.
  * The decode parts are sent back to it for storage 
@@ -24,14 +26,13 @@ public class IR extends Register {
 	private int Indirect = 0;
 	private int Trace = 0;
 
-	IR(String IR) {
+	IR(int size, String IR) {
+		super(size,"IR");
 		IRstring = IR;
-		this.setName("IR");
 	}
 
 	IR() {
-		IRstring = "";
-		this.setName("IR");
+		this(HardwarePart.IR.getBit(),"IR");
 	}
 
 	/*

@@ -2,6 +2,7 @@
 package edu.gwu.cs6461.test;
 
 import java.math.BigInteger;
+import java.util.StringTokenizer;
 
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
@@ -21,7 +22,34 @@ System.out.println(res);
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new TEST().testBit();
+		new TEST().testConvert();
+	}
+	
+	
+	void testConvert(){
+		int val = 101;
+		
+		String bin = Convertor.getSignedBinFromInt(val, 8);
+		
+		System.out.println(bin);
+		
+		
+	}
+	
+	void testSplit(){
+		String bin = "1|1|0|0|0|0|0|0|000000001000";
+		bin = "11000000000000001000";
+		
+		String bits[] = new String[bin.length()];
+		for (int i = 0; i < bin.length(); i++) {
+			bits[i]= bin.substring(i, i+1);
+		}
+
+		for (int i = 0; i < bits.length; i++) {
+			System.out.println(bits[i]);
+		}
+		System.out.println(bits.length);
+		
 	}
 	
 	

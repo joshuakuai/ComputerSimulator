@@ -1,3 +1,5 @@
 sim.gui.width=900
 sim.gui.height=500
-sim.gui.windowtitle=CS6461 Computer System Simulator - Phase I
+sim.gui.windowtitle=CS6461 Computer System Simulator - Part II
+sim.mem.load.startposition=101
+sim.mem.numberofbank=8

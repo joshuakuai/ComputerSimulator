@@ -7,20 +7,18 @@
 package edu.gwu.cs6461.logic;
 
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.HardwarePart;
 
 /**
  *XF table class
  *creates all the index registers and updates them
  */
 public class XF {
-    private Register X1 = new Register();
-    private Register X2 = new Register();
-    private Register X3 = new Register();
+    private Register X1 = new Register(HardwarePart.X1.getBit(),HardwarePart.X1.getName(),true);
+    private Register X2 = new Register(HardwarePart.X2.getBit(),HardwarePart.X2.getName(),true);
+    private Register X3 = new Register(HardwarePart.X3.getBit(),HardwarePart.X3.getName(),true);
     
     public XF(){
-    	X1.setName("X1");
-    	X2.setName("X2");
-    	X3.setName("X3");
     }
     //update the values to GUI
     public void setRegisterObserver(Observer obs){

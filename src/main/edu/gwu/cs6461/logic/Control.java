@@ -7,6 +7,8 @@
 package edu.gwu.cs6461.logic;
 
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.ConditionCode;
+import edu.gwu.cs6461.sim.common.HardwarePart;
 
 /**
  * This class has the main logic that calls the different classes needed to finish an instruction.
@@ -18,18 +20,13 @@ import edu.gwu.cs6461.sim.bridge.Observer;
  */
 public class Control {
 	//create registers shared by most instructions.
-	public Register MAR = new Register();
-	public Register MDR = new Register();
+	public Register MAR = new Register(HardwarePart.MAR.getBit(),HardwarePart.MAR.getName());
+	public Register MDR = new Register(HardwarePart.MDR.getBit(),HardwarePart.MDR.getName());
 	//create result register this contains the final result
 	//from ALU calculation
-	private Register RES = new Register();
+	private Register RES = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
 	
 	public Control(){
-		MAR.setSize(20);
-		MDR.setSize(20);
-		
-		MAR.setName("MAR");
-		MDR.setName("MDR");
 	}
 	//create observer for them to be updated to GUI
 	public void setRegisterObserver(Observer obs){
@@ -221,7 +218,7 @@ public class Control {
 				IRobject.getOpCode(), RES,CC);
 		//if CC register is 0 it means the calculation was ok with no errors
 		//so put the ALU result in the general Register selected
-		if(CC.getData()==0){
+		if(CC.getData()==ConditionCode.NORMAL.getCode()){
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
 	}
@@ -255,7 +252,7 @@ public class Control {
 					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
 			//if CC register is 0 it means the calculation was ok with no errors
 			//so put the ALU result in the general Register selected
-			if(CC.getData()==0){
+			if(CC.getData()==ConditionCode.NORMAL.getCode()){
 				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 			}
 		}
@@ -287,7 +284,7 @@ public class Control {
 					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
 			//if CC register is 0 it means the calculation was ok with no errors
 			//so put the ALU result in the general Register selected
-			if(CC.getData()==0){
+			if(CC.getData()==ConditionCode.NORMAL.getCode()){
 				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 			}
 		}

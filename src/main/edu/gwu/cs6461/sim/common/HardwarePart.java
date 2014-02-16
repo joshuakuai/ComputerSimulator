@@ -17,13 +17,14 @@ public enum HardwarePart {
 	X2("X2",13),
 	X3("X3",13),
 	MAR("MAR",13),
-	MBR("MDR",20),
+	MDR("MDR",20),
 	MSR("MSR",20,false),
 	MFR("MFR",4,false),
 	CC("CC",4,false),
 	IR("IR",20),
 	PC("PC",13,false),
 	MEMORY("MEMORY",20),
+	RES("RES",13,false),
 	NOTEXIST("NOTEXIST",-1,false);
 	
 	/**
