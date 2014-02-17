@@ -147,7 +147,7 @@ public class Control {
 				IRobject.getOpCode(), RES,CC);
 		//if CC register is 0 it means the calculation was ok with no errors
 		//so put the ALU result in the general Register selected
-		if(CC.getData()==0){
+		if(CC.getData()==ConditionCode.NORMAL.getCode()){
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
 	}
