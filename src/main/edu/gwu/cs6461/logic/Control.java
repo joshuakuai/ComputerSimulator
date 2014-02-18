@@ -6,9 +6,15 @@
 
 package edu.gwu.cs6461.logic;
 
+import org.apache.log4j.Logger;
+
+import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.ALUFlags;
+import edu.gwu.cs6461.sim.common.ALUOperator;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.HardwarePart;
+import edu.gwu.cs6461.sim.exception.MemoryException;
 
 /**
  * This class has the main logic that calls the different classes needed to finish an instruction.
@@ -19,12 +25,15 @@ import edu.gwu.cs6461.sim.common.HardwarePart;
  * 
  */
 public class Control {
+	private final static Logger logger = Logger.getLogger(Control.class);
 	//create registers shared by most instructions.
 	public Register MAR = new Register(HardwarePart.MAR.getBit(),HardwarePart.MAR.getName());
 	public Register MDR = new Register(HardwarePart.MDR.getBit(),HardwarePart.MDR.getName());
 	//create result register this contains the final result
+
+	
 	//from ALU calculation
-	private Register RES = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
+	@Deprecated private Register RES = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
 	
 	public Control(){
 	}
@@ -54,10 +63,10 @@ public class Control {
 	 *the instruction functions.
 	 * @run depending on the opcode from IR the right instruction is called
 	*/
-	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, Memory Mem,
+	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, MMU Mem,
 			ALU ALU, Register CC) {
 		if (IRobject.getOpCode() == 1)
-			LDR(IRobject, RFtable, XFtable, Mem);
+			LDR(IRobject, RFtable, XFtable, Mem, CC);
 		else if (IRobject.getOpCode() == 2)
 			STR(IRobject, RFtable, XFtable, Mem);
 		else if (IRobject.getOpCode() == 3)
@@ -79,31 +88,60 @@ public class Control {
 	 * @param IRobject IR object with decoded instruction
 	 * @run	Load Register from memory instruction
 	 */
-	public void LDR(IR IRobject, RF RFtable, XF XFtable, Memory Mem) {
+	public void LDR(IR IRobject, RF RFtable, XF XFtable, MMU Mem, Register CC) {
 		// TODO (part 2) create an adder class for effective address calculation
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
-				RES.setData(IRobject.getAddress()
+				
+				//example to use ALU to calculate the address
+				//TODO  to apply to all
+				ALU.getInstance().setALU(IRobject.getAddress(), XFtable.getSwitch(IRobject.getXFI()),
+						ALUOperator.Addition, MAR.getSize()).calculate();
+				
+				if (ALU.getInstance().getFlag() == ALUFlags.Normal) {
+					MAR.setData(ALU.getInstance().getResult());
+					CC.setData(ConditionCode.NORMAL.getCode());
+				} else if (ALU.getInstance().getFlag() == ALUFlags.Overflow) {
+					CC.setData(ConditionCode.OVERFLOW.getCode());
+					//Exception handling  is needed
+				}
+				
+				/*RES.setData(IRobject.getAddress()
 						+ XFtable.getSwitch(IRobject.getXFI()));
-				MAR.setData(RES.getData());
+				 MAR.setData(RES.getData());
+				*/
+				
 			} else if (IRobject.getXFI() == 2) {
 				RES.setData(IRobject.getAddress()
 						+ XFtable.getSwitch(IRobject.getXFI()));
 				MAR.setData(RES.getData());
+				
+				
 			} else if (IRobject.getXFI() == 3) {
 				RES.setData(IRobject.getAddress()
 						+ XFtable.getSwitch(IRobject.getXFI()));
 				MAR.setData(RES.getData());
+				
 			}
 		} else
 			MAR.setData(IRobject.getAddress());
 		//put the memory content of MAR address into MDR
-		MDR.setData(Mem.getMem(MAR.getData()));
+		try {
+			MDR.setData(Mem.getDataFromMem(MAR.getData()));
+		} catch (MemoryException e) {
+			logger.error("failed to get data from memory: " + e.getMessage(), e);
+		}
+		
+		
 		//if indirect bit is enabled put MDR in MAR and get the memory content 
 		//of MAR address and put it in MDR
 		if (IRobject.getIndirect() == 1) {
 			MAR.setData(MDR.getData());
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}
 		}
 		//Using the RFI index the setSwitch function decides in which General Register
 		//to put the value of MDR in
@@ -115,7 +153,7 @@ public class Control {
 	 * @param CC passed to ALU
 	 * @run   Add memory to register
 	 */
-	public void AMR(IR IRobject, RF RFtable, XF XFtable, Memory Mem, ALU ALU, Register CC) {
+	public void AMR(IR IRobject, RF RFtable, XF XFtable, MMU Mem, ALU ALU, Register CC) {
 		// TODO (part 2) create an adder class for effective address calculation
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
@@ -134,12 +172,20 @@ public class Control {
 		} else
 			MAR.setData(IRobject.getAddress());
 
-		MDR.setData(Mem.getMem(MAR.getData()));
+		try {
+			MDR.setData(Mem.getDataFromMem(MAR.getData()));
+		} catch (MemoryException e) {
+			logger.error("failed to get data from memory: " + e.getMessage(), e);
+		}
 		//if indirect bit is enabled put MDR in MAR and get the memory content 
 		//of MAR address and put it in MDR
 		if (IRobject.getIndirect() == 1) {
 			MAR.setData(MDR.getData());
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}
 		}
 		//send General Register as operand1 and MDR value(memory value)
 		//as operand2 two to ALU.
@@ -155,7 +201,7 @@ public class Control {
 	 * @param IRobject IR object with decoded instruction
 	 * @run store register to memory
 	 */
-	public void STR(IR IRobject, RF RFtable, XF XFtable, Memory Mem) {
+	public void STR(IR IRobject, RF RFtable, XF XFtable, MMU Mem) {
 		// TODO (part 2) create an adder class for effective address calculation
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
@@ -176,24 +222,28 @@ public class Control {
 		//if indirect is set put the memory value at MAR in MDR and then pass MDR value
 		//to MAR then use MAR address to store General register into memory
 		if (IRobject.getIndirect() == 1) {
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}
 			MAR.setData(MDR.getData());
-			Mem.setMem(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
+			Mem.setData(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
 		}else
-			Mem.setMem(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
+			Mem.setData(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
 	}
 /**
  * @param IRobject IR object with decoded instruction
  * @param CC passed to ALU
  * @run	Subtract Memory from Register
  */
-	public void SMR(IR IRobject, RF RFtable, XF XFtable, Memory Mem, ALU ALU, Register CC) {
+	public void SMR(IR IRobject, RF RFtable, XF XFtable, MMU Mem, ALU ALU, Register CC) {
 		// TODO (part 2) create an adder class for effective address calculation
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
-				RES.setData(IRobject.getAddress()
-						+ XFtable.getSwitch(IRobject.getXFI()));
+				RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
 				MAR.setData(RES.getData());
+				
 			} else if (IRobject.getXFI() == 2) {
 				RES.setData(IRobject.getAddress()
 						+ XFtable.getSwitch(IRobject.getXFI()));
@@ -206,11 +256,18 @@ public class Control {
 		} else
 			MAR.setData(IRobject.getAddress());
 
-		MDR.setData(Mem.getMem(MAR.getData()));
+		try {
+			MDR.setData(Mem.getDataFromMem(MAR.getData()));
+		} catch (MemoryException e) {
+			logger.error("failed to get data from memory: " + e.getMessage(), e);
+		}
 
 		if (IRobject.getIndirect() == 1) {
 			MAR.setData(MDR.getData());
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);			}
 		}
 		//send General Register as operand1 and MDR value(memory value)
 		//as operand2 two to ALU.
@@ -294,7 +351,7 @@ public class Control {
  * @param IRobject IR object with decoded instruction
  * @run	Load Register with Address
  */
-	public void LDA(IR IRobject, RF RFtable, XF XFtable, Memory Mem) {
+	public void LDA(IR IRobject, RF RFtable, XF XFtable, MMU Mem) {
 		// TODO (part 2) create an adder class for effective address calculation
 		if (IRobject.getXFI() != 0) {
 			if (IRobject.getXFI() == 1) {
@@ -317,7 +374,11 @@ public class Control {
 		//if indirect is set than get the contents of memory at location MAR and pass it to MDR
 		//than pass MDR value To MAR and pass MAR value to general register
 		if (IRobject.getIndirect() == 1) {
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}
 			MAR.setData(MDR.getData());
 			RFtable.setSwitch(IRobject.getRFI1(), MAR.getData());
 		}
@@ -330,15 +391,25 @@ public class Control {
 	 * @param IRobject IR object with decoded instruction
 	 * @run	Load Index Register from Memory
 	 */
-	public void LDX(IR IRobject, XF XFtable, Memory Mem) {
+	public void LDX(IR IRobject, XF XFtable, MMU Mem) {
 		//get memory contents of address MAR and put it in MDR
 		MAR.setData(IRobject.getAddress());
-		MDR.setData(Mem.getMem(MAR.getData()));
+		try {
+			//TODO what is it is loading from memory which has too large of value ???
+			MDR.setData(Mem.getDataFromMem(MAR.getData()));
+		} catch (MemoryException e) {
+			logger.error("failed to get data from memory: " + e.getMessage(), e);
+		}
 		//if indirect is set than put MDR in MAR and get the memory contents of location MAR
 		//and put them in MDR
 		if (IRobject.getIndirect() == 1) {
 			MAR.setData(MDR.getData());
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				//TODO what is it is loading from memory which has too large of value ???
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}
 		}
 		//if indirect is not set put original MDR in index register
 		XFtable.setSwitch(IRobject.getXFI(), MDR.getData());
@@ -347,19 +418,27 @@ public class Control {
 	 * @param IRobject IR object with decoded instruction
 	 * @run	Store Index Register to Memory
 	 */
-	public void STX(IR IRobject, XF XFtable, Memory Mem) {
+	public void STX(IR IRobject, XF XFtable, MMU Mem) {
 		MAR.setData(IRobject.getAddress());
 		//if indirect is not set than just put the index register content into memory
 		//IR address location		
-		Mem.setMem(MAR.getData(), XFtable.getSwitch(IRobject.getXFI()));		
+
+		int xfi = IRobject.getXFI();
+		Mem.setData(MAR.getData(), XFtable.getSwitch(xfi),  XFtable.getSize(xfi));
+		
 		//if indirect is set than put IR address in MAR and than get the contents of the memory at MAR address
 		//put that in MDR then put MDR value into MAR
 		//then the index register value is insert into memory at indirect location MAR
 		if (IRobject.getIndirect() == 1) {
 			//MAR.setData(IRobject.getAddress());
-			MDR.setData(Mem.getMem(MAR.getData()));
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}
 			MAR.setData(MDR.getData());
-			Mem.setMem(MAR.getData(), XFtable.getSwitch(IRobject.getXFI()));
+			xfi = IRobject.getXFI();
+			Mem.setData(MAR.getData(), XFtable.getSwitch(xfi), XFtable.getSize(xfi));
 		}
 	}
 }

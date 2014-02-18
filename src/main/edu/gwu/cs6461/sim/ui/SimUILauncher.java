@@ -22,10 +22,11 @@ public class SimUILauncher {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 
 		int width = prop.getIntProperty("sim.gui.width",850);
-		int heigh = prop.getIntProperty("sim.gui.heigh",700);
+		int heigh = prop.getIntProperty("sim.gui.height",700);
 		String title = prop.getStringProperty("sim.gui.windowtitle");
+		boolean resize= prop.getBooleanProperty("sim.gui.resizable",true);
 		
-		MainSimFrame mFrame = new MainSimFrame(title);
+		MainSimFrame mFrame = new MainSimFrame(title,resize);
 		mFrame.init();
 		mFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		mFrame.setSize(width, heigh);

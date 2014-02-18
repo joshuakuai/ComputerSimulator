@@ -1,5 +1,6 @@
 sim.gui.width=900
-sim.gui.height=500
+sim.gui.height=800
+sim.gui.resizable=true
 sim.gui.windowtitle=CS6461 Computer System Simulator - Part II
-sim.mem.load.startposition=101
 sim.mem.numberofbank=8
+sim.programfilepath=bin/program1.txt

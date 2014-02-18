@@ -87,5 +87,22 @@ public class Convertor {
 		return val;
 	}
 	
+	public static String getUnSignedBinFromInt(int iVal, int numOfBit) {
+		return getSignedBinFromInt(iVal, numOfBit);
+		
+	}
+	
+	public static String[] bitToArray(String bit) {
+		String[] rst = { "" };
+		if (bit == null || "".equals(bit.trim())) {
+			return rst;
+		}
 
+		String bits[] = new String[bit.length()];
+		for (int i = 0; i < bit.length(); i++) {
+			bits[i] = bit.substring(i, i + 1);
+		}
+		return bits;
+
+	}
 }

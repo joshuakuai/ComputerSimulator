@@ -17,6 +17,7 @@ import edu.gwu.cs6461.sim.util.Convertor;
 /**
  * Memory class to store instructions and values
  */
+@Deprecated
 public class Memory extends Observable {
 	private Vector<Integer> Mem = new Vector<Integer>();
 	private int size = 8192;

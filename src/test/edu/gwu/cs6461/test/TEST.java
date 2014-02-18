@@ -2,6 +2,7 @@
 package edu.gwu.cs6461.test;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import edu.gwu.cs6461.sim.common.HardwarePart;
@@ -22,17 +23,31 @@ System.out.println(res);
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new TEST().testConvert();
+		int a =new TEST().testInteger();
+		
+		System.out.println(new TEST().testInteger());
+	}
+	
+	Integer testInteger() {
+		return null;
 	}
 	
 	
+	/**
+	 * 
+	 */
 	void testConvert(){
-		int val = 101;
+		int val = 5028;
+		String bin = Convertor.getUnSignedBinFromInt(val, 13);
+		System.out.println("in binary form:"+ bin);
 		
-		String bin = Convertor.getSignedBinFromInt(val, 8);
+		System.out.println("value form: "+Convertor.getSignedValFromBin(bin, 14));
 		
-		System.out.println(bin);
+
+		String []str = Convertor.bitToArray(bin);
+		System.out.println("len:"+str.length+":"+Arrays.asList(str));
 		
+		System.out.println(Integer.parseInt(bin,2));
 		
 	}
 	
@@ -63,6 +78,8 @@ System.out.println(res);
 //		}
 		
 		String bin = "11000000000000001000";
+		
+		
 		
 		System.out.println(Convertor.getSignedValFromBin(bin,20));
 		

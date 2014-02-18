@@ -1,6 +1,7 @@
 package edu.gwu.cs6461.sim.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -51,6 +52,8 @@ import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
+import edu.gwu.cs6461.sim.util.PropertiesLoader;
+import edu.gwu.cs6461.sim.util.PropertiesParser;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
 
 /**
@@ -167,7 +170,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	/**
 	 * Constructor:init GUI component; register GUi component event listeners
 	 */
-	public MainSimFrame(String title) {
+	public MainSimFrame(String title, boolean resizable) {
 		// setLayout(new MigLayout());
 
 		setTitle(title);
@@ -250,7 +253,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			}
 
 		});
-		setResizable(false);
+		setResizable(resizable);
 		setRegisterEditable(false);
 
 		setMemorySwitch(false);
@@ -331,7 +334,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		resetSimulator(false);
 
-		Memory.shareInstance().register(this);
+
 		reSetCPUController();
 	}
 
@@ -562,7 +565,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			// then if the the thread is dead and is not suspended,
 			// recreate the cpucontroller thread and
 			// set the debug model on and start the process
-			CPUController.recreateCPUController(true);
+			cpuController.recreateCPUController(true);
 			reSetCPUController();
 
 			if (model == 1) {
@@ -656,7 +659,6 @@ public class MainSimFrame extends JFrame implements Observer {
 		for (int i = 0; i <= sp; i++) {
 			key += " ";
 		}
-		logger.debug(":" + key + ':');
 		return key;
 	}
 
@@ -667,15 +669,13 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * @param val
 	 */
 	private void loadToLogicLayer(String dest, String val) {
-
 		// This val will be binary code string
 		Integer data = Integer.parseInt(val, 2);
-
 		HardwarePart dName = HardwarePart.fromName(dest);
 
 		if (dName == HardwarePart.MEMORY) {
 			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
-			Memory.shareInstance().setMem(addressLocation, data);
+			cpuController.setMemData(addressLocation, val);
 		} else if (dName == HardwarePart.R0) {
 			cpuController.RFtable.setR0(data);
 		} else if (dName == HardwarePart.R1) {
@@ -706,6 +706,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		cpuController.clearObserver();
 		cpuController.setRegisterObserver(MainSimFrame.this);
 		cpuController.setMainFrame(MainSimFrame.this);
+		
+		
 	}
 
 	/**
@@ -732,7 +734,7 @@ public class MainSimFrame extends JFrame implements Observer {
 				for (int i = HIGHESTBIT - numBit + 1; i <= HIGHESTBIT; i++) {
 					res += radBinData[i].isSelected() ? "1" : "0";
 				}
-				logger.debug("value from UI: " + res);
+				logger.debug("switch value from UI: " + res);
 
 				if (rName == HardwarePart.MEMORY && txtMemAdd.getText().isEmpty()) {
 
@@ -755,13 +757,24 @@ public class MainSimFrame extends JFrame implements Observer {
 				new Thread(new Runnable() {
 					public void run() {
 						try {
-							CPUController.recreateCPUController(false);
+							cpuController.recreateCPUController(false);
 							reSetCPUController();
 							Thread.sleep(200);
 							resetSimulator(true);
 							simConsole.info("Simulator started....");
+							
+							
+							//TODO should be load from IO console
+							PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+							String fileName = prop.getStringProperty("sim.programfilepath");
+							if (fileName != null && !"".equals(fileName)) {
+								cpuController.loadFromFile(fileName);
+								logger.debug("profile file "+fileName+" is loaded");
+							} else
+								logger.debug("profile file is not loaded");
+							
 						} catch (Exception e) {
-							e.printStackTrace();
+							logger.error("failed while initializing simulator.",e);
 						}
 					}
 				}).start();
@@ -770,14 +783,14 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			} else if (parent == btnTerminate) {
 				String ObjButtons[] = { "Yes", "No" };
-				int PromptResult = JOptionPane
+				int promptResult = JOptionPane
 						.showOptionDialog(
 								MainSimFrame.this,
 								"Are you sure you terminate simulator? All value will be reset.",
 								"Termination", JOptionPane.DEFAULT_OPTION,
 								JOptionPane.WARNING_MESSAGE, null, ObjButtons,
 								ObjButtons[1]);
-				if (PromptResult == 0) {
+				if (promptResult == 0) {
 					resetSimulator(false);
 					simConsole.info("Simulator terminated....");
 					resetMainCtrlBtn(false);
@@ -815,7 +828,10 @@ public class MainSimFrame extends JFrame implements Observer {
 				radBinData[i].setSelected(false);
 			}
 		}
+		
+		
 		String sel = (String) cboSwithOptions.getSelectedItem();
+		
 		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
 			txtMemAdd.setText("");
 		} else
@@ -907,6 +923,22 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (radBinData[i] != null) {
 				radBinData[i].setVisible(b);
 				lblBinPosInfo[i].setVisible(b);
+			}
+		}
+
+		
+		String sel = (String) cboSwithOptions.getSelectedItem();
+		if (HardwarePart.fromName(sel) == HardwarePart.IR) {
+			lblBinPosInfo[6].setForeground(Color.BLUE);
+			lblBinPosInfo[7].setForeground(Color.BLUE);
+			lblBinPosInfo[8].setForeground(Color.GREEN);
+			lblBinPosInfo[9].setForeground(Color.GREEN);
+			lblBinPosInfo[10].setForeground(Color.GRAY);
+			lblBinPosInfo[11].setForeground(Color.MAGENTA);
+			
+		} else {
+			for (int i = 6; i < 12; i++) {
+				lblBinPosInfo[i].setForeground(Color.BLACK);
 			}
 		}
 
@@ -1009,6 +1041,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		cboTESTAllInstr = new JComboBox<String>(reg);
 	}
+	
 	private class TESTComboActionListener implements ActionListener {
 
 		@Override

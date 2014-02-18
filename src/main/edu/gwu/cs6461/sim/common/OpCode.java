@@ -8,6 +8,8 @@ package edu.gwu.cs6461.sim.common;
  *
  */
 public enum OpCode {
+	HLT(1,"000000"),
+	TRAP(30,"011110"),
 	LDR(1,"000001"),
 	STR(2,"000010"),
 	LDA(3,"000011"),

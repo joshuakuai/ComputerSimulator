@@ -75,4 +75,13 @@ public class XF {
            return getX3();
         return -1;
     }
+	public int getSize(int XFI) {
+		if (XFI == 1)
+			return X1.getSize();
+		else if (XFI == 2)
+			return X2.getSize();
+		else if (XFI == 3)
+			return X3.getSize();
+		return -1;
+	}
 }

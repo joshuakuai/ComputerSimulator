@@ -7,6 +7,18 @@ package edu.gwu.cs6461.logic;
  * ALU calculation etc.
  * 
  */
+import static edu.gwu.cs6461.sim.common.SimConstants.FILE_COMMENT;
+import static edu.gwu.cs6461.sim.common.SimConstants.FILE_DATA_HEAD;
+import static edu.gwu.cs6461.sim.common.SimConstants.FILE_INSTRUCTION_HEAD;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+
+import edu.gwu.cs6461.logic.unit.MMU;
+import edu.gwu.cs6461.logic.unit.MainMemory;
 import edu.gwu.cs6461.sim.bridge.*;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.ui.*;
@@ -27,22 +39,23 @@ public class CPUController extends Thread {
 	public XF XFtable = new XF();
 	
 	public Control cpuControl = new Control();
-	public ALU ALU = new ALU();
-	public static CPUController instance = new CPUController();
+	private static CPUController instance = new CPUController();
 	
 	private boolean suspendflag = false;
 	private final static Logger logger = Logger.getLogger(CPUController.class);
 
 	// Keep a weak reference of mainSimFrame
 	private MainSimFrame mainFrame = null;
+	private MMU mmu = MMU.instance();
 
 	// CPU holds a weak reference of the memory but CPU doesn't own the memory
 	private CPUController() {
+		
 	}
 
 	//This recreates the cpu thread after an instruction is finished
 	//and a new one is started
-	public static void recreateCPUController(boolean isReserveData) {
+	public void recreateCPUController(boolean isReserveData) {
 		CPUController tmpController = new CPUController();
 		
 		if(isReserveData){
@@ -70,6 +83,10 @@ public class CPUController extends Thread {
 		}
 	}
 
+	public void setMemData(int address, String data){
+		mmu.setData(address, data);
+	}
+	
 	public void setMainFrame(MainSimFrame mf) {
 		mainFrame = mf;
 	}
@@ -81,7 +98,8 @@ public class CPUController extends Thread {
 		XFtable.clearObserver();
 		cpuControl.clearObserver();
 		CC.clear();
-		
+//		Memory.shareInstance().clear();
+		mmu.clearObserver();
 	}
 
 	public void setRegisterObserver(Observer obs) {
@@ -91,6 +109,8 @@ public class CPUController extends Thread {
 		XFtable.setRegisterObserver(obs);
 		cpuControl.setRegisterObserver(obs);
 		CC.register(obs);
+//		Memory.shareInstance().register(obs);
+		mmu.registerObserver(obs);
 	}
 
 	public void Suspend() {
@@ -107,6 +127,9 @@ public class CPUController extends Thread {
 		return suspendflag;
 	}
 
+	
+	
+	
 	public void run() {
 		logger.debug("CPU thread begins.");
 
@@ -120,7 +143,7 @@ public class CPUController extends Thread {
 
 		cpuControl.Decode(IRobject);
 		cpuControl.RunInstruction(IRobject, RFtable, XFtable,
-				Memory.shareInstance(), ALU,CC);
+				mmu, ALU.getInstance(),CC);
 
 		// PC+1 then loop the whole process(Phase 2)
 
@@ -129,4 +152,77 @@ public class CPUController extends Thread {
 
 		logger.debug("CPU thread ends.");
 	}
+
+
+	/**
+	 * load up program from file into memory
+	 * @param fileName
+	 */
+	public void loadFromFile(String fileName) {
+		FileInputStream fis = null;
+		BufferedReader br = null;
+		try {
+			File f = new File(fileName);
+			fis = new FileInputStream(f);
+			br = new BufferedReader(new FileReader(f));
+			
+			String line;
+			int instrPos = 100, dataPos = 150;
+			boolean currData = true;
+			boolean dheader = false,iheader = false;
+			while ((line = br.readLine()) != null) {
+				
+				if (line.startsWith(FILE_COMMENT) || "".equals(line.trim())) {
+					continue;
+				}
+				
+				int cmIdx = line.indexOf(FILE_COMMENT);
+				if (cmIdx> 1) {
+					line = line.substring(0, cmIdx);
+				}
+				line = line.trim();
+				
+				if (line.startsWith(FILE_DATA_HEAD)) {
+					int pos = line.indexOf(":");
+					if (pos >1) {
+						dataPos = Integer.parseInt(line.substring(pos+1));
+						logger.debug("save " + FILE_DATA_HEAD +" from " + dataPos);
+					}
+					currData = true;
+					dheader = true;
+				} else {
+					dheader = false;
+				}
+				if (line.startsWith(FILE_INSTRUCTION_HEAD)) {
+					int pos = line.indexOf(":");
+					if (pos >1) {
+						instrPos = Integer.parseInt(line.substring(pos+1));
+						logger.debug("save " + FILE_INSTRUCTION_HEAD +" from " + instrPos);
+					}
+					currData = false;
+					iheader = true;
+				} else {
+					iheader = false;
+				}
+			
+				if (currData && !dheader) {
+					mmu.setData(dataPos++, line);
+				} else if (!currData && !iheader) {
+					mmu.setInstr(instrPos++, line);
+				}
+			}
+			
+		} catch (IOException e) {
+			logger.error("failed to read file ",e);
+		} finally{
+			try {
+				fis.close();
+				br.close();
+			} catch (Exception e) { }
+		}
+	}
+
+
+
+
 }

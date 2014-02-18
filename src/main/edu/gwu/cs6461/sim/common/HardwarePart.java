@@ -24,7 +24,7 @@ public enum HardwarePart {
 	IR("IR",20),
 	PC("PC",13,false),
 	MEMORY("MEMORY",20),
-	RES("RES",13,false),
+	RES("RES",20,false),
 	NOTEXIST("NOTEXIST",-1,false);
 	
 	/**
