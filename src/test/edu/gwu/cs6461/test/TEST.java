@@ -23,14 +23,253 @@ System.out.println(res);
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int a =new TEST().testInteger();
+//		int a =new TEST().testInteger();
+		TEST tester = new TEST();
 		
-		System.out.println(new TEST().testInteger());
+		System.out.println("---------Division----");
+		tester.testDVD();
+		System.out.println("---------Multiply----");
+		tester.test2complementMlt();
+		System.out.println("---------subtraction----");
+		tester.test2complementSub();
+		System.out.println("---------Add-----------");
+		tester.test2complementAdd();
+		System.out.println("---------bit AND-----------");
+		tester.testANDOrOR("AND");
+		System.out.println("---------bit or -----------");
+		tester.testANDOrOR("OR");
+		System.out.println("--------Arithmetic Shift-----------");
+		tester.testShiftArith("left");
+		System.out.println("-----------");
+		tester.testShiftArith("right");
+		System.out.println("-------Rotate Left--------");
+		tester.testRRCLeft();
+		System.out.println("-------Rotate Right-------");
+		tester.testRRCRight();
+		System.out.println("-------Shift logical left-------");
+		tester.testLeftShiftLogical();
+		System.out.println("-------Shift logical right-------");
+		tester.testRightShiftLogical();
+		System.out.println("-------NOT-------");
+		tester.testNOT();
+		
 	}
 	
-	Integer testInteger() {
-		return null;
+	void testDVD(){
+		
+		int opt1 =100;
+		int opt2 = -32;
+		
+		int quotient = opt1 / opt2;
+		int remainder = opt1 % opt2;
+
+		System.out.println(opt1 +"/"+opt2 + " quotient:"+ quotient +" Remainder: "+ remainder);
+		System.out.println("quotient:"+ Convertor.getBinFromInt(quotient, 20) 
+				+" Remainder: "+ Convertor.getBinFromInt(remainder, 20));
 	}
+	
+	void get2sRange(int width){
+		
+		BigInteger range = (BigInteger.valueOf(2l).pow(width-1));
+		System.out.println( width + " bits range " + range.negate() +" -- "  + range.subtract(BigInteger.valueOf(1)));
+
+	}
+	
+	void test2complementMlt(){
+		String val13_1 = "01101";   //13
+		String val13_2 = "11010";   //-6
+		int width = val13_1.length();
+		
+		int opt1 = Convertor.getSignedValFromBin(val13_1, 5);
+		int opt2 = Convertor.getSignedValFromBin(val13_2, 5);
+		
+		int result = opt1 * opt2;
+		System.out.println(width +" bin: "+val13_1 +" x " +val13_2+ "=" + result);
+		System.out.println("Dec: "+opt1 +" x " +opt2 + "=" + result);
+		
+		String rstBin  = Convertor.getBinFromInt(result, width);
+		System.out.println(width +" res: "+rstBin);
+		System.out.println(width +" res: "+rstBin +" high order bits: ????????");//need to ask
+		System.out.println(width +" res: "+rstBin +" low order bits: ????????");
+		
+		
+		BigInteger range = (BigInteger.valueOf(2l).pow(width-1));
+		if (BigInteger.valueOf(result).compareTo(range) >= 0 || 
+				BigInteger.valueOf(result).compareTo(range.negate()) < 0) {
+			System.out.println("OVERFLOW! " + width + " bits range " + range.negate() +" -- "  + range.subtract(BigInteger.valueOf(1)));
+		}
+		
+	}
+	void test2complementAdd(){
+		String val13_1 = "1111110011011";   //-101
+		String val13_2 = "0000000001010";   //10
+		int width = val13_1.length();
+		
+		int opt1 = Convertor.getSignedValFromBin(val13_1, 13);
+		int opt2 = Convertor.getSignedValFromBin(val13_2, 13);
+		
+		int result = opt1 + opt2;
+		System.out.println(width+" bin: "+val13_1 +"+" +val13_2+ "=" + result);
+		System.out.println("Dec: "+opt1 +"+" +opt2 + "=" + result);
+		System.out.println(width+" res: "+Convertor.getBinFromInt(result, 13));
+	}
+	
+	void test2complementSub(){
+		String val13_1 = "1111110011011";   //-101
+		String val13_2 = "0000000001010";   //10
+		int width = val13_1.length();
+		
+		int opt1 = Convertor.getSignedValFromBin(val13_1, 13);
+		int opt2 = Convertor.getSignedValFromBin(val13_2, 13);
+		
+		int result = opt1 - opt2;
+		System.out.println(width+" bin: "+val13_1 +"-" +val13_2+ "=" + result);
+		System.out.println("Dec: "+opt1 +"-" +opt2 + "=" + result);
+		System.out.println(width+" res: "+Convertor.getBinFromInt(result, 13));
+	}
+	
+	void testANDOrOR(String operator){
+		String val20;
+		val20 = "10011110000011111111";
+		String val13 = "0000011001100";
+		
+		int iVal20 = Integer.parseInt(val20,2);
+		int iVal13 = Integer.parseInt(val13,2);
+		
+		int result;
+		if ("OR".equals(operator)) {
+			result = iVal20 | iVal13;
+		} else 
+			result = iVal20 & iVal13;
+		
+
+		System.out.println(val20);
+		System.out.println(pad(val13,20," "));
+		System.out.println(Convertor.getBinFromInt(result, 20));
+		
+	}
+	void testRRCRight() {
+		int shift = 8;
+		String val20 = "10010000000100000010";                         //string in binary
+		val20 = "10011110000011111111";
+
+		StringBuffer s = new StringBuffer(val20);
+		int lastPos = s.length();
+		for (int i = 0; i < shift; i++) {
+			char c = s.charAt(lastPos-1);
+			s.insert(0,c);
+			s.deleteCharAt(lastPos);
+		}
+		String result = s.toString();
+		System.out.println("val20: " + val20);
+		System.out.println("result:" + result );
+	}
+	
+	void testRRCLeft(){
+		int shift = 8;
+		String val20 = "10010000000100000010";                         //string in binary
+		val20 = "10011110000011111111";
+
+		StringBuffer s = new StringBuffer(val20);
+		for (int i = 0; i < shift; i++) {
+			char c = s.charAt(0);
+			s.append(c);
+			s.deleteCharAt(0);
+		}
+		String result = s.toString();
+		System.out.println("val20: " + val20);
+		System.out.println("result:" + result );
+	}
+	
+	void testShiftArith(String direction) {
+		int shift = 8;
+		String val20 = "10010000000100000010";                         //string in binary
+		val20 = "10011110000011111111";
+
+		int width = val20.length();
+		
+		int iVal = Integer.parseInt(val20,2);
+		
+		String signBit = val20.substring(0,1);
+		int result;
+		if ("right".equals(direction)) {
+			result = iVal >> shift;
+		} else
+			result = iVal << shift;
+			
+		String res19 = Convertor.getBinFromInt(result, width-1);
+		String res20 = signBit + res19;
+		System.out.println("val20:              "+ val20);
+		System.out.println("result " + pad(direction,5," ") +" shift: "+ res20);
+	}
+	
+	void testLeftShiftLogical() {
+		
+		int shift = 8;
+		String val20 = "10010000000100000010";                         //string in binary
+
+		StringBuilder sb = new StringBuilder(val20);
+		for (int i = 0; i < shift; i++) {
+			sb.append("0");
+			sb.deleteCharAt(0);
+		}
+		String result = sb.toString();
+		System.out.println("val20: " + val20);
+		System.out.println("result:" + result );
+	}
+
+	void testRightShiftLogical() {
+		
+		int shift = 8;
+		String val20 = "10010000000100000010";                         //string in binary
+
+
+		StringBuilder sb = new StringBuilder(val20);
+		int lastPos = sb.length();
+		for (int i = 0; i < shift; i++) {
+			sb.insert(0,"0");
+			sb.deleteCharAt(lastPos);
+		}
+		String result = sb.toString();
+		System.out.println("val20: " + val20);
+		System.out.println("result:" + result );
+	}
+	
+	void testNOT(){
+		
+		String val13 = "1001000000010";                         //string in binary
+		System.out.println(val13 +"=" + 
+					Convertor.getSignedValFromBin(val13, 13));  //1001000000010=-3582 
+		int iVal = Integer.parseInt(val13,2);   				//assign to 32 bit int
+		int result13 = ~iVal;                                   //Do a 'NOT' or one's complement  
+//		System.out.println("incorrect="+ result13);             //incorrect result -4611                   
+		
+		//toBinaryString always return unsigned 32 bits, we only take the bit we need
+		String sVal = Integer.toBinaryString(result13).substring(32-13); 
+		System.out.println(sVal +"="+Convertor.getSignedValFromBin(sVal, 13)); //0110111111101=3581
+	}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	/**
@@ -38,7 +277,7 @@ System.out.println(res);
 	 */
 	void testConvert(){
 		int val = 5028;
-		String bin = Convertor.getUnSignedBinFromInt(val, 13);
+		String bin = Convertor.getBinFromInt(val, 13);
 		System.out.println("in binary form:"+ bin);
 		
 		System.out.println("value form: "+Convertor.getSignedValFromBin(bin, 14));
@@ -141,6 +380,17 @@ System.out.println(res);
 		
 		
 	}
+	private static String pad(String val, int length, String padder){
+		if (val==null || "".equals(val) || val.length() >= length) {
+			return val;
+		}
+		int padLen = length-val.length();
+		for (int i = 0; i < padLen; i++) {
+			val = padder + val;
+		} 
+		
+		return val;
+	}	
 	
 	void testHex(){
 		int val = 0x100000;

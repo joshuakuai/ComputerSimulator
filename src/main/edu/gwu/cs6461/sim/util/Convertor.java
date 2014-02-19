@@ -87,7 +87,7 @@ public class Convertor {
 		return val;
 	}
 	
-	public static String getUnSignedBinFromInt(int iVal, int numOfBit) {
+	public static String getBinFromInt(int iVal, int numOfBit) {
 		return getSignedBinFromInt(iVal, numOfBit);
 		
 	}
