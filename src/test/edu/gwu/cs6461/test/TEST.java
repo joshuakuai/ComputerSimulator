@@ -11,6 +11,16 @@ import edu.gwu.cs6461.sim.util.Convertor;
 
 public class TEST {
 
+	
+	void testOverBit(){
+		int val = -8;
+		String sVal = Integer.toBinaryString(val);
+		sVal = Convertor.getBinFromInt(val, 20);
+		
+		System.out.println(Convertor.getSignedValFromBin(sVal, 20));
+		
+	}
+	
 	/**
 	 * 
 	 * 
@@ -18,7 +28,7 @@ public class TEST {
 	 * 
 	 * 
 	 * short res = (short)Integer.parseInt("1111111111001110", 2);
-System.out.println(res);
+		System.out.println(res);
 	 * 
 	 * @param args
 	 */
@@ -26,33 +36,35 @@ System.out.println(res);
 //		int a =new TEST().testInteger();
 		TEST tester = new TEST();
 		
-		System.out.println("---------Division----");
-		tester.testDVD();
-		System.out.println("---------Multiply----");
-		tester.test2complementMlt();
-		System.out.println("---------subtraction----");
-		tester.test2complementSub();
-		System.out.println("---------Add-----------");
-		tester.test2complementAdd();
-		System.out.println("---------bit AND-----------");
-		tester.testANDOrOR("AND");
-		System.out.println("---------bit or -----------");
-		tester.testANDOrOR("OR");
-		System.out.println("--------Arithmetic Shift-----------");
-		tester.testShiftArith("left");
-		System.out.println("-----------");
-		tester.testShiftArith("right");
-		System.out.println("-------Rotate Left--------");
-		tester.testRRCLeft();
-		System.out.println("-------Rotate Right-------");
-		tester.testRRCRight();
-		System.out.println("-------Shift logical left-------");
-		tester.testLeftShiftLogical();
-		System.out.println("-------Shift logical right-------");
-		tester.testRightShiftLogical();
-		System.out.println("-------NOT-------");
-		tester.testNOT();
+		tester.testOverBit();
 		
+//		System.out.println("---------Division----");
+//		tester.testDVD();
+//		System.out.println("---------Multiply----");
+//		tester.test2complementMlt();
+//		System.out.println("---------subtraction----");
+//		tester.test2complementSub();
+//		System.out.println("---------Add-----------");
+//		tester.test2complementAdd();
+//		System.out.println("---------bit AND-----------");
+//		tester.testANDOrOR("AND");
+//		System.out.println("---------bit or -----------");
+//		tester.testANDOrOR("OR");
+//		System.out.println("--------Arithmetic Shift-----------");
+//		tester.testShiftArith("left");
+//		System.out.println("-----------");
+//		tester.testShiftArith("right");
+//		System.out.println("-------Rotate Left--------");
+//		tester.testRRCLeft();
+//		System.out.println("-------Rotate Right-------");
+//		tester.testRRCRight();
+//		System.out.println("-------Shift logical left-------");
+//		tester.testLeftShiftLogical();
+//		System.out.println("-------Shift logical right-------");
+//		tester.testRightShiftLogical();
+//		System.out.println("-------NOT-------");
+//		tester.testNOT();
+//		
 	}
 	
 	void testDVD(){

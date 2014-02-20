@@ -101,9 +101,9 @@ public class ALU extends Observable {
 			currFlag = ALUFlags.NotReady;
 		}
 		
-		String op1="", op2="";
-		op1=Integer.toBinaryString(operand1);
-		op2=Integer.toBinaryString(operand2);
+		String op1 = "", op2 = "";
+		op1= Convertor.getBinFromInt(operand1, bitSize);;
+		op2= Convertor.getBinFromInt(operand2, bitSize);;
 		
 		int opt1 = Convertor.getSignedValFromBin(op1, bitSize);
 		int opt2 = Convertor.getSignedValFromBin(op2, bitSize);
@@ -132,9 +132,8 @@ public class ALU extends Observable {
 	@Deprecated
 	public void Calculate(int operand1, int operand2, int bitSize, int opcode, Register RES, Register CC) {
 		String op1="", op2="";
-		op1=Integer.toBinaryString(operand1);
-		op2=Integer.toBinaryString(operand2);
-		logger.debug("opt1:"+ op1+",opt2:"+ op2);
+		op1= Convertor.getBinFromInt(operand1, bitSize);;
+		op2= Convertor.getBinFromInt(operand2, bitSize);;
 		
 		int opt1 = Convertor.getSignedValFromBin(op1, bitSize);
 		int opt2 = Convertor.getSignedValFromBin(op2, bitSize);
@@ -149,9 +148,9 @@ public class ALU extends Observable {
 		}
 		
 		int ret=0; 
-		if ("+".equals(operation)) {
+		if ("+".equals(operation.getOpt())) {
 			ret = opt1+opt2;
-		} else if ("-".equals(operation)) {
+		} else if ("-".equals(operation.getOpt())) {
 			ret = opt1-opt2;
 		}
 		if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
