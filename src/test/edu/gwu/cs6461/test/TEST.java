@@ -7,6 +7,7 @@ import java.util.StringTokenizer;
 
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
+import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.util.Convertor;
 
 public class TEST {
@@ -33,15 +34,12 @@ public class TEST {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		int a =new TEST().testInteger();
+
 		TEST tester = new TEST();
-		
-		tester.testOverBit();
-		
+		System.out.println("---------Multiply----");
+		tester.test2complementMlt_2();
 //		System.out.println("---------Division----");
 //		tester.testDVD();
-//		System.out.println("---------Multiply----");
-//		tester.test2complementMlt();
 //		System.out.println("---------subtraction----");
 //		tester.test2complementSub();
 //		System.out.println("---------Add-----------");
@@ -67,10 +65,18 @@ public class TEST {
 //		
 	}
 	
+	void testTRR(){
+		
+	}
+	
 	void testDVD(){
 		
 		int opt1 =100;
 		int opt2 = -32;
+
+		if (opt2 == 0) {
+			System.out.println("DIVZERO! ");	
+		}
 		
 		int quotient = opt1 / opt2;
 		int remainder = opt1 % opt2;
@@ -87,6 +93,67 @@ public class TEST {
 
 	}
 	
+	/**
+	 * 
+	 * Reference <br>
+	 * http://csc.columbusstate.edu/woolbright/Instructions/MULTREG.pdf
+	 * 
+	 */
+	void test2complementMlt_2(){
+		String val20_1 = "01111111111111111111";   //524287
+		String valxx_2 = "11111111111111111101";   //-3
+		valxx_2 = "11";   //3
+		valxx_2 = "10";   //2
+		valxx_2 = "10";   //-2
+//		valxx_2 = "111110";
+		valxx_2 = "0111111111";   //511
+		
+		System.out.println("Start ............");
+		int width = val20_1.length();
+		int widthOp2 = valxx_2.length();
+		
+		int opt1 = Convertor.getSignedValFromBin(val20_1, width); // get the twos value in given width
+		int opt2 = Convertor.getSignedValFromBin(valxx_2, widthOp2);  // get the twos value in given width
+
+		int result = opt1 * opt2;
+		System.out.println(width +" bit: "+val20_1 +" x " +valxx_2+ "=" + Integer.toBinaryString(result) );
+		System.out.println(width +" bit: "+val20_1 +" x " +valxx_2+ "=" + Convertor.display(result) );
+		System.out.println("Dec: "+opt1 +" x " +opt2 + "=" + result);
+		
+		//get the low order bit
+		int iMask = result & SimConstants.BIN_MASK_20;  // get the lower order bits
+		String lowOrderBit = Convertor.getBinFromInt(iMask, SimConstants.WORD_SIZE);   //low order bit in String
+		int lowBitVal  = Convertor.getSignedValFromBin(lowOrderBit, SimConstants.WORD_SIZE); //low order bit in value
+		if (lowBitVal < 0) {
+			lowBitVal = lowBitVal + SimConstants.WORD_UNSIGN_VALUE; //since there is high order bit, it is not real -ve number
+		}
+
+		//get the high order bit
+		result >>= SimConstants.WORD_SIZE;          //singed shift to keep the sign bit
+		iMask = result & SimConstants.BIN_MASK_20;
+		String highOrderBit = Convertor.getBinFromInt(iMask, SimConstants.WORD_SIZE);  //high order bit in String
+		int highBitVal = Convertor.getSignedValFromBin(highOrderBit, SimConstants.WORD_SIZE); //high order bit in value
+		highBitVal *= SimConstants.WORD_UNSIGN_VALUE; //because 20bit higher, enlarge to reflect its value
+		
+		//get the result
+		int finalResult = highBitVal + lowBitVal;
+		System.out.println("low order bit: " + lowOrderBit + ","+ lowBitVal);
+		System.out.println("high order bit: " + highOrderBit + ","+ highBitVal);
+		System.out.println("the result:"+  finalResult );
+		
+		//check overflow		
+		BigInteger range = (BigInteger.valueOf(2l).pow(SimConstants.WORD_SIZE-1));
+		if (BigInteger.valueOf(finalResult).compareTo(range) >= 0 || 
+				BigInteger.valueOf(finalResult).compareTo(range.negate()) < 0) {
+			System.out.println("OVERFLOW! " + SimConstants.WORD_SIZE + " bits range " + range.negate() +" -- "  + range.subtract(BigInteger.valueOf(1)));
+		}
+		
+	}	
+	
+	/**
+	 * 
+	 */
+	@Deprecated
 	void test2complementMlt(){
 		String val13_1 = "01101";   //13
 		String val13_2 = "11010";   //-6

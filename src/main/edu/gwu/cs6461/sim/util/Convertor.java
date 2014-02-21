@@ -105,4 +105,19 @@ public class Convertor {
 		return bits;
 
 	}
+	
+	
+	public static String  display(int value) {
+		String str="",tmp;
+		int displayMask = 1 << 31;
+		for (int bit = 1; bit <= 32; bit++) {
+			str += (value & displayMask) == 0 ? "0" : "1";
+
+			value <<= 1; 
+
+		} // end for
+		
+		return str;
+	} // end method display	
+	
 }
