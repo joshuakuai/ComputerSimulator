@@ -102,8 +102,8 @@ public class ALU extends Observable {
 		}
 		
 		String op1 = "", op2 = "";
-		op1= Convertor.getBinFromInt(operand1, bitSize);;
-		op2= Convertor.getBinFromInt(operand2, bitSize);;
+		op1= Convertor.getBinFromInt(operand1, bitSize);
+		op2= Convertor.getBinFromInt(operand2, bitSize);
 		
 		int opt1 = Convertor.getSignedValFromBin(op1, bitSize);
 		int opt2 = Convertor.getSignedValFromBin(op2, bitSize);
@@ -126,11 +126,11 @@ public class ALU extends Observable {
 	
 	
 	@Deprecated
-	public void Calculate(int operand1, int operand2, int opcode, Register RES, Register CC) {
-		Calculate(operand1, operand2, SimConstants.WORD_SIZE, opcode, RES, CC);
+	public void Calculate(int operand1, int operand2, int opcode, Register RES, Register CC, Register RES2, Multiply Multi) {
+		Calculate(operand1, operand2, SimConstants.WORD_SIZE, opcode, RES, CC, RES2, Multi);
 	}
 	@Deprecated
-	public void Calculate(int operand1, int operand2, int bitSize, int opcode, Register RES, Register CC) {
+	public void Calculate(int operand1, int operand2, int bitSize, int opcode, Register RES, Register CC, Register RES2, Multiply Multi) {
 		String op1="", op2="";
 		op1= Convertor.getBinFromInt(operand1, bitSize);;
 		op2= Convertor.getBinFromInt(operand2, bitSize);;
@@ -143,26 +143,56 @@ public class ALU extends Observable {
 		//check the opcode to decide what arithmetic operation to be done
 		if (OpCode.fromCode(opcode) == OpCode.AMR || OpCode.fromCode(opcode) == OpCode.AIR)
 			operation = ALUOperator.Addition;
-		else if (OpCode.fromCode(opcode) == OpCode.SMR || OpCode.fromCode(opcode) == OpCode.SIR){
+		else if (OpCode.fromCode(opcode) == OpCode.SMR || OpCode.fromCode(opcode) == OpCode.SIR)
 			operation = ALUOperator.Subtraction;
-		}
-		
+		else if (OpCode.fromCode(opcode) == OpCode.MLT)
+			operation = ALUOperator.Multiply;
+		else if (OpCode.fromCode(opcode) == OpCode.DVD)
+			operation = ALUOperator.Division;
+				
 		int ret=0; 
 		if ("+".equals(operation.getOpt())) {
 			ret = opt1+opt2;
 		} else if ("-".equals(operation.getOpt())) {
 			ret = opt1-opt2;
 		}
+
 		if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
-			setCC(ConditionCode.OVERFLOW.getCode(),CC);
-		} else {
+			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
+		} 
+		else {
+			setCC(ConditionCode.NORMAL.getCode(),CC);
+		}
+		//set RES for subtract, add, multiply
+		RES.setData(ret);
+		
+		if("/".equals(operation.getOpt())){
+			if(opt2!=0){
+				RES.setData(opt1/opt2);
+				RES2.setData(opt1%opt2);
+			}
+			else
+				setCC(ConditionCode.DIVZERO.getCode(),CC);
+		}
+		if ("*".equals(operation.getOpt())){
+			multiply(opt1, opt2, CC,Multi);
+		}
+		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);	
+	}
+	public void multiply(int opt1, int opt2, Register CC, Multiply Multi){
+		long resultMLT=0;		
+		
+		resultMLT=1L*(long)opt1*(long)opt2;
+		logger.debug("Res MLT="+resultMLT);		
+		
+		if (resultMLT > SimConstants.WORD_MAX_VALUE || resultMLT < SimConstants.WORD_MIN_VALUE) {
+			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
+		} 
+		else {
 			setCC(ConditionCode.NORMAL.getCode(),CC);
 		}
 		
-		RES.setData(ret);
-		
-		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);
-		
+		Multi.setResult(resultMLT);
 	}
 	public void setCC(int Value, Register CC) {
 		CC.setData(Value);

@@ -227,7 +227,7 @@ public class TEST {
 		}
 		String result = sb.toString();
 		System.out.println("val20: " + val20);
-		System.out.println("result:" + result );
+		System.out.println("result:" + result);
 	}
 
 	void testRightShiftLogical() {

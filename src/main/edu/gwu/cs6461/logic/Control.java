@@ -14,7 +14,9 @@ import edu.gwu.cs6461.sim.common.ALUFlags;
 import edu.gwu.cs6461.sim.common.ALUOperator;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.HardwarePart;
+import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.MemoryException;
+import edu.gwu.cs6461.sim.util.Convertor;
 
 /**
  * This class has the main logic that calls the different classes needed to finish an instruction.
@@ -33,8 +35,9 @@ public class Control {
 
 	
 	//from ALU calculation
-	@Deprecated private Register RES = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
-	
+	private Register RES = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
+	private Register RES2 = new Register(HardwarePart.RES.getBit(),"RES2");
+	private Multiply Multi = new Multiply(40,"Multi");
 	public Control(){
 	}
 	//create observer for them to be updated to GUI
@@ -63,8 +66,9 @@ public class Control {
 	 *the instruction functions.
 	 * @run depending on the opcode from IR the right instruction is called
 	*/
-	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, MMU Mem,
-			ALU ALU, Register CC) {
+	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, MMU Mem, ALU ALU, Register CC, Register PC) 
+	{
+		int OpCode=IRobject.getOpCode();
 		if (IRobject.getOpCode() == 1)
 			LDR(IRobject, RFtable, XFtable, Mem, CC);
 		else if (IRobject.getOpCode() == 2)
@@ -83,6 +87,38 @@ public class Control {
 			LDX(IRobject, XFtable, Mem);
 		else if (IRobject.getOpCode() == 42)
 			STX(IRobject, XFtable, Mem);
+		else if(OpCode==20)
+			MLT(IRobject, RFtable,ALU,CC);
+		else if(OpCode==21)
+			DVD(IRobject,RFtable,ALU,CC);
+		else if(OpCode==22)
+			TRR(IRobject,RFtable,CC);
+		else if(OpCode==23)
+			AND(IRobject,RFtable);
+		else if(OpCode==24)
+			ORR(IRobject,RFtable);
+		else if(OpCode==25)
+			NOT(IRobject,RFtable);
+		else if(OpCode==31)
+			SRC(IRobject,RFtable);
+		else if(OpCode==32)
+			RRC(IRobject,RFtable);
+		else if(OpCode==10)
+			JZ(IRobject,RFtable,XFtable, Mem, PC);
+		else if(OpCode==11)
+			JNE(IRobject,RFtable,XFtable, Mem, PC);
+		else if(OpCode==12)
+			JCC(IRobject,XFtable, Mem, CC, PC);
+		else if(OpCode==13)
+			JMP(IRobject,XFtable, Mem, PC);
+		else if(OpCode==14)
+			JSR(IRobject,RFtable,XFtable, Mem, PC);
+		else if(OpCode==15)
+			RFS(IRobject,RFtable, PC);
+		else if(OpCode==16)
+			SOB(IRobject,RFtable,XFtable, Mem, PC);
+		else if(OpCode==10)
+			JGE(IRobject,RFtable,XFtable, Mem, PC);
 	}
 	/** 
 	 * @param IRobject IR object with decoded instruction
@@ -189,8 +225,7 @@ public class Control {
 		}
 		//send General Register as operand1 and MDR value(memory value)
 		//as operand2 two to ALU.
-		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
-				IRobject.getOpCode(), RES,CC);
+		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),	IRobject.getOpCode(), RES,CC,RES2, Multi);
 		//if CC register is 0 it means the calculation was ok with no errors
 		//so put the ALU result in the general Register selected
 		if(CC.getData()==ConditionCode.NORMAL.getCode()){
@@ -272,7 +307,7 @@ public class Control {
 		//send General Register as operand1 and MDR value(memory value)
 		//as operand2 two to ALU.
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
-				IRobject.getOpCode(), RES,CC);
+				IRobject.getOpCode(), RES,CC,RES2, Multi);
 		//if CC register is 0 it means the calculation was ok with no errors
 		//so put the ALU result in the general Register selected
 		if(CC.getData()==ConditionCode.NORMAL.getCode()){
@@ -306,7 +341,7 @@ public class Control {
 			// ALU: add the register to the immediate and put back the value in the
 			// register
 			ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
-					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
+					IRobject.getImmed(), IRobject.getOpCode(), RES, CC, RES2, Multi);
 			//if CC register is 0 it means the calculation was ok with no errors
 			//so put the ALU result in the general Register selected
 			if(CC.getData()==ConditionCode.NORMAL.getCode()){
@@ -338,7 +373,7 @@ public class Control {
 			// ALU: subtract the register from the immediate and put back the value in the
 			// register
 			ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
-					IRobject.getImmed(), IRobject.getOpCode(), RES, CC);
+					IRobject.getImmed(), IRobject.getOpCode(), RES, CC, RES2,Multi);
 			//if CC register is 0 it means the calculation was ok with no errors
 			//so put the ALU result in the general Register selected
 			if(CC.getData()==ConditionCode.NORMAL.getCode()){
@@ -434,11 +469,411 @@ public class Control {
 			try {
 				MDR.setData(Mem.getDataFromMem(MAR.getData()));
 			} catch (MemoryException e) {
-				logger.error("failed to get data from memory: " + e.getMessage(), e);
+				logger.error("failed to send data to memory: " + e.getMessage(), e);
 			}
 			MAR.setData(MDR.getData());
 			xfi = IRobject.getXFI();
 			Mem.setData(MAR.getData(), XFtable.getSwitch(xfi), XFtable.getSize(xfi));
 		}
 	}
+	public void MLT(IR IRobject, RF RFtable, ALU ALU, Register CC){
+		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), RFtable.getSwitch(IRobject.getRFI2()),IRobject.getOpCode(), RES, CC, RES2, Multi);
+		logger.debug("MLT="+Multi.getResult());
+		
+		String result = Long.toString(Multi.getResult(),2);
+		int upperhalf=0;
+		int lowerhalf=0;
+		if(CC.getData()==ConditionCode.OVERFLOW.getCode()){
+			if (result.length()>20){
+				upperhalf= Integer.parseInt(result.substring(0,result.length()-20),2);
+				lowerhalf=Integer.parseInt(result.substring(result.length()-20),2);
+				RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
+				RFtable.setSwitch(IRobject.getRFI1()+1, lowerhalf);
+			}
+		}else if (CC.getData()==ConditionCode.NORMAL.getCode()){			
+				upperhalf= 0;
+				lowerhalf=Integer.parseInt(result.substring(0, 20),2);	
+				RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
+				RFtable.setSwitch(IRobject.getRFI1()+1, lowerhalf);
+		}
+		logger.debug("HIGHbit="+upperhalf+"  LOWERbit="+lowerhalf);			
+	}
+	public void DVD(IR IRobject, RF RFtable, ALU ALU, Register CC){
+		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), RFtable.getSwitch(IRobject.getRFI2()),IRobject.getOpCode(), RES, CC, RES2, Multi);
+		if(CC.getData()==ConditionCode.NORMAL.getCode()){			
+			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+			RFtable.setSwitch(IRobject.getRFI1()+1, RES2.getData());
+		}		
+	}
+	public void TRR(IR IRobject, RF RFtable,Register CC){
+		String op1 = "", op2 = "";
+		op1= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()), SimConstants.WORD_SIZE);
+		op2= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI2()), SimConstants.WORD_SIZE);		
+		int opt1 = Convertor.getSignedValFromBin(op1, SimConstants.WORD_SIZE);
+		int opt2 = Convertor.getSignedValFromBin(op2, SimConstants.WORD_SIZE);
+		//
+		if(opt1 == opt2){
+			CC.setData(ConditionCode.EQUALORNOT.getCode());
+		}
+		else
+			CC.setData(0);
+	}
+	public void AND(IR IRobject, RF RFtable){
+		String op1 = "", op2 = "";
+		op1= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()), SimConstants.WORD_SIZE);
+		op2= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI2()), SimConstants.WORD_SIZE);		
+		int opt1 = Convertor.getSignedValFromBin(op1, SimConstants.WORD_SIZE);
+		int opt2 = Convertor.getSignedValFromBin(op2, SimConstants.WORD_SIZE);
+		//
+		RES.setData(opt1 & opt2);
+		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+	}
+	public void ORR(IR IRobject, RF RFtable){
+		String op1 = "", op2 = "";
+		op1= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()), SimConstants.WORD_SIZE);
+		op2= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI2()), SimConstants.WORD_SIZE);		
+		int opt1 = Convertor.getSignedValFromBin(op1, SimConstants.WORD_SIZE);
+		int opt2 = Convertor.getSignedValFromBin(op2, SimConstants.WORD_SIZE);
+		//
+		RES.setData(opt1 | opt2);
+		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+	}
+	public void NOT(IR IRobject, RF RFtable){
+		String op1 = "";
+		op1= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()), SimConstants.WORD_SIZE);		
+		int opt1 = Convertor.getSignedValFromBin(op1, SimConstants.WORD_SIZE);
+		//
+		RES.setData(~opt1);
+		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+	}
+	public void SRC(IR IRobject, RF RFtable){
+		int count=IRobject.getCount();
+		int LogicArithmetic=IRobject.getLogicalorArithmetic();
+		int LeftRight=IRobject.getLeftorRight();
+		//
+		if(count!=0){
+			String op1 = "";
+			op1= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()), SimConstants.WORD_SIZE);		
+			StringBuilder sb = new StringBuilder(op1);
+			//
+			if(LogicArithmetic==1){
+				if(LeftRight==1)
+				for (int i=0; i<count;i++){
+					sb.append("0");
+					sb.deleteCharAt(0);
+					logger.debug("Left="+sb);
+				}
+				if(LeftRight==0){
+					int lastPos = sb.length();
+					for (int i=0; i<count;i++){
+						sb.insert(0,"0");
+						sb.deleteCharAt(lastPos);
+						logger.debug("Right="+sb);
+					}
+				}
+				RES.setData(Integer.parseInt(sb.toString(), 2));
+			}
+			else if (LogicArithmetic==0){
+				int width = op1.length();
+					
+				int iVal = Integer.parseInt(op1,2);
+					
+				String signBit = op1.substring(0,1);
+				int result=0;
+					//
+				if(LeftRight==1){
+					result = iVal << count;
+					logger.debug("left a="+result);
+				}
+				else if(LeftRight==0){
+					result = iVal >> count;		
+					logger.debug("Right a="+Integer.toString(result,2));
+				}				
+				String res19 = Convertor.getBinFromInt(result, width-1);
+				String res20 = signBit + res19;
+					
+				RES.setData(Integer.parseInt(res20, 2));
+			}
+			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+		}
+		//else if count is zero do nothing
+	}
+	public void RRC(IR IRobject, RF RFtable){
+		int count=IRobject.getCount();
+		int LeftRight=IRobject.getLeftorRight();
+		//
+		if(count!=0){
+			String op1 = "";
+			op1= Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()), SimConstants.WORD_SIZE);		
+			StringBuffer s = new StringBuffer(op1);
+			int lastPos = s.length();
+			if(LeftRight==0){
+				for (int i = 0; i < count; i++) {
+					char c = s.charAt(lastPos-1);
+					s.insert(0,c);
+					s.deleteCharAt(lastPos);
+				}
+			logger.debug("Rot Right="+s.toString());
+			}
+			if(LeftRight==1){
+				for (int i = 0; i < count; i++) {
+					char c = s.charAt(0);
+					s.append(c);
+					s.deleteCharAt(0);
+				}
+			logger.debug("Rot Left="+s.toString());
+			}
+			//
+			RES.setData(Integer.parseInt(s.toString(), 2));
+			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
+		}
+	}
+	/////////////////////////////////////////////
+	//////////////////////////////////////////////
+	public void JZ(IR IRobject,RF RFtable,XF XFtable, MMU Mem,Register PC ){
+		if(RFtable.getSwitch(IRobject.getRFI1())==0){
+			MAR.setData(IRobject.getAddress());
+			if(XFtable.getSize(IRobject.getXFI())!=0){
+				if (IRobject.getXFI() != 0) {
+					if (IRobject.getXFI() == 1) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 2) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 3) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					}
+				}				
+			}
+			//if indirect bit is enabled get the memory content 
+			//of MAR address and put it in MDR then copy MDR into MAR
+			if (IRobject.getIndirect() == 1) {			
+				try {
+					MDR.setData(Mem.getDataFromMem(MAR.getData()));
+					MAR.setData(MDR.getData());
+				} catch (MemoryException e){
+					logger.error("failed to get data from memory: " + e.getMessage(), e);
+				}			
+			}		
+			PC.setData(MAR.getData());
+			logger.debug("PC JZ="+PC.getData());
+		}
+		//////////////////////////
+		else
+			PC.setData(PC.getData()+1);
+	}
+	//////
+	public void JNE(IR IRobject,RF RFtable,XF XFtable, MMU Mem,Register PC ){
+		if(RFtable.getSwitch(IRobject.getRFI1())!=0){
+			MAR.setData(IRobject.getAddress());
+			if(XFtable.getSize(IRobject.getXFI())!=0){
+				if (IRobject.getXFI() != 0) {
+					if (IRobject.getXFI() == 1) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 2) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 3) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					}
+				}				
+			}
+			//if indirect bit is enabled get the memory content 
+			//of MAR address and put it in MDR then copy MDR into MAR
+			if (IRobject.getIndirect() == 1) {			
+				try {
+					MDR.setData(Mem.getDataFromMem(MAR.getData()));
+					MAR.setData(MDR.getData());
+				} catch (MemoryException e){
+					logger.error("failed to get data from memory: " + e.getMessage(), e);
+				}			
+			}		
+			PC.setData(MAR.getData());
+			logger.debug("PC JNE="+PC.getData());
+		}
+		//////////////////////////
+		else
+			PC.setData(PC.getData()+1);
+	}
+	public void JCC(IR IRobject,XF XFtable, MMU Mem,Register CC,Register PC ){
+		if(CC.getData()==1){
+			MAR.setData(IRobject.getAddress());
+			if(XFtable.getSize(IRobject.getXFI())!=0){
+				if (IRobject.getXFI() != 0) {
+					if (IRobject.getXFI() == 1) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 2) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 3) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					}
+				}				
+			}
+			//if indirect bit is enabled get the memory content 
+			//of MAR address and put it in MDR then copy MDR into MAR
+			if (IRobject.getIndirect() == 1) {			
+				try {
+					MDR.setData(Mem.getDataFromMem(MAR.getData()));
+					MAR.setData(MDR.getData());
+				} catch (MemoryException e){
+					logger.error("failed to get data from memory: " + e.getMessage(), e);
+				}			
+			}		
+			PC.setData(MAR.getData());
+			logger.debug("PC JCC="+PC.getData());
+		}
+		//////////////////////////
+		else
+			PC.setData(PC.getData()+1);
+	}
+	public void JMP(IR IRobject,XF XFtable, MMU Mem,Register PC ){		
+		MAR.setData(IRobject.getAddress());
+		if(XFtable.getSize(IRobject.getXFI())!=0){
+			if (IRobject.getXFI() != 0) {
+				if (IRobject.getXFI() == 1) {
+					RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+					MAR.setData(RES.getData());
+				} else if (IRobject.getXFI() == 2) {
+					RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+					MAR.setData(RES.getData());
+				} else if (IRobject.getXFI() == 3) {
+					RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+					MAR.setData(RES.getData());
+				}
+			}				
+		}
+		//if indirect bit is enabled get the memory content 
+		//of MAR address and put it in MDR then copy MDR into MAR
+		if (IRobject.getIndirect() == 1) {			
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+				MAR.setData(MDR.getData());
+			} catch (MemoryException e){
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}			
+		}		
+		PC.setData(MAR.getData());
+		logger.debug("PC JMP="+PC.getData());
+		
+	}
+	public void JSR(IR IRobject,RF RFtable, XF XFtable, MMU Mem,Register PC ){
+		//save PC+1 into R3
+		RFtable.setR3(PC.getData()+1);
+		
+		MAR.setData(IRobject.getAddress());
+		if(XFtable.getSize(IRobject.getXFI())!=0){
+			if (IRobject.getXFI() != 0) {
+				if (IRobject.getXFI() == 1) {
+					RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+					MAR.setData(RES.getData());
+				} else if (IRobject.getXFI() == 2) {
+					RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+					MAR.setData(RES.getData());
+				} else if (IRobject.getXFI() == 3) {
+					RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+					MAR.setData(RES.getData());
+				}
+			}				
+		}
+		//if indirect bit is enabled get the memory content 
+		//of MAR address and put it in MDR then copy MDR into MAR
+		if (IRobject.getIndirect() == 1) {			
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+				MAR.setData(MDR.getData());
+			} catch (MemoryException e){
+				logger.error("failed to get data from memory: " + e.getMessage(), e);
+			}			
+		}		
+		PC.setData(MAR.getData());
+		logger.debug("PC JMP="+PC.getData());
+		
+	}
+	public void RFS(IR IRobject,RF RFtable,Register PC ){
+		RFtable.setR0(IRobject.getImmed());
+		PC.setData(RFtable.getR3());
+	}
+	public void SOB(IR IRobject,RF RFtable,XF XFtable, MMU Mem,Register PC ){
+		//subtract 1 from the selected general register
+		int RegValue=RFtable.getSwitch(IRobject.getRFI1()) - 1;
+		RFtable.setSwitch(IRobject.getRFI1(), RegValue );
+		//check if the selected general register is greater than zero
+		//if true put effective address or content of effective address
+		//in PC
+		if(RFtable.getSwitch(IRobject.getRFI1())>0){
+			MAR.setData(IRobject.getAddress());
+			if(XFtable.getSize(IRobject.getXFI())!=0){
+				if (IRobject.getXFI() != 0) {
+					if (IRobject.getXFI() == 1) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 2) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 3) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					}
+				}				
+			}
+			//if indirect bit is enabled get the memory content 
+			//of MAR address and put it in MDR then copy MDR into MAR
+			if (IRobject.getIndirect() == 1) {			
+				try {
+					MDR.setData(Mem.getDataFromMem(MAR.getData()));
+					MAR.setData(MDR.getData());
+				} catch (MemoryException e){
+					logger.error("failed to get data from memory: " + e.getMessage(), e);
+				}			
+			}		
+			PC.setData(MAR.getData());
+			logger.debug("PC JGE="+PC.getData());
+		}
+		//Increment the PC by 1
+		else
+			PC.setData(PC.getData()+1);
+	}
+	public void JGE(IR IRobject,RF RFtable,XF XFtable, MMU Mem,Register PC ){
+		if(RFtable.getSwitch(IRobject.getRFI1())>=0){
+			MAR.setData(IRobject.getAddress());
+			if(XFtable.getSize(IRobject.getXFI())!=0){
+				if (IRobject.getXFI() != 0) {
+					if (IRobject.getXFI() == 1) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 2) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					} else if (IRobject.getXFI() == 3) {
+						RES.setData(IRobject.getAddress() + XFtable.getSwitch(IRobject.getXFI()));
+						MAR.setData(RES.getData());
+					}
+				}				
+			}
+			//if indirect bit is enabled get the memory content 
+			//of MAR address and put it in MDR then copy MDR into MAR
+			if (IRobject.getIndirect() == 1) {			
+				try {
+					MDR.setData(Mem.getDataFromMem(MAR.getData()));
+					MAR.setData(MDR.getData());
+				} catch (MemoryException e){
+					logger.error("failed to get data from memory: " + e.getMessage(), e);
+				}			
+			}		
+			PC.setData(MAR.getData());
+			logger.debug("PC JGE="+PC.getData());
+		}
+		//////////////////////////
+		else
+			PC.setData(PC.getData()+1);
+	}
+		
+	
 }
