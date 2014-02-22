@@ -107,6 +107,7 @@ public class TEST {
 		valxx_2 = "10";   //-2
 //		valxx_2 = "111110";
 		valxx_2 = "0111111111";   //511
+		valxx_2 = "01111111111111111111";  //524287
 		
 		System.out.println("Start ............");
 		int width = val20_1.length();
@@ -115,14 +116,13 @@ public class TEST {
 		int opt1 = Convertor.getSignedValFromBin(val20_1, width); // get the twos value in given width
 		int opt2 = Convertor.getSignedValFromBin(valxx_2, widthOp2);  // get the twos value in given width
 
-		int result = opt1 * opt2;
-		System.out.println(width +" bit: "+val20_1 +" x " +valxx_2+ "=" + Integer.toBinaryString(result) );
-		System.out.println(width +" bit: "+val20_1 +" x " +valxx_2+ "=" + Convertor.display(result) );
+		long result = (long)opt1 * (long)opt2;
+		System.out.println(width +" bit: "+val20_1 +" x " +valxx_2+ "=" + Long.toBinaryString(result) );
 		System.out.println("Dec: "+opt1 +" x " +opt2 + "=" + result);
 		
 		//get the low order bit
-		int iMask = result & SimConstants.BIN_MASK_20;  // get the lower order bits
-		String lowOrderBit = Convertor.getBinFromInt(iMask, SimConstants.WORD_SIZE);   //low order bit in String
+		long iMask = result & SimConstants.BIN_MASK_20;  // get the lower order bits
+		String lowOrderBit = Convertor.getBinFromInt((int)iMask, SimConstants.WORD_SIZE);   //low order bit in String
 		int lowBitVal  = Convertor.getSignedValFromBin(lowOrderBit, SimConstants.WORD_SIZE); //low order bit in value
 		if (lowBitVal < 0) {
 			lowBitVal = lowBitVal + SimConstants.WORD_UNSIGN_VALUE; //since there is high order bit, it is not real -ve number
@@ -131,12 +131,12 @@ public class TEST {
 		//get the high order bit
 		result >>= SimConstants.WORD_SIZE;          //singed shift to keep the sign bit
 		iMask = result & SimConstants.BIN_MASK_20;
-		String highOrderBit = Convertor.getBinFromInt(iMask, SimConstants.WORD_SIZE);  //high order bit in String
-		int highBitVal = Convertor.getSignedValFromBin(highOrderBit, SimConstants.WORD_SIZE); //high order bit in value
+		String highOrderBit = Convertor.getBinFromInt((int)iMask, SimConstants.WORD_SIZE);  //high order bit in String
+		long highBitVal = Convertor.getSignedValFromBin(highOrderBit, SimConstants.WORD_SIZE); //high order bit in value
 		highBitVal *= SimConstants.WORD_UNSIGN_VALUE; //because 20bit higher, enlarge to reflect its value
 		
 		//get the result
-		int finalResult = highBitVal + lowBitVal;
+		long finalResult = highBitVal + lowBitVal;
 		System.out.println("low order bit: " + lowOrderBit + ","+ lowBitVal);
 		System.out.println("high order bit: " + highOrderBit + ","+ highBitVal);
 		System.out.println("the result:"+  finalResult );
