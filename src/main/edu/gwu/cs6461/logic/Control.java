@@ -66,59 +66,68 @@ public class Control {
 	 *the instruction functions.
 	 * @run depending on the opcode from IR the right instruction is called
 	*/
-	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, MMU Mem, ALU ALU, Register CC, Register PC) 
+	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, MMU Mem, ALU ALU, Register CC, Register PC, Register MFR) 
 	{
 		int OpCode=IRobject.getOpCode();
-		if (IRobject.getOpCode() == 1)
-			LDR(IRobject, RFtable, XFtable, Mem, CC);
-		else if (IRobject.getOpCode() == 2)
-			STR(IRobject, RFtable, XFtable, Mem);
-		else if (IRobject.getOpCode() == 3)
-			LDA(IRobject, RFtable, XFtable, Mem);
-		else if (IRobject.getOpCode() == 4)
-			AMR(IRobject, RFtable, XFtable, Mem, ALU,CC);
-		else if (IRobject.getOpCode() == 5)
-			SMR(IRobject, RFtable, XFtable, Mem, ALU,CC);
-		else if (IRobject.getOpCode() == 6)
-			AIR(IRobject, RFtable, ALU,CC);
-		else if (IRobject.getOpCode() == 7)
-			SIR(IRobject, RFtable, ALU, CC);
-		else if (IRobject.getOpCode() == 41)
-			LDX(IRobject, XFtable, Mem);
-		else if (IRobject.getOpCode() == 42)
-			STX(IRobject, XFtable, Mem);
-		else if(OpCode==20)
-			MLT(IRobject, RFtable,ALU,CC);
-		else if(OpCode==21)
-			DVD(IRobject,RFtable,ALU,CC);
-		else if(OpCode==22)
-			TRR(IRobject,RFtable,CC);
-		else if(OpCode==23)
-			AND(IRobject,RFtable);
-		else if(OpCode==24)
-			ORR(IRobject,RFtable);
-		else if(OpCode==25)
-			NOT(IRobject,RFtable);
-		else if(OpCode==31)
-			SRC(IRobject,RFtable);
-		else if(OpCode==32)
-			RRC(IRobject,RFtable);
-		else if(OpCode==10)
-			JZ(IRobject,RFtable,XFtable, Mem, PC);
-		else if(OpCode==11)
-			JNE(IRobject,RFtable,XFtable, Mem, PC);
-		else if(OpCode==12)
-			JCC(IRobject,XFtable, Mem, CC, PC);
-		else if(OpCode==13)
-			JMP(IRobject,XFtable, Mem, PC);
-		else if(OpCode==14)
-			JSR(IRobject,RFtable,XFtable, Mem, PC);
-		else if(OpCode==15)
-			RFS(IRobject,RFtable, PC);
-		else if(OpCode==16)
-			SOB(IRobject,RFtable,XFtable, Mem, PC);
-		else if(OpCode==10)
-			JGE(IRobject,RFtable,XFtable, Mem, PC);
+		if(OpCode ==1 || OpCode==2 || OpCode==3||OpCode==4||OpCode==5||OpCode==6||OpCode==7||OpCode==41||OpCode==42||OpCode==20
+			||OpCode==21||OpCode==22||OpCode==23||OpCode==24||OpCode==25||OpCode==31||OpCode==32||OpCode==10
+			||OpCode==11||OpCode==12||OpCode==13|OpCode==14||OpCode==15||OpCode==16||OpCode==17){
+			
+			Decode(IRobject);
+			if (IRobject.getOpCode() == 1)
+				LDR(IRobject, RFtable, XFtable, Mem, CC);
+			else if (IRobject.getOpCode() == 2)
+				STR(IRobject, RFtable, XFtable, Mem);
+			else if (IRobject.getOpCode() == 3)
+				LDA(IRobject, RFtable, XFtable, Mem);
+			else if (IRobject.getOpCode() == 4)
+				AMR(IRobject, RFtable, XFtable, Mem, ALU,CC);
+			else if (IRobject.getOpCode() == 5)
+				SMR(IRobject, RFtable, XFtable, Mem, ALU,CC);
+			else if (IRobject.getOpCode() == 6)
+				AIR(IRobject, RFtable, ALU,CC);
+			else if (IRobject.getOpCode() == 7)
+				SIR(IRobject, RFtable, ALU, CC);
+			else if (IRobject.getOpCode() == 41)
+				LDX(IRobject, XFtable, Mem);
+			else if (IRobject.getOpCode() == 42)
+				STX(IRobject, XFtable, Mem);
+			else if(OpCode==20)
+				MLT(IRobject, RFtable,ALU,CC);
+			else if(OpCode==21)
+				DVD(IRobject,RFtable,ALU,CC);
+			else if(OpCode==22)
+				TRR(IRobject,RFtable,CC);
+			else if(OpCode==23)
+				AND(IRobject,RFtable);
+			else if(OpCode==24)
+				ORR(IRobject,RFtable);
+			else if(OpCode==25)
+				NOT(IRobject,RFtable);
+			else if(OpCode==31)
+				SRC(IRobject,RFtable);
+			else if(OpCode==32)
+				RRC(IRobject,RFtable);
+			else if(OpCode==10)
+				JZ(IRobject,RFtable,XFtable, Mem, PC);
+			else if(OpCode==11)
+				JNE(IRobject,RFtable,XFtable, Mem, PC);
+			else if(OpCode==12)
+				JCC(IRobject,XFtable, Mem, CC, PC);
+			else if(OpCode==13)
+				JMP(IRobject,XFtable, Mem, PC);
+			else if(OpCode==14)
+				JSR(IRobject,RFtable,XFtable, Mem, PC);
+			else if(OpCode==15)
+				RFS(IRobject,RFtable, PC);
+			else if(OpCode==16)
+				SOB(IRobject,RFtable,XFtable, Mem, PC);
+			else if(OpCode==17)
+				JGE(IRobject,RFtable,XFtable, Mem, PC);
+		}
+		else{
+			MFR.setData(2);
+		}
 	}
 	/** 
 	 * @param IRobject IR object with decoded instruction

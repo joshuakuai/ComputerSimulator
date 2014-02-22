@@ -31,6 +31,7 @@ public class CPUController extends Thread {
 	public IR IRobject = new IR();
 	public Register PC = new Register(HardwarePart.PC.getBit(),HardwarePart.PC.getName());
 	public Register CC = new Register(HardwarePart.CC.getBit(),HardwarePart.CC.getName());
+	public Register MFR =  new Register(HardwarePart.MFR.getBit(),HardwarePart.MFR.getName());
 	//Debug register when set run program in single step mode
 	public Register SS = new Register(1,"SS");
 	
@@ -66,6 +67,7 @@ public class CPUController extends Thread {
 			tmpController.PC = instance.PC;
 			tmpController.cpuControl = instance.cpuControl;
 			tmpController.CC=instance.CC;
+			tmpController.MFR=instance.MFR;
 		}
 		
 		instance = tmpController;
@@ -98,6 +100,7 @@ public class CPUController extends Thread {
 		XFtable.clearObserver();
 		cpuControl.clearObserver();
 		CC.clear();
+		MFR.clear();
 //		Memory.shareInstance().clear();
 		mmu.clearObserver();
 	}
@@ -109,6 +112,7 @@ public class CPUController extends Thread {
 		XFtable.setRegisterObserver(obs);
 		cpuControl.setRegisterObserver(obs);
 		CC.register(obs);
+		MFR.register(obs);
 //		Memory.shareInstance().register(obs);
 		mmu.registerObserver(obs);
 	}
@@ -141,8 +145,8 @@ public class CPUController extends Thread {
 			cpuControl.FetchIR(PC.getData(), IRobject);
 		}
 
-		cpuControl.Decode(IRobject);
-		cpuControl.RunInstruction(IRobject, RFtable, XFtable, mmu, ALU.getInstance(),CC, PC);
+		//cpuControl.Decode(IRobject);
+		cpuControl.RunInstruction(IRobject, RFtable, XFtable, mmu, ALU.getInstance(),CC, PC, MFR);
 
 		// PC+1 then loop the whole process(Phase 2)
 

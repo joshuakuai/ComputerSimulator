@@ -618,6 +618,8 @@ public class MainSimFrame extends JFrame implements Observer {
 			txtPC.setText(val);
 		} else if (dName == HardwarePart.IR) {
 			txtIR.setText(val);
+		} else if (dName == HardwarePart.MFR) {
+			txtMFR.setText(val);
 		} else if (dName == HardwarePart.MEMORY) {
 			String key = vals[0];
 			val = vals[1];
@@ -861,6 +863,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtCC.setEditable(b);
 		txtIR.setEditable(b);
 		txtPC.setEditable(b);
+		txtMFR.setEditable(b);
 
 	}
 
@@ -879,6 +882,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtCC.setText("");
 		txtIR.setText("");
 		txtPC.setText("");
+		txtMFR.setText("");
 		cboSwithOptions.setSelectedIndex(mainSwitchIdx);
 		clearSwitches(LOWESTBIT, HIGHESTBIT);
 		setSwitchesEditable(LOWESTBIT, HIGHESTBIT, isStart );
