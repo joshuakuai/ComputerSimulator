@@ -68,7 +68,7 @@ public class Control {
 	*/
 	public void RunInstruction(IR IRobject, RF RFtable, XF XFtable, MMU Mem, ALU ALU, Register CC, Register PC, Register MFR) 
 	{
-		int OpCode=IRobject.getOpCode();
+		int OpCode=Integer.parseInt(IRobject.getIRstring().substring(0, 6),2);
 		if(OpCode ==1 || OpCode==2 || OpCode==3||OpCode==4||OpCode==5||OpCode==6||OpCode==7||OpCode==41||OpCode==42||OpCode==20
 			||OpCode==21||OpCode==22||OpCode==23||OpCode==24||OpCode==25||OpCode==31||OpCode==32||OpCode==10
 			||OpCode==11||OpCode==12||OpCode==13|OpCode==14||OpCode==15||OpCode==16||OpCode==17){
@@ -501,7 +501,7 @@ public class Control {
 			}
 		}else if (CC.getData()==ConditionCode.NORMAL.getCode()){			
 				upperhalf= 0;
-				lowerhalf=Integer.parseInt(result.substring(0, 20),2);	
+				lowerhalf=Integer.parseInt(result.substring(0),2);	
 				RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
 				RFtable.setSwitch(IRobject.getRFI1()+1, lowerhalf);
 		}
