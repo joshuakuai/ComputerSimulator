@@ -124,6 +124,10 @@ public class CPUController extends Thread {
 			cpuControl.Decode();
 
 			cpuControl.RunInstruction();
+			
+			if (registerContainer.SI.getData() == 1 && this.isAlive()) {
+				this.Suspend();
+			}
 		}
 		
 		// Finish all instructions, show message to user to let it know

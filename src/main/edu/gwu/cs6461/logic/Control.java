@@ -37,7 +37,6 @@ public class Control {
 	private Register PC = null;
 	private Register CC = null;
 	private Register MFR = null;
-	private Register SS = null;
 	private RF RFtable = null;
 	private XF XFtable = null;
 	private Register MAR = null;
@@ -65,7 +64,6 @@ public class Control {
 		PC = registerContainer.PC;
 		CC = registerContainer.CC;
 		MFR = registerContainer.MFR;
-		SS = registerContainer.SS;
 		RFtable = registerContainer.RFtable;
 		XFtable = registerContainer.XFtable;
 		MAR = registerContainer.MAR;

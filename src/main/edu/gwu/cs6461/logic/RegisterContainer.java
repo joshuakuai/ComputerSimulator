@@ -11,8 +11,12 @@ public class RegisterContainer {
 	public Register PC = new Register(HardwarePart.PC.getBit(),HardwarePart.PC.getName());
 	public Register CC = new Register(HardwarePart.CC.getBit(),HardwarePart.CC.getName());
 	public Register MFR =  new Register(HardwarePart.MFR.getBit(),HardwarePart.MFR.getName());
+	
 	//Debug register when set run program in single step mode
 	public Register SS = new Register(1,"SS");
+	
+	//Debug register when set run program in single instruction mode
+	public Register SI = new Register(1,"SI");
 	
 	//create RF and XF tables
 	public RF RFtable = new RF();

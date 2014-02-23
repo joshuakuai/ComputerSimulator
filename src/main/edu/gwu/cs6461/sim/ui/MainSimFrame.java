@@ -536,7 +536,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			} else if (parent == btnSingleStep) {
 				beginCPUProcessWithModel(1);
 			}  else if (parent == btnSingleInstr) {
-				logger.debug("step instruction");
+				beginCPUProcessWithModel(2);
 			}  else if (parent == btnHalt) {
 				logger.debug("step Halt ");
 			}
@@ -548,12 +548,12 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * signal the back-end logic to run the instruction till the end or
 	 * run as single step mode
 	 * 
-	 * @param Model, 0: Run 1: Single Step
+	 * @param Model, 0: Run 1: Single Step 2: Single Instruction
 	 */
 	private void beginCPUProcessWithModel(int model) {
-		if (model == 1 && cpuController.isAlive()
+		if ((model == 1 || model == 2) && cpuController.isAlive()
 				&& cpuController.isSuspended()) {
-			// For Single step model
+			// For Single step model or single instruction
 			// If this thread is alive and is suspended, the button will
 			// resume the thread
 			cpuController.Resume();
@@ -570,8 +570,13 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			if (model == 1) {
 				cpuController.registerContainer.SS.setData(1);
+				cpuController.registerContainer.SI.setData(0);
 			}else if(model == 0){
 				cpuController.registerContainer.SS.setData(0);
+				cpuController.registerContainer.SI.setData(0);
+			}else if(model == 2){
+				cpuController.registerContainer.SS.setData(0);
+				cpuController.registerContainer.SI.setData(1);
 			}
 
 			cpuController.start();
@@ -708,8 +713,6 @@ public class MainSimFrame extends JFrame implements Observer {
 		cpuController.clearObserver();
 		cpuController.setRegisterObserver(MainSimFrame.this);
 		cpuController.setMainFrame(MainSimFrame.this);
-		
-		
 	}
 
 	/**
