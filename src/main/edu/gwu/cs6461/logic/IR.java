@@ -136,8 +136,9 @@ public class IR extends Register {
 		Trace = TraceNew;
 	}
 	
-	public void seIRstring(String IRstring){
-		super.setData(Integer.parseInt(IRstring,2));
+	public void setIRstring(String IRstring){
+		this.setData(Integer.parseInt(IRstring,2));
+				
 		this.IRstring = IRstring;
 	}
 
@@ -145,7 +146,7 @@ public class IR extends Register {
 	 * *****Checking functions********************
 	 */
 	public boolean isEmpty() {
-		if (IRstring == null || "".equals(IRstring.trim())) {
+		if (IRstring == null || "".equals(IRstring.trim()) || this.getData() == 0) {
 			return true;
 		}
 		return false;

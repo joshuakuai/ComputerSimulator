@@ -26,32 +26,31 @@ import edu.gwu.cs6461.sim.ui.*;
 import org.apache.log4j.Logger;
 
 public class CPUController extends Thread {
-	//Create registers that are shared between the different
-	//cpu classes
-	public IR IRobject = new IR();
-	public Register PC = new Register(HardwarePart.PC.getBit(),HardwarePart.PC.getName());
-	public Register CC = new Register(HardwarePart.CC.getBit(),HardwarePart.CC.getName());
-	public Register MFR =  new Register(HardwarePart.MFR.getBit(),HardwarePart.MFR.getName());
-	//Debug register when set run program in single step mode
-	public Register SS = new Register(1,"SS");
+	//Initial Registers
+	public RegisterContainer registerContainer = new RegisterContainer();
+
+	//Memory unit
+	private MMU mmu = MMU.instance();
 	
-	//create RF and XF tables
-	public RF RFtable = new RF();
-	public XF XFtable = new XF();
-	
+	//Logic control
 	public Control cpuControl = new Control();
+	
+	//Singleton instance
 	private static CPUController instance = new CPUController();
 	
+	//Thread suspend flag
 	private boolean suspendflag = false;
+	
 	private final static Logger logger = Logger.getLogger(CPUController.class);
 
 	// Keep a weak reference of mainSimFrame
 	private MainSimFrame mainFrame = null;
-	private MMU mmu = MMU.instance();
 
 	// CPU holds a weak reference of the memory but CPU doesn't own the memory
 	private CPUController() {
-		
+		cpuControl.setALU(ALU.getInstance());
+		cpuControl.setMem(mmu);
+		cpuControl.setRegisters(registerContainer);
 	}
 
 	//This recreates the cpu thread after an instruction is finished
@@ -60,14 +59,8 @@ public class CPUController extends Thread {
 		CPUController tmpController = new CPUController();
 		
 		if(isReserveData){
-			tmpController.IRobject = instance.IRobject;
-			tmpController.RFtable = instance.RFtable;
-			tmpController.XFtable = instance.XFtable;
-			tmpController.SS = instance.SS;
-			tmpController.PC = instance.PC;
+			tmpController.registerContainer = instance.registerContainer;
 			tmpController.cpuControl = instance.cpuControl;
-			tmpController.CC=instance.CC;
-			tmpController.MFR=instance.MFR;
 		}
 		
 		instance = tmpController;
@@ -80,7 +73,7 @@ public class CPUController extends Thread {
 
 	// Suspend is deprecated but we'll still use it
 	public void checkSingleStepModel() {
-		if (SS.getData() == 1 && this.isAlive()) {
+		if (registerContainer.SS.getData() == 1 && this.isAlive()) {
 			this.Suspend();
 		}
 	}
@@ -94,27 +87,13 @@ public class CPUController extends Thread {
 	}
 	
 	public void clearObserver(){
-		PC.clear();
-		IRobject.clear();
-		RFtable.clearObserver();
-		XFtable.clearObserver();
-		cpuControl.clearObserver();
-		CC.clear();
-		MFR.clear();
-//		Memory.shareInstance().clear();
 		mmu.clearObserver();
+		registerContainer.clearAllRegistersObserver();
 	}
 
 	public void setRegisterObserver(Observer obs) {
-		PC.register(obs);
-		IRobject.register(obs);
-		RFtable.setRegisterObserver(obs);
-		XFtable.setRegisterObserver(obs);
-		cpuControl.setRegisterObserver(obs);
-		CC.register(obs);
-		MFR.register(obs);
-//		Memory.shareInstance().register(obs);
 		mmu.registerObserver(obs);
+		registerContainer.registerObserver(obs);
 	}
 
 	public void Suspend() {
@@ -130,29 +109,26 @@ public class CPUController extends Thread {
 	public boolean isSuspended() {
 		return suspendflag;
 	}
-
-	
-	
 	
 	public void run() {
 		logger.debug("CPU thread begins.");
 
-		// For the first time we begin the process, we'll check if the IR is
-		// empty or not
-		// TODO:If the IR is Empty then fetch the instruction from the
-		// memory(Phase 2)
-		if (IRobject.isEmpty()) {
-			cpuControl.FetchIR(PC.getData(), IRobject);
+		while(true){
+			//Fetch the IR
+			cpuControl.FetchIR();
+			
+			if(registerContainer.IRobject.isEmpty()){
+				break;
+			}
+			
+			cpuControl.Decode();
+
+			cpuControl.RunInstruction();
 		}
-
-		//cpuControl.Decode(IRobject);
-		cpuControl.RunInstruction(IRobject, RFtable, XFtable, mmu, ALU.getInstance(),CC, PC, MFR);
-
-		// PC+1 then loop the whole process(Phase 2)
-
+		
 		// Finish all instructions, show message to user to let it know
 		mainFrame.showProgrameFinishDialog();
-
+	
 		logger.debug("CPU thread ends.");
 	}
 

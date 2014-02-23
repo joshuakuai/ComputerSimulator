@@ -569,9 +569,9 @@ public class MainSimFrame extends JFrame implements Observer {
 			reSetCPUController();
 
 			if (model == 1) {
-				cpuController.SS.setData(1);
+				cpuController.registerContainer.SS.setData(1);
 			}else if(model == 0){
-				cpuController.SS.setData(0);
+				cpuController.registerContainer.SS.setData(0);
 			}
 
 			cpuController.start();
@@ -679,27 +679,27 @@ public class MainSimFrame extends JFrame implements Observer {
 			Integer addressLocation = Integer.parseInt(txtMemAdd.getText());
 			cpuController.setMemData(addressLocation, val);
 		} else if (dName == HardwarePart.R0) {
-			cpuController.RFtable.setR0(data);
+			cpuController.registerContainer.RFtable.setR0(data);
 		} else if (dName == HardwarePart.R1) {
-			cpuController.RFtable.setR1(data);
+			cpuController.registerContainer.RFtable.setR1(data);
 		} else if (dName == HardwarePart.R2) {
-			cpuController.RFtable.setR2(data);
+			cpuController.registerContainer.RFtable.setR2(data);
 		} else if (dName == HardwarePart.R3) {
-			cpuController.RFtable.setR3(data);
+			cpuController.registerContainer.RFtable.setR3(data);
 		} else if (dName == HardwarePart.X1) {
-			cpuController.XFtable.setX1(data);
+			cpuController.registerContainer.XFtable.setX1(data);
 		} else if (dName == HardwarePart.X2) {
-			cpuController.XFtable.setX2(data);
+			cpuController.registerContainer.XFtable.setX2(data);
 		} else if (dName == HardwarePart.X3) {
-			cpuController.XFtable.setX3(data);
+			cpuController.registerContainer.XFtable.setX3(data);
 		} else if (dName == HardwarePart.MAR) {
-			cpuController.cpuControl.MAR.setData(data);
+			cpuController.registerContainer.MAR.setData(data);
 		} else if (dName == HardwarePart.MDR) {
-			cpuController.cpuControl.MDR.setData(data);
+			cpuController.registerContainer.MDR.setData(data);
 		} else if (dName == HardwarePart.PC) {
-			cpuController.PC.setData(data);
+			cpuController.registerContainer.PC.setData(data);
 		} else if (dName == HardwarePart.IR) {
-			cpuController.IRobject.seIRstring(val);
+			cpuController.registerContainer.IRobject.setIRstring(val);
 		}
 	}
 	
@@ -765,7 +765,6 @@ public class MainSimFrame extends JFrame implements Observer {
 							resetSimulator(true);
 							simConsole.info("Simulator started....");
 							
-							
 							//TODO should be load from IO console
 							PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 							String fileName = prop.getStringProperty("sim.programfilepath");
@@ -775,6 +774,7 @@ public class MainSimFrame extends JFrame implements Observer {
 							} else
 								logger.debug("profile file is not loaded");
 							
+							
 						} catch (Exception e) {
 							logger.error("failed while initializing simulator.",e);
 						}
@@ -782,6 +782,9 @@ public class MainSimFrame extends JFrame implements Observer {
 				}).start();
 				simConsole.info("Simulator starting....");
 				resetMainCtrlBtn(true);
+				
+				//TODO:We need to define the initial PC value
+				cpuController.registerContainer.PC.setData(10);
 
 			} else if (parent == btnTerminate) {
 				String ObjButtons[] = { "Yes", "No" };
