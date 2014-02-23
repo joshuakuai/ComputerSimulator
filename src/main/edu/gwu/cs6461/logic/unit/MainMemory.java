@@ -1,16 +1,8 @@
 package edu.gwu.cs6461.logic.unit;
 
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_COMMENT;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_DATA_HEAD;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_INSTRUCTION_HEAD;
 import static edu.gwu.cs6461.sim.common.SimConstants.MEMORY_ADDRESS_LIMIT;
 import static edu.gwu.cs6461.sim.common.SimConstants.WORD_SIZE;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,7 +27,6 @@ public class MainMemory extends Observable{
 	private static MainMemory memory = new MainMemory();
 	
 	private int numOfbank = 8;
-
 	public static MainMemory getInstance(){ 
 		return memory;
 	}
@@ -43,7 +34,7 @@ public class MainMemory extends Observable{
 	private MainMemory() {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 		numOfbank = prop.getIntProperty("sim.mem.numberofbank", 8);
-		logger.debug("numOfBank :"+ numOfbank);
+		logger.debug("numOfBank in main memory :"+ numOfbank);
 		
 		contentInBank = new TreeMap<>();
 		int bank=0;
@@ -69,16 +60,17 @@ public class MainMemory extends Observable{
 		private int address=0;
 		private MemoryType type = MemoryType.INSTR;// instruction or data
 		private String data = "";// in binary form
-		private int size = 0; //data may use 13 bit as the size
-		private Entry(MemoryType type, String data, int address, int size) {
+		private int size = WORD_SIZE; //data may use 13 bit as the size
+		protected Entry(MemoryType type, String data, int address, int size) {
 			this.type =type;
 			this.address = address;
 			this.data = data;
 			this.size = size;
 		}
-		private Entry(MemoryType type, String data, int address) {
-			this(type, data, address,WORD_SIZE);
+		protected Entry(MemoryType type, String data, int address) {
+			this(type, data, address, WORD_SIZE);
 		}
+		protected Entry(){}
 		public void setType(MemoryType type){this.type = type;}
 		public MemoryType getType() {return type;}
 		public void setData(String data) {this.data = data;	}
@@ -89,13 +81,11 @@ public class MainMemory extends Observable{
 		public void setSize(int size) {this.size = size;}
 		public int getSize() {return size;}
 		public boolean isData(){
-			if (type == MemoryType.DATA) {
-				return true;
+			if (type == MemoryType.DATA) { return true;
 			} return false;
 		}
 		public boolean isInstr(){
-			if (type == MemoryType.INSTR) {
-				return true;
+			if (type == MemoryType.INSTR) {return true;
 			} return false;
 		}
 	}
@@ -140,12 +130,12 @@ public class MainMemory extends Observable{
 			Entry d =contentInBank.get(bank).get(address);
 			d.setData(data);
 			d.setType(MemoryType.INSTR);
-			logger.info("instr memory update, bank:" + bank +", address:"+ address);
+			logger.info("instruction memory updated, bank:" + bank +", address:"+ address);
 			
 			publishUpdate(address, data);
 			
 		} else{
-			logger.error("invalid instr memory address " + address + " in bank " + bank);
+			logger.error("invalid instruction memory address " + address + " in bank " + bank);
 		}
 		
 	}
@@ -182,7 +172,7 @@ public class MainMemory extends Observable{
 		int bank = address % numOfbank;
 		if (contentInBank.get(bank) != null) {
 			Entry d =contentInBank.get(bank).get(address);
-			logger.info("memory "+d.type+" retrieval, bank:" + bank +", address:"+ address);
+			logger.debug("memory "+d.type+" retrieval, bank:" + bank +", address:"+ address);
 			return d;
 		}
 		return null;
@@ -218,84 +208,4 @@ public class MainMemory extends Observable{
 	}
 	
 	
-	@Deprecated
-	private void loadFromFile(String fileName) {
-		FileInputStream fis = null;
-		BufferedReader br = null;
-		try {
-			File f = new File(fileName);
-			fis = new FileInputStream(f);
-			br = new BufferedReader(new FileReader(f));
-			
-			String line;
-			int instrPos = 100, dataPos = 150;
-			boolean currData = true;
-			boolean dheader = false,iheader = false;
-			while ((line = br.readLine()) != null) {
-				
-				if (line.startsWith(FILE_COMMENT) || "".equals(line.trim())) {
-					continue;
-				}
-				
-				int cmIdx = line.indexOf(FILE_COMMENT);
-				if (cmIdx> 1) {
-					line = line.substring(0, cmIdx);
-				}
-				line = line.trim();
-				
-				if (line.startsWith(FILE_DATA_HEAD)) {
-					int pos = line.indexOf(":");
-					if (pos >1) {
-						dataPos = Integer.parseInt(line.substring(pos+1));
-						logger.debug("save " + FILE_DATA_HEAD +" from " + dataPos);
-					}
-					currData = true;
-					dheader = true;
-				} else {
-					dheader = false;
-				}
-				if (line.startsWith(FILE_INSTRUCTION_HEAD)) {
-					int pos = line.indexOf(":");
-					if (pos >1) {
-						instrPos = Integer.parseInt(line.substring(pos+1));
-						logger.debug("save " + FILE_INSTRUCTION_HEAD +" from " + instrPos);
-					}
-					currData = false;
-					iheader = true;
-				} else {
-					iheader = false;
-				}
-			
-				if (currData && !dheader) {
-					setData(dataPos++, line);
-				} else if (!currData && !iheader) {
-					setInstr(instrPos++, line);
-				}
-			}
-			
-		} catch (IOException e) {
-			logger.error("failed to read file ",e);
-		} finally{
-			try {
-				fis.close();
-				br.close();
-			} catch (Exception e) { }
-		}
-	}
-	
-	public static void main(String[] args) {
-		String fileName = "D:/java_stuff/githome/ComputerSimulator/src/main/edu/gwu/cs6461/logic/unit/program1.txt";
-		fileName = "bin/program1.txt";
-		MainMemory.getInstance().loadFromFile(fileName);
-		
-		Iterator<Entry> iter = MainMemory.getInstance().iterator();
-		
-		while (iter.hasNext()) {
-			Entry string = iter.next();
-			
-			System.out.println(string);
-			
-		}
-		
-	}
 }

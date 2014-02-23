@@ -3,7 +3,8 @@ package edu.gwu.cs6461.test;
 
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
@@ -34,10 +35,49 @@ public class TEST {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
 		TEST tester = new TEST();
+		tester.testMap();
+	}
+
+	void testMap(){
+		LinkedHashMap<Integer, String>link = new LinkedHashMap<>();
+		
+		link.put(10,"1");
+		link.put(1,"1");
+		link.put(5,"1");
+		link.put(3,"1");
+		System.out.println(link);
+		
+		String val = link.remove(1);
+		link.put(1, val);
+
+		System.out.println(link);
+		Set<Integer>keys = link.keySet();
+		System.out.println(keys);
+		
+		Integer[] array = keys.toArray(new Integer[0]);
+		
+		link.remove(array[0]);
+		System.out.println(link +":"+link.size()) ;
+		
+	}
+	
+	void testmask(){
+		
+		int net = 4385;
+		
+		int iMask = net & 0b11111111111111111111; 
+		System.out.println(iMask);
+		System.out.println(Convertor.display(iMask));		
+		System.out.println(Integer.toBinaryString(iMask));
+		
+	}
+	
+	
+	
+	void instrTest() {
 		System.out.println("---------Multiply----");
-		tester.test2complementMlt_2();
+		test2complementMlt_2();
 //		System.out.println("---------Division----");
 //		tester.testDVD();
 //		System.out.println("---------subtraction----");

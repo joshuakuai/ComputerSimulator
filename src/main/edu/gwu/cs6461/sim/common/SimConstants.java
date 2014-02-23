@@ -13,4 +13,5 @@ public class SimConstants {
 	
 	
 	public static final int MEMORY_ADDRESS_LIMIT = 8192;
+	public static final int MEMORY_ADDRESS_SPACE = 13;
 }
