@@ -145,7 +145,7 @@ public class CPUController extends Thread {
 			cpuControl.FetchIR(PC.getData(), IRobject);
 		}
 
-		cpuControl.Decode(IRobject);
+//		cpuControl.Decode(IRobject);
 		cpuControl.RunInstruction(IRobject, RFtable, XFtable, mmu, ALU.getInstance(),CC, PC, MFR);
 
 		// PC+1 then loop the whole process(Phase 2)
