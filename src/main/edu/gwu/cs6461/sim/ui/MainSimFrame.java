@@ -225,15 +225,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String ObjButtons[] = { "Yes", "No" };
-				int PromptResult = JOptionPane.showOptionDialog(
-						MainSimFrame.this, "Are you sure you want to exit?",
-						"Simualtor", JOptionPane.DEFAULT_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
-						ObjButtons[1]);
-				if (PromptResult == 0) {
-					System.exit(0);
-				}
+				promptExit();
 			}
 		});
 
@@ -241,17 +233,8 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				String ObjButtons[] = { "Yes", "No" };
-				int PromptResult = JOptionPane.showOptionDialog(
-						MainSimFrame.this, "Are you sure you want to exit?",
-						"Simualtor", JOptionPane.DEFAULT_OPTION,
-						JOptionPane.WARNING_MESSAGE, null, ObjButtons,
-						ObjButtons[1]);
-				if (PromptResult == 0) {
-					System.exit(0);
-				}
+				promptExit();
 			}
-
 		});
 		setResizable(resizable);
 		setRegisterEditable(false);
@@ -265,6 +248,17 @@ public class MainSimFrame extends JFrame implements Observer {
 		});
 
 	}
+	private void promptExit() {
+		String ObjButtons[] = { "Yes", "No" };
+		int PromptResult = JOptionPane.showOptionDialog(
+				MainSimFrame.this, "Are you sure you want to exit?",
+				"Simualtor", JOptionPane.DEFAULT_OPTION,
+				JOptionPane.WARNING_MESSAGE, null, ObjButtons,
+				ObjButtons[1]);
+		if (PromptResult == 0) {
+			System.exit(0);
+		}
+	}
 
 	/**
 	 * Create and arrange the main window components ie all the registers are at
@@ -276,7 +270,10 @@ public class MainSimFrame extends JFrame implements Observer {
 		JPanel regSwPanel = new JPanel();
 		JPanel regPanel = new JPanel();
 		regPanel.setLayout(new BoxLayout(regPanel, BoxLayout.X_AXIS));
-		// regPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+//		FlowLayout fl = new FlowLayout();
+//		fl.setAlignment(FlowLayout.RIGHT);
+//		regPanel.setLayout(fl);
+		 
 		regPanel.add(createGeneralRPanel());
 		regPanel.add(createIndexRPanel());
 		regPanel.add(createMiscRPanel());
@@ -634,17 +631,14 @@ public class MainSimFrame extends JFrame implements Observer {
 			// Check if the Element has contained the address
 			for (int i = 0; i < lstModel.getSize(); i++) {
 				String addString = lstModel.getElementAt(i);
-
-				if (addString.startsWith(key)) { //further enhance in the next phase
+				int spIdx = addString.indexOf(" ");
+				if (spIdx>0) {
+					addString = addString.substring(0,spIdx);
+				}
+				if (addString.equals(key) ) { //further enhance in the next phase
 					lstModel.setElementAt(newElementString, i);
 					return;
 				}
-				
-//				String[] mVal = addString.split("----------");
-//				if (mVal[0].equals(key)) {
-//					lstModel.setElementAt(newElementString, i);
-//					return;
-//				}
 			}
 
 			lstModel.addElement(newElementString);
@@ -924,6 +918,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		// }
 
 		// lstMemory = new JList<String>(lstModel);
+		
 
 	}
 
