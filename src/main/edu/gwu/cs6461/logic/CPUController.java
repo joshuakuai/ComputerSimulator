@@ -21,6 +21,7 @@ import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.logic.unit.MainMemory;
 import edu.gwu.cs6461.sim.bridge.*;
 import edu.gwu.cs6461.sim.common.HardwarePart;
+import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.ui.*;
 
 import org.apache.log4j.Logger;
@@ -140,8 +141,9 @@ public class CPUController extends Thread {
 	/**
 	 * load up program from file into memory
 	 * @param fileName
+	 * @throws IOCmdException 
 	 */
-	public void loadFromFile(String fileName) {
+	public void loadFromFile(String fileName) throws IOCmdException  {
 		FileInputStream fis = null;
 		BufferedReader br = null;
 		try {
@@ -195,8 +197,9 @@ public class CPUController extends Thread {
 				}
 			}
 			
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.error("failed to read file ",e);
+			throw new IOCmdException(e.getMessage());
 		} finally{
 			try {
 				fis.close();

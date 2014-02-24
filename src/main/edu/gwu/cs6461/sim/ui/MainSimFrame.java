@@ -15,6 +15,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EtchedBorder;
@@ -51,6 +54,7 @@ import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
+import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
 import edu.gwu.cs6461.sim.util.PropertiesParser;
@@ -150,7 +154,10 @@ public class MainSimFrame extends JFrame implements Observer {
 	private DefaultListModel<String> lstModel = new DefaultListModel<String>();
 	private JList<String> lstMemory = new JList<String>(lstModel);
 	
-	
+	private JTextField txtIOInput = new JTextField();
+	private JList<String> lstHistCdms;
+	private DefaultListModel<String> lstModHistCdms= new DefaultListModel<>();
+
 	
 	//for testing only
 	private JComboBox<String> cboTESTAllInstr = new JComboBox<String>();
@@ -274,24 +281,29 @@ public class MainSimFrame extends JFrame implements Observer {
 //		fl.setAlignment(FlowLayout.RIGHT);
 //		regPanel.setLayout(fl);
 		 
-		regPanel.add(createGeneralRPanel());
-		regPanel.add(createIndexRPanel());
-		regPanel.add(createMiscRPanel());
+		JPanel a = createGeneralRPanel();
+		regPanel.add(a);
+		a  = createIndexRPanel();
+		regPanel.add(a);
+		a = createMiscRPanel();
+		regPanel.add(a);
 
 		regSwPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-
+		//top buttons area
 		c.gridx = 0;
 		c.gridy = 0;
 		c.gridwidth = 3;
 		c.anchor = GridBagConstraints.LAST_LINE_START;
 		regSwPanel.add(createMainCtrlPanel(), c);
 
+		//registers area
 		c.gridx = 0;
 		c.gridy = 1;
 		c.gridwidth = 3;
 		regSwPanel.add(regPanel, c);
 
+		//switches and control buttons panel
 		c.gridx = 0;
 		c.gridy = 2;
 		c.gridwidth = 2;
@@ -309,15 +321,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		// c.fill = GridBagConstraints.BOTH;
 		regSwPanel.add(createControlPanel(), c);
 
-		// c.gridx=0;
-		// c.gridy=2;
-		// c.gridwidth = 3;
-		// regSwPanel.add(createConsolePanel(), c);
-
-		// setLayout(new FlowLayout(FlowLayout.LEFT));
 		add(regSwPanel, BorderLayout.NORTH);
-		add(createConsolePanel(), BorderLayout.SOUTH);
-		// add(lblWinStatus,BorderLayout.SOUTH);
+		//add(createConsolePanel(), BorderLayout.SOUTH);
 
 		// memory area
 		JScrollPane sMem = new JScrollPane();
@@ -325,7 +330,21 @@ public class MainSimFrame extends JFrame implements Observer {
 		JPanel jmem = new JPanel(new BorderLayout());
 		jmem.add(sMem, BorderLayout.CENTER);
 		jmem.setBorder(new TitledBorder(new EtchedBorder(), "Memory"));
-		add(jmem, BorderLayout.CENTER);
+		//add(jmem, BorderLayout.CENTER);
+		
+		JSplitPane spMemConsoleIO = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
+				createConsolePanel(), createIOConsolePanel());
+		spMemConsoleIO.setDividerSize(8);
+		spMemConsoleIO.setContinuousLayout(true);
+		spMemConsoleIO.resetKeyboardActions();
+		spMemConsoleIO.setOneTouchExpandable(true);
+
+		JSplitPane spMemConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jmem,spMemConsoleIO);
+		spMemConsole.setDividerSize(8);
+		spMemConsole.setContinuousLayout(true);
+		spMemConsole.setOneTouchExpandable(true);
+		
+		add(spMemConsole, BorderLayout.CENTER);
 
 		logger.debug(getLayout());
 
@@ -364,6 +383,50 @@ public class MainSimFrame extends JFrame implements Observer {
 		return wrap;
 	}
 
+	
+	private JPanel createIOConsolePanel(){
+		JPanel gConsole = new JPanel();
+		gConsole.setLayout(new GridBagLayout());
+		gConsole.setBorder(new TitledBorder(new EtchedBorder(), "IO Input"));
+
+ 		lstHistCdms = new JList<String>(lstModHistCdms);
+		lstHistCdms.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		
+		txtIOInput.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+		        String cmd = txtIOInput.getText();
+		        lstModHistCdms.insertElementAt("Loading "+ cmd, 0);
+		        lstHistCdms.setSelectedIndex(0);
+		        txtIOInput.selectAll();
+		        
+		        try {
+					performIOCommand(cmd);
+				} catch (IOCmdException e1) {
+					simConsole.error(cmd + " is not loaded "  + e1.getMessage());
+				}
+			}
+		});
+		txtIOInput.setFocusTraversalKeysEnabled(false);
+		txtIOInput.getDocument().addDocumentListener(new TextFieldDocListener(txtIOInput));
+	    
+		
+		JScrollPane sclHistCmdsPane = new JScrollPane(lstHistCdms);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridwidth = GridBagConstraints.REMAINDER;
+
+		c.fill = GridBagConstraints.HORIZONTAL;
+		gConsole.add(txtIOInput, c);
+
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
+		gConsole.add(sclHistCmdsPane, c);
+
+		return gConsole;
+	}
 	private JPanel createIndexRPanel() {
 		GriddedPanel gPanel = new GriddedPanel();
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Index"));
@@ -404,7 +467,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		scroll.setPreferredSize(new Dimension(240, 80));
 
 		JPanel gPanel = new JPanel();
-		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Console"));
+		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Console Printer"));
 		gPanel.setLayout(new BorderLayout());
 		gPanel.add(scroll, BorderLayout.CENTER);
 
@@ -762,15 +825,6 @@ public class MainSimFrame extends JFrame implements Observer {
 							resetSimulator(true);
 							simConsole.info("Simulator started....");
 							
-							//TODO should be load from IO console
-							PropertiesParser prop = PropertiesLoader.getPropertyInstance();
-							String fileName = prop.getStringProperty("sim.programfilepath");
-							if (fileName != null && !"".equals(fileName)) {
-								cpuController.loadFromFile(fileName);
-								logger.debug("profile file "+fileName+" is loaded");
-							} else
-								logger.debug("profile file is not loaded");
-							
 							
 						} catch (Exception e) {
 							logger.error("failed while initializing simulator.",e);
@@ -801,6 +855,24 @@ public class MainSimFrame extends JFrame implements Observer {
 
 			}
 
+		}
+
+	}
+	
+	private void performIOCommand(String cmd) throws IOCmdException{
+		
+		if (cmd==null || "".equals(cmd)) {
+			return;
+		}
+		
+		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+		String filePath = prop.getStringProperty("sim.programfilepath");
+		filePath = filePath+File.separator+cmd;
+		if (filePath != null && !"".equals(filePath)) {
+			cpuController.loadFromFile(filePath);
+			logger.debug("profile file "+filePath+" is loaded");
+		} else {
+			logger.debug("profile file is not loaded");
 		}
 
 	}
@@ -907,6 +979,10 @@ public class MainSimFrame extends JFrame implements Observer {
 		lstModel.addElement("Address   Content");
 		lstModel.addElement("---------------------------------------");
 
+		lstModHistCdms.clear();
+		txtIOInput.setText("");
+		txtIOInput.setEditable(isStart);
+		
 		// try {
 		// lstModel.clear();
 		// for (int j = 0; j < 2048; j++) {
@@ -982,7 +1058,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		}
 	}
 
-	
+//	private class txtCmdActionListener implements ActionListener
 	
 	/**
 	 * Receive data from observable objects and publish to GUI components
