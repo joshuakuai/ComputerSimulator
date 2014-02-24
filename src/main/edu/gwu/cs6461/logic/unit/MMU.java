@@ -13,8 +13,6 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 import org.omg.CORBA.portable.InputStream;
 
-import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithm.WordListener;
-
 import edu.gwu.cs6461.logic.unit.MainMemory.Entry;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.MemoryType;
