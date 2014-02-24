@@ -126,6 +126,7 @@ public class CPUController extends Thread {
 			cpuControl.RunInstruction();
 			
 			if (registerContainer.SI.getData() == 1 && this.isAlive()) {
+				registerContainer.SI.setData(0);
 				this.Suspend();
 			}
 		}

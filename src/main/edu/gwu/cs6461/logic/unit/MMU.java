@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.omg.CORBA.portable.InputStream;
 
 import com.sun.xml.internal.fastinfoset.algorithm.BuiltInEncodingAlgorithm.WordListener;
 
@@ -47,7 +48,6 @@ public class MMU {
 	private MMU() {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 		enableCache = prop.getBooleanProperty("sim.mem.cache.enabled", true);
-		
 	}
 	
 	
@@ -119,7 +119,12 @@ public class MMU {
 			int size = entry.getSize();
 			String da = entry.getData();
 			int len = da.length();
-			da = da.substring(len - size);
+			
+			int subStringStartPoint = len - size;
+			if(subStringStartPoint < 0){
+				subStringStartPoint = 0;
+			}
+			da = da.substring(subStringStartPoint);
 			int val = Convertor.getSignedValFromBin(da, size);
 			return val;
 		}
@@ -239,12 +244,11 @@ public class MMU {
 	
 	
 	public static void main(String[] args) throws MemoryException {
-		String fileName = "D:/java_stuff/githome/ComputerSimulator/src/main/edu/gwu/cs6461/logic/unit/program1.txt";
+		String fileName = "src/resources/edu/gwu/cs6461/logic/unit/program1.txt";
 		fileName = "bin/program1.txt";
 		MMU mmu = MMU.instance();
 		mmu.loadFromFile(fileName);
-
-
+		
 		Entry e = cacheMap.getDataFromCache(7398);
 		e = cacheMap.getDataFromCache(7392);
 		e = cacheMap.getDataFromCache(7138);

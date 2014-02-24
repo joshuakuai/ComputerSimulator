@@ -37,6 +37,7 @@ public class Control {
 	private Register PC = null;
 	private Register CC = null;
 	private Register MFR = null;
+	private Register SI = null;
 	private RF RFtable = null;
 	private XF XFtable = null;
 	private Register MAR = null;
@@ -62,6 +63,7 @@ public class Control {
 	public void setRegisters(RegisterContainer registerContainer) {
 		IRobject = registerContainer.IRobject;
 		PC = registerContainer.PC;
+		SI = registerContainer.SI;
 		CC = registerContainer.CC;
 		MFR = registerContainer.MFR;
 		RFtable = registerContainer.RFtable;
@@ -84,8 +86,11 @@ public class Control {
 			logger.error("failed to get data from memory: " + e.getMessage(), e);
 		}
 
-		// IR <- MDR
-		IRobject.setIRstring(Integer.toBinaryString(0x100000 | MDR.getData()).substring(1));
+		// IR <- MDR		
+		String tmpString = Integer.toBinaryString(0x100000 | MDR.getData());
+		tmpString = tmpString.substring(tmpString.length()-20);
+		
+		IRobject.setIRstring(tmpString);
 	}
 
 	// this creates a new decode class object which breaks down the instruction
@@ -111,8 +116,8 @@ public class Control {
 				|| OpCode == 42 || OpCode == 20 || OpCode == 21 || OpCode == 22
 				|| OpCode == 23 || OpCode == 24 || OpCode == 25 || OpCode == 31
 				|| OpCode == 32 || OpCode == 10 || OpCode == 11 || OpCode == 12
-				|| OpCode == 13 | OpCode == 14 || OpCode == 15 || OpCode == 16
-				|| OpCode == 17) {
+				|| OpCode == 13 || OpCode == 14 || OpCode == 15 || OpCode == 16
+				|| OpCode == 17 || OpCode == 55) {
 
 			if (OpCode == 1)
 				LDR();
@@ -164,6 +169,9 @@ public class Control {
 				SOB();
 			else if (OpCode == 17)
 				JGE();
+			else if (OpCode == 55) {
+				EOP();
+			}
 		} else {
 			MFR.setData(2);
 		}
@@ -189,7 +197,7 @@ public class Control {
 		}
 	}
 
-	public void calculateEAIndirect(){
+	public void calculateEAIndirect() {
 		// if indirect bit is enabled put MDR in MAR and get the memory content
 		// of MAR address and put it in MDR
 		if (IRobject.getIndirect() == 1) {
@@ -202,7 +210,15 @@ public class Control {
 			}
 		}
 	}
-	
+
+	/**
+	 * Terminate the CPU
+	 */
+	public void EOP() {
+		SI.setData(1);
+		PC.setData(PC.getData() + 1);
+	}
+
 	/**
 	 * @param IRobject
 	 *            IR object with decoded instruction
@@ -216,8 +232,8 @@ public class Control {
 		// Register
 		// to put the value of MDR in
 		RFtable.setSwitch(IRobject.getRFI1(), MDR.getData());
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -230,9 +246,9 @@ public class Control {
 	 */
 	public void AMR() {
 		this.calculateEAOffset();
-		
+
 		this.calculateEAIndirect();
-		
+
 		// send General Register as operand1 and MDR value(memory value)
 		// as operand2 two to ALU.
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
@@ -242,8 +258,8 @@ public class Control {
 		if (CC.getData() == ConditionCode.NORMAL.getCode()) {
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -268,8 +284,8 @@ public class Control {
 			Mem.setData(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
 		} else
 			Mem.setData(MAR.getData(), RFtable.getSwitch(IRobject.getRFI1()));
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -281,10 +297,10 @@ public class Control {
 	 */
 	public void SMR() {
 		this.calculateEAOffset();
-		
+
 		this.calculateEAIndirect();
 
-			// send General Register as operand1 and MDR value(memory value)
+		// send General Register as operand1 and MDR value(memory value)
 		// as operand2 two to ALU.
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()), MDR.getData(),
 				IRobject.getOpCode(), RES, CC, RES2, Multi);
@@ -293,8 +309,8 @@ public class Control {
 		if (CC.getData() == ConditionCode.NORMAL.getCode()) {
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -338,8 +354,8 @@ public class Control {
 				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 			}
 		}
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -379,7 +395,7 @@ public class Control {
 			}
 		}
 
-		PC.setData(PC.getData()+1);
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -389,7 +405,7 @@ public class Control {
 	 */
 	public void LDA() {
 		this.calculateEAOffset();
-		
+
 		// if indirect is set than get the contents of memory at location MAR
 		// and pass it to MDR
 		// than pass MDR value To MAR and pass MAR value to general register
@@ -407,7 +423,7 @@ public class Control {
 			// register
 			RFtable.setSwitch(IRobject.getRFI1(), MAR.getData());
 
-		PC.setData(PC.getData()+1);
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -441,8 +457,8 @@ public class Control {
 		}
 		// if indirect is not set put original MDR in index register
 		XFtable.setSwitch(IRobject.getXFI(), MDR.getData());
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	/**
@@ -477,8 +493,8 @@ public class Control {
 			Mem.setData(MAR.getData(), XFtable.getSwitch(xfi),
 					XFtable.getSize(xfi));
 		}
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void MLT() {
@@ -506,8 +522,8 @@ public class Control {
 			RFtable.setSwitch(IRobject.getRFI1() + 1, lowerhalf);
 		}
 		logger.debug("HIGHbit=" + upperhalf + "  LOWERbit=" + lowerhalf);
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void DVD() {
@@ -518,8 +534,8 @@ public class Control {
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 			RFtable.setSwitch(IRobject.getRFI1() + 1, RES2.getData());
 		}
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void TRR() {
@@ -535,8 +551,8 @@ public class Control {
 			CC.setData(ConditionCode.EQUALORNOT.getCode());
 		} else
 			CC.setData(0);
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void AND() {
@@ -550,8 +566,8 @@ public class Control {
 		//
 		RES.setData(opt1 & opt2);
 		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void ORR() {
@@ -565,8 +581,8 @@ public class Control {
 		//
 		RES.setData(opt1 | opt2);
 		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void NOT() {
@@ -577,8 +593,8 @@ public class Control {
 		//
 		RES.setData(~opt1);
 		RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void SRC() {
@@ -632,8 +648,8 @@ public class Control {
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
 		// else if count is zero do nothing
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	public void RRC() {
@@ -667,8 +683,8 @@ public class Control {
 			RES.setData(Integer.parseInt(s.toString(), 2));
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
-		
-		PC.setData(PC.getData()+1);
+
+		PC.setData(PC.getData() + 1);
 	}
 
 	// ///////////////////////////////////////////

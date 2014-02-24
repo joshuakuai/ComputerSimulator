@@ -124,5 +124,4 @@ public class Decode {
 		IRobject.setAddress(Address);
 		logger.debug("Address=" + Address);
 	}
-
 }

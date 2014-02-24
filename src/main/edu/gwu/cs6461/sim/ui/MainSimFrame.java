@@ -62,10 +62,11 @@ import edu.gwu.cs6461.sim.util.TextAreaAppender;
  * 
  * This is the first screen to be displayed when user starts the simulator.
  * 
- * This Frame class displays all the hardware parts for user to see the status and data; it also
- * displays the switches to allow user to input values, control panel to allow user to Run and do the 
- * Single Step for the simulator, IPL button to start the simulator, Terminate button to 
- * terminate or reset simlator, memory area to show the content in simulator memory, console area 
+ * This Frame class displays all the hardware parts for user to see the status
+ * and data; it also displays the switches to allow user to input values,
+ * control panel to allow user to Run and do the Single Step for the simulator,
+ * IPL button to start the simulator, Terminate button to terminate or reset
+ * simlator, memory area to show the content in simulator memory, console area
  * to show the system message.
  * 
  * 
@@ -73,7 +74,7 @@ import edu.gwu.cs6461.sim.util.TextAreaAppender;
  * 
  */
 public class MainSimFrame extends JFrame implements Observer {
-	
+
 	/**
 	 * object to logging purpose
 	 */
@@ -86,7 +87,6 @@ public class MainSimFrame extends JFrame implements Observer {
 	 */
 	private static final int HIGHESTBIT = 19;
 	private static final int LOWESTBIT = 0;
-
 
 	private JRadioButton[] radBinData = new JRadioButton[20];
 	private JLabel[] lblBinPosInfo = new JLabel[20];
@@ -149,12 +149,9 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JTextArea txtConsoleText = new JTextArea();
 	private DefaultListModel<String> lstModel = new DefaultListModel<String>();
 	private JList<String> lstMemory = new JList<String>(lstModel);
-	
-	
-	
-	//for testing only
+
+	// for testing only
 	private JComboBox<String> cboTESTAllInstr = new JComboBox<String>();
-	
 
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester this is
@@ -334,7 +331,6 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		resetSimulator(false);
 
-
 		reSetCPUController();
 	}
 
@@ -486,13 +482,13 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JPanel createSwitchPanel(int start, int end) {
 		// Button only
 		JPanel btnPanel = new JPanel();
-		
-		//TODO remove
+
+		// TODO remove
 		createTESTComponent();
 		btnPanel.add(cboTESTAllInstr);
 		cboTESTAllInstr.addActionListener(new TESTComboActionListener());
 		cboTESTAllInstr.setVisible(false);
-		
+
 		btnPanel.add(lblMemAddress);
 		btnPanel.add(txtMemAdd);
 		btnPanel.add(cboSwithOptions);
@@ -522,8 +518,9 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	/**
 	 * button event listener for Run and Single step buttons
+	 * 
 	 * @author marcoyeung
-	 *
+	 * 
 	 */
 	private class SimActListener implements ActionListener {
 		@Override
@@ -535,28 +532,36 @@ public class MainSimFrame extends JFrame implements Observer {
 				beginCPUProcessWithModel(0);
 			} else if (parent == btnSingleStep) {
 				beginCPUProcessWithModel(1);
-			}  else if (parent == btnSingleInstr) {
+			} else if (parent == btnSingleInstr) {
 				beginCPUProcessWithModel(2);
-			}  else if (parent == btnHalt) {
-				logger.debug("step Halt ");
+			} else if (parent == btnHalt) {
+				if (cpuController.isAlive()) {
+					cpuController.Suspend();
+				}
 			}
 		}
 
 	}
 
 	/**
-	 * signal the back-end logic to run the instruction till the end or
-	 * run as single step mode
+	 * signal the back-end logic to run the instruction till the end or run as
+	 * single step mode
 	 * 
-	 * @param Model, 0: Run 1: Single Step 2: Single Instruction
+	 * @param Model
+	 *            , 0: Run 1: Single Step 2: Single Instruction
 	 */
 	private void beginCPUProcessWithModel(int model) {
-		if ((model == 1 || model == 2) && cpuController.isAlive()
-				&& cpuController.isSuspended()) {
+		if (cpuController.isAlive() && cpuController.isSuspended()) {
 			// For Single step model or single instruction
 			// If this thread is alive and is suspended, the button will
 			// resume the thread
 			cpuController.Resume();
+
+			// If the model is debug, then we set the SI or SS as 1 again to
+			// stop
+			// After next instruction
+			setDebugModelRegisters(model);
+
 			return;
 		}
 
@@ -568,16 +573,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			cpuController.recreateCPUController(true);
 			reSetCPUController();
 
-			if (model == 1) {
-				cpuController.registerContainer.SS.setData(1);
-				cpuController.registerContainer.SI.setData(0);
-			}else if(model == 0){
-				cpuController.registerContainer.SS.setData(0);
-				cpuController.registerContainer.SI.setData(0);
-			}else if(model == 2){
-				cpuController.registerContainer.SS.setData(0);
-				cpuController.registerContainer.SI.setData(1);
-			}
+			setDebugModelRegisters(model);
 
 			cpuController.start();
 		}
@@ -585,9 +581,27 @@ public class MainSimFrame extends JFrame implements Observer {
 	}
 
 	/**
+	 * Set the debug model registers to stop the program properly
 	 * 
-	 * hardware data from back-end or switches are published to the corresponding
-	 * UI components.
+	 * @param model
+	 */
+	public void setDebugModelRegisters(int model) {
+		if (model == 1) {
+			cpuController.registerContainer.SS.setData(1);
+			cpuController.registerContainer.SI.setData(0);
+		} else if (model == 0) {
+			cpuController.registerContainer.SS.setData(0);
+			cpuController.registerContainer.SI.setData(0);
+		} else if (model == 2) {
+			cpuController.registerContainer.SS.setData(0);
+			cpuController.registerContainer.SI.setData(1);
+		}
+	}
+
+	/**
+	 * 
+	 * hardware data from back-end or switches are published to the
+	 * corresponding UI components.
 	 * 
 	 * @param dest
 	 * @param vals
@@ -629,30 +643,31 @@ public class MainSimFrame extends JFrame implements Observer {
 			String key = vals[0];
 			val = vals[1];
 
-			String newElementString = padSpace(key,9) + val;
+			String newElementString = padSpace(key, 9) + val;
 
 			// Check if the Element has contained the address
 			for (int i = 0; i < lstModel.getSize(); i++) {
 				String addString = lstModel.getElementAt(i);
 
-				if (addString.startsWith(key)) { //further enhance in the next phase
+				if (addString.startsWith(key)) { // further enhance in the next
+													// phase
 					lstModel.setElementAt(newElementString, i);
 					return;
 				}
-				
-//				String[] mVal = addString.split("----------");
-//				if (mVal[0].equals(key)) {
-//					lstModel.setElementAt(newElementString, i);
-//					return;
-//				}
+
+				// String[] mVal = addString.split("----------");
+				// if (mVal[0].equals(key)) {
+				// lstModel.setElementAt(newElementString, i);
+				// return;
+				// }
 			}
 
 			lstModel.addElement(newElementString);
 		} else if (dName == HardwarePart.CC) {
-			ConditionCode cc = ConditionCode.fromCode(Integer.valueOf(val)); 
-			if (cc != ConditionCode.NOTEXIST && cc != ConditionCode.NORMAL) 
-					txtCC.setText(cc.name());
-			else 
+			ConditionCode cc = ConditionCode.fromCode(Integer.valueOf(val));
+			if (cc != ConditionCode.NOTEXIST && cc != ConditionCode.NORMAL)
+				txtCC.setText(cc.name());
+			else
 				txtCC.setText("");
 		}
 	}
@@ -707,8 +722,8 @@ public class MainSimFrame extends JFrame implements Observer {
 			cpuController.registerContainer.IRobject.setIRstring(val);
 		}
 	}
-	
-	private void reSetCPUController(){
+
+	private void reSetCPUController() {
 		cpuController = CPUController.shareInstance();
 		cpuController.clearObserver();
 		cpuController.setRegisterObserver(MainSimFrame.this);
@@ -719,7 +734,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * Button event listeners for Deposit, Reset , IPL, and Terminate buttons
 	 * 
 	 * @author marcoyeung
-	 *
+	 * 
 	 */
 	private class BtnActListener implements ActionListener {
 
@@ -741,7 +756,8 @@ public class MainSimFrame extends JFrame implements Observer {
 				}
 				logger.debug("switch value from UI: " + res);
 
-				if (rName == HardwarePart.MEMORY && txtMemAdd.getText().isEmpty()) {
+				if (rName == HardwarePart.MEMORY
+						&& txtMemAdd.getText().isEmpty()) {
 
 					JOptionPane.showMessageDialog(MainSimFrame.this,
 							"Please input the memory address.",
@@ -767,26 +783,29 @@ public class MainSimFrame extends JFrame implements Observer {
 							Thread.sleep(200);
 							resetSimulator(true);
 							simConsole.info("Simulator started....");
-							
-							//TODO should be load from IO console
-							PropertiesParser prop = PropertiesLoader.getPropertyInstance();
-							String fileName = prop.getStringProperty("sim.programfilepath");
+
+							// TODO should be load from IO console
+							PropertiesParser prop = PropertiesLoader
+									.getPropertyInstance();
+							String fileName = prop
+									.getStringProperty("sim.programfilepath");
 							if (fileName != null && !"".equals(fileName)) {
 								cpuController.loadFromFile(fileName);
-								logger.debug("profile file "+fileName+" is loaded");
+								logger.debug("profile file " + fileName
+										+ " is loaded");
 							} else
 								logger.debug("profile file is not loaded");
-							
-							
+
 						} catch (Exception e) {
-							logger.error("failed while initializing simulator.",e);
+							logger.error(
+									"failed while initializing simulator.", e);
 						}
 					}
 				}).start();
 				simConsole.info("Simulator starting....");
 				resetMainCtrlBtn(true);
-				
-				//TODO:We need to define the initial PC value
+
+				// TODO:We need to define the initial PC value
 				cpuController.registerContainer.PC.setData(10);
 
 			} else if (parent == btnTerminate) {
@@ -836,17 +855,16 @@ public class MainSimFrame extends JFrame implements Observer {
 				radBinData[i].setSelected(false);
 			}
 		}
-		
-		
+
 		String sel = (String) cboSwithOptions.getSelectedItem();
-		
+
 		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
 			txtMemAdd.setText("");
 		} else
 			setMemorySwitch(false);
 	}
-	
-	private void setSwitchesEditable(int start, int end, boolean b){
+
+	private void setSwitchesEditable(int start, int end, boolean b) {
 		for (int i = start; i <= end; i++) {
 			if (radBinData[i] != null) {
 				radBinData[i].setEnabled(b);
@@ -891,8 +909,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtMFR.setText("");
 		cboSwithOptions.setSelectedIndex(mainSwitchIdx);
 		clearSwitches(LOWESTBIT, HIGHESTBIT);
-		setSwitchesEditable(LOWESTBIT, HIGHESTBIT, isStart );
-		
+		setSwitchesEditable(LOWESTBIT, HIGHESTBIT, isStart);
+
 		String sel = (String) cboSwithOptions.getSelectedItem();
 		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
 			setMemorySwitch(true);
@@ -936,7 +954,6 @@ public class MainSimFrame extends JFrame implements Observer {
 			}
 		}
 
-		
 		String sel = (String) cboSwithOptions.getSelectedItem();
 		if (HardwarePart.fromName(sel) == HardwarePart.IR) {
 			lblBinPosInfo[6].setForeground(Color.BLUE);
@@ -945,7 +962,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			lblBinPosInfo[9].setForeground(Color.GREEN);
 			lblBinPosInfo[10].setForeground(Color.GRAY);
 			lblBinPosInfo[11].setForeground(Color.MAGENTA);
-			
+
 		} else {
 			for (int i = 6; i < 12; i++) {
 				lblBinPosInfo[i].setForeground(Color.BLACK);
@@ -973,22 +990,18 @@ public class MainSimFrame extends JFrame implements Observer {
 				} else {
 					setMemorySwitch(false);
 				}
-				
+
 				if (reg == HardwarePart.IR) {
 					cboTESTAllInstr.setVisible(true);
-				} else
-				{
+				} else {
 					cboTESTAllInstr.setVisible(false);
 				}
-					
-				
+
 			}
 			logger.debug("selected :  " + selected);
 		}
 	}
 
-	
-	
 	/**
 	 * Receive data from observable objects and publish to GUI components
 	 * 
@@ -1032,16 +1045,15 @@ public class MainSimFrame extends JFrame implements Observer {
 		JOptionPane.showMessageDialog(this, "All instructions are executed.");
 	}
 
-	
 	/***************************************/
-	
-	private void createTESTComponent(){
+
+	private void createTESTComponent() {
 		OpCode[] names = OpCode.values();
 		List<String> tmp = new ArrayList<String>();
 
 		int i = 0;
 		for (OpCode n : names) {
-			if (n.getiVal()>0) {
+			if (n.getiVal() > 0) {
 				tmp.add(n.name());
 				i++;
 			}
@@ -1051,7 +1063,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		cboTESTAllInstr = new JComboBox<String>(reg);
 	}
-	
+
 	private class TESTComboActionListener implements ActionListener {
 
 		@Override
@@ -1061,17 +1073,17 @@ public class MainSimFrame extends JFrame implements Observer {
 			OpCode op = OpCode.valueOf(selected);
 			String bin = op.getbStr();
 			if (op != OpCode.NOTEXIST) {
-				
+
 				try {
 					String bits[] = new String[bin.length()];
 					for (int i = 0; i < bin.length(); i++) {
-						bits[i]= bin.substring(i, i+1);
+						bits[i] = bin.substring(i, i + 1);
 					}
 
-					for (int i = 0; i < 6 ; i++) {
+					for (int i = 0; i < 6; i++) {
 						if (bits[i].equals("1")) {
 							radBinData[i].setSelected(true);
-						} else { 
+						} else {
 							radBinData[i].setSelected(false);
 						}
 					}
@@ -1081,8 +1093,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			}
 			logger.debug("selected :  " + op);
 		}
-		
+
 	}
-	
-	
+
 }
