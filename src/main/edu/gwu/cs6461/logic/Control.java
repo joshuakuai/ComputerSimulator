@@ -92,7 +92,7 @@ public class Control {
 		tmpString = tmpString.substring(tmpString.length()-20);
 		
 		IRobject.setIRstring(tmpString);
-		logger.debug("fetched instr:"+ tmpString);
+		logger.debug("fetched instr:" + PC.getData()+":"+ tmpString);
 	}
 
 	// this creates a new decode class object which breaks down the instruction

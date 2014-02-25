@@ -1,6 +1,7 @@
 package edu.gwu.cs6461.logic.unit;
 
 import static edu.gwu.cs6461.sim.common.SimConstants.MEMORY_ADDRESS_LIMIT;
+import static edu.gwu.cs6461.sim.common.SimConstants.MEMORY_ADDRESS_SPACE;
 import static edu.gwu.cs6461.sim.common.SimConstants.WORD_SIZE;
 
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observable;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.MemoryType;
+import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
 import edu.gwu.cs6461.sim.util.PropertiesParser;
 
@@ -30,6 +32,7 @@ public class MainMemory extends Observable{
 	public static MainMemory getInstance(){ 
 		return memory;
 	}
+	
 	
 	private MainMemory() {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
@@ -146,8 +149,6 @@ public class MainMemory extends Observable{
 				Integer.toString(address) + "," + data);
 
 		this.notifyObservers(hardwareData);
-		
-		logger.debug("push data to observer.");
 		CPUController.shareInstance().checkSingleStepModel();
 	}
 	
@@ -208,5 +209,29 @@ public class MainMemory extends Observable{
 //        }
 	}
 	
+
+	private Address translateAddress(int address){
+		return new Address(address);
+	}
+	private static class Address{
+		private int msb=0;
+		private int lsb=0;
+		private Address(int address) {
+			String str = Convertor.getBinFromInt(address, MEMORY_ADDRESS_SPACE);
+			
+			String part1 = str.substring(0, 10);
+			String part2 = str.substring(10, 13);
+			
+			msb = Integer.parseInt(part1);
+			lsb = Integer.parseInt(part2);
+		}
+		public int getMsb() {
+			return msb;
+		}
+		public int getLsb() {
+			return lsb;
+		}
+		
+	}
 	
 }

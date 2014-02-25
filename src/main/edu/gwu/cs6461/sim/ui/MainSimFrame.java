@@ -54,6 +54,7 @@ import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
+import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
 import edu.gwu.cs6461.sim.util.PropertiesParser;
@@ -165,6 +166,8 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * will be default IR. Terminate and reset button will reset back to IR
 	 */
 	private int mainSwitchIdx = 0;
+	
+	private int instrStartingPos = 0;
 
 	/**
 	 * Business logic objects
@@ -179,6 +182,10 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		setTitle(title);
 
+		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+		instrStartingPos = prop.getIntProperty("sim.program.startingpoint",100);
+				
+		
 		HardwarePart[] names = HardwarePart.values();
 		List<String> tmp = new ArrayList<String>();
 
@@ -186,7 +193,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		for (HardwarePart n : names) {
 			if (n.isEditable()) {
 				tmp.add(n.getName());
-				if (n == HardwarePart.IR) {
+				if (n == HardwarePart.MEMORY) {
 					mainSwitchIdx = i;
 				}
 				i++;
@@ -851,7 +858,7 @@ public class MainSimFrame extends JFrame implements Observer {
 				resetMainCtrlBtn(true);
 
 				// TODO:We need to define the initial PC value
-				cpuController.registerContainer.PC.setData(10);
+				cpuController.registerContainer.PC.setData(instrStartingPos);
 
 			} else if (parent == btnTerminate) {
 				String ObjButtons[] = { "Yes", "No" };
@@ -886,7 +893,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		filePath = filePath + File.separator+cmd;
 		if (filePath != null && !"".equals(filePath)) {
 			cpuController.loadFromFile(filePath);
-			logger.debug("profile file "+filePath+" is loaded");
+			logger.debug("program file "+filePath+" is loaded");
+			simConsole.info("program file "+cmd+" is loaded");
 		} else {
 			logger.debug("profile file is not loaded");
 		}
@@ -998,6 +1006,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtIOInput.setText("");
 		txtIOInput.setEditable(isStart);
 		
+		cboTESTAllInstr.setEnabled(isStart);
+		txtMemAdd.setEnabled(isStart);
+		
 		// try {
 		// lstModel.clear();
 		// for (int j = 0; j < 2048; j++) {
@@ -1023,7 +1034,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		}
 
 		String sel = (String) cboSwithOptions.getSelectedItem();
-		if (HardwarePart.fromName(sel) == HardwarePart.IR) {
+		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
 			lblBinPosInfo[6].setForeground(Color.BLUE);
 			lblBinPosInfo[7].setForeground(Color.BLUE);
 			lblBinPosInfo[8].setForeground(Color.GREEN);
@@ -1059,7 +1070,7 @@ public class MainSimFrame extends JFrame implements Observer {
 					setMemorySwitch(false);
 				}
 
-				if (reg == HardwarePart.IR) {
+				if (reg == HardwarePart.MEMORY) {
 					cboTESTAllInstr.setVisible(true);
 				} else {
 					cboTESTAllInstr.setVisible(false);
@@ -1123,7 +1134,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		int i = 0;
 		for (OpCode n : names) {
-			if (n.getiVal() > 0) {
+			if (n.isEditable()) {
 				tmp.add(n.name());
 				i++;
 			}
@@ -1145,10 +1156,11 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (op != OpCode.NOTEXIST) {
 
 				try {
-					String bits[] = new String[bin.length()];
+					String bits[]=Convertor.bitToArray(bin.substring(0,6) );//bin.substring(bin.length() - 6) );
+					/*String bits[] = new String[bin.length()];
 					for (int i = 0; i < bin.length(); i++) {
 						bits[i] = bin.substring(i, i + 1);
-					}
+					}*/
 
 					for (int i = 0; i < 6; i++) {
 						if (bits[i].equals("1")) {

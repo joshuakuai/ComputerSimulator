@@ -9,7 +9,7 @@ package edu.gwu.cs6461.sim.common;
  */
 public enum OpCode {
 	HLT(0,"000000"),
-	TRAP(30,"011110"),
+	TRAP(30,"011110",false),
 	LDR(1,"000001"),
 	STR(2,"000010"),
 	LDA(3,"000011"),
@@ -35,11 +35,13 @@ public enum OpCode {
 	NOT(25,"011001"),
 	SRC(31,"011111"),
 	RRC(32,"100000"),
-	IN(61,"111101"),
-	OUT(62,"111110"),
-	CHK(63,"111111"),
-	NOTEXIST(-1,"-1111111");
+//	IN(61,"111101"),
+//	OUT(62,"111110"),
+//	CHK(63,"111111"),
+	DATA(99,"000000-"),
+	NOTEXIST(-1,"-1111111",false);
 	
+	private final boolean editable;
 	/**
 	 * 6 bits fixed length in unsigned binary form
 	 */
@@ -50,10 +52,17 @@ public enum OpCode {
 	private final int iVal;
 	
 	private OpCode(int iVal, String binVal) {
+		this(iVal, binVal,true);
+	}
+	private OpCode(int iVal, String binVal,boolean editable) {
 		this.iVal = iVal;
 		this.binVal = binVal;
+		this.editable = editable;
 	}
-
+	public boolean isEditable(){
+		return editable;
+	}
+	
 	/**
 	 * return the integer value of opcode 
 	 * @return
