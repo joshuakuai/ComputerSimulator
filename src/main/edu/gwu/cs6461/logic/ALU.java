@@ -185,7 +185,7 @@ public class ALU extends Observable {
 		resultMLT=1L*(long)opt1*(long)opt2;
 		logger.debug("Res MLT="+resultMLT);		
 		
-		if (resultMLT > SimConstants.WORD_MAX_VALUE || resultMLT < SimConstants.WORD_MIN_VALUE) {
+		if (resultMLT > SimConstants.TWOWORD_MAX_VALUE || resultMLT < SimConstants.TWOWORD_MIN_VALUE) {
 			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
 		} 
 		else {
