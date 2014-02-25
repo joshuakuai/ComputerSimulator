@@ -62,6 +62,10 @@ public class Register extends Observable{
 	public void setData(int newData) {
 		data = newData;
 		
+		if(this.name.equals("SI") || this.name.equals("SS")){
+			return;
+		}
+		
 		HardwareData hardwareData = new HardwareData();
 		if (HardwarePart.IR.getName().equals(this.name)) {
 			hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));

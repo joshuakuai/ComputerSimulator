@@ -119,7 +119,7 @@ public class Control {
 				|| OpCode == 23 || OpCode == 24 || OpCode == 25 || OpCode == 31
 				|| OpCode == 32 || OpCode == 10 || OpCode == 11 || OpCode == 12
 				|| OpCode == 13 || OpCode == 14 || OpCode == 15 || OpCode == 16
-				|| OpCode == 17 || OpCode == 55) {
+				|| OpCode == 17 || OpCode == 0) {
 
 			if (OpCode == 1)
 				LDR();
@@ -171,7 +171,7 @@ public class Control {
 				SOB();
 			else if (OpCode == 17)
 				JGE();
-			else if (OpCode == 55) {
+			else if (OpCode == 0) {
 				EOP();
 			}
 		} else {

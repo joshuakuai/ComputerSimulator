@@ -99,8 +99,14 @@ public class CPUController extends Thread {
 	}
 
 	public void Suspend() {
-		suspendflag = true;
-		simConsole.info("Simulator is suspended. current PC:" );
+		if(suspendflag){
+			return;
+		}else{
+			suspendflag = true;
+		}
+		
+		String inforString = String.format("Simulator is suspended. current PC: %d",registerContainer.PC.getData());
+		simConsole.info(inforString);
 		super.suspend();
 	}
 
@@ -121,7 +127,8 @@ public class CPUController extends Thread {
 			//Fetch the IR
 			cpuControl.FetchIR();
 			
-			if(registerContainer.IRobject.isEmpty()){
+			//If is the terminate operate, we will stop the running process
+			if(registerContainer.IRobject.getOpCode() == 55){
 				break;
 			}
 			
