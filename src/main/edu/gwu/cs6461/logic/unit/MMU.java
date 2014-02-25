@@ -241,7 +241,7 @@ public class MMU {
 	}
 	
 	
-	public static void main(String[] args) throws MemoryException {
+	public static void _main(String[] args) throws MemoryException {
 		String fileName = "src/resources/edu/gwu/cs6461/logic/unit/program1.txt";
 		fileName = "bin/program1.txt";
 		MMU mmu = MMU.instance();
