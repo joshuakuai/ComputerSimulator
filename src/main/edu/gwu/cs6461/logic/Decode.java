@@ -31,7 +31,7 @@ public class Decode {
 	public void decodeSwitch(IR IRobject) {
 		OpCode = Integer.parseInt(IRobject.getIRstring().substring(0, 6), base);
 		IRobject.setOpCode(OpCode);
-		logger.debug("OpCode=" + OpCode);
+		logger.debug("OpCode=" + edu.gwu.cs6461.sim.common.OpCode.fromCode(OpCode));
 		if (OpCode == 1 || OpCode==2 || OpCode==3||OpCode==4||OpCode==5||OpCode==10||OpCode==11||OpCode==16||OpCode==17)
 			function1(IRobject);
 		else if (OpCode == 41 || OpCode==42 ||OpCode==13||OpCode==14)

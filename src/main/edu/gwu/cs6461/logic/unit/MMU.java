@@ -89,6 +89,7 @@ public class MMU {
 			boolean isInCache = false;
 			isInCache = cacheMap.isDataInCache(address);
 			if (isInCache) { //update cache: write-no-allocate policy
+				logger.info("data in cache, update it at address: " + address);
 				Entry en = new Entry(type, data, address,size);
 				cacheMap.writeCache(address, en);
 			}
@@ -112,7 +113,7 @@ public class MMU {
 		
 		if (entry != null) {
 			if (!entry.isData()) {
-				logger.error("instruction is retrieved for data use.");
+				logger.warn("instruction is retrieved for data use.");
 			}
 			int size = entry.getSize();
 			String da = entry.getData();
@@ -145,7 +146,7 @@ public class MMU {
 		
 		if (entry != null) {
 			if (entry.isData()) {
-				logger.error("data is retrieved for data use.");
+				logger.warn("data is retrieved for data use.");
 			}
 			String da = entry.getData();
 			return da;

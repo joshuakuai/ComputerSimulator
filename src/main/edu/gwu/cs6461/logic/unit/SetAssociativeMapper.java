@@ -67,18 +67,20 @@ public class SetAssociativeMapper implements CacheMapper {
 	@Override
 	public void writeCache(int address, Entry entry) {
 		MemoryAddress add = new MemoryAddress(address);
+		//TODO only need to update the individual cache entry
 		pushBlockToCache(add, entry);
 	}
 
 	@Override
 	public Entry getDataFromCache(int address) throws MemoryException {
 		MemoryAddress add = new MemoryAddress(address);
-		logger.debug("lookup data at "+address+" in cache set:"+add.setField+",tag:"+add.tagField+",word:"+add.wordField);
+		logger.debug("lookup data at address "+address+" in cache set:"+add.setField+",tag:"+add.tagField+",word:"+add.wordField);
 		Entry request = cache.getData(add);
 		if (request == null) {
 			logger.debug("cache miss set:"+add.setField+",tag:"+add.tagField+",word:"+add.wordField);
-			logger.debug("Retrieve block from main memory.");
+			logger.debug("Load up from main memory.");
 			request = mainMem.getData(address);
+			logger.debug("Retrieve the whole block from main memory.");
 			pushBlockToCache(add, null);
 		} else {
 			logger.debug("cache hit set:"+add.setField+",tag:"+add.tagField+",word:"+add.wordField);

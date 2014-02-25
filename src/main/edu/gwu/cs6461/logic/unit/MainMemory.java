@@ -147,6 +147,7 @@ public class MainMemory extends Observable{
 
 		this.notifyObservers(hardwareData);
 		
+		logger.debug("push data to observer.");
 		CPUController.shareInstance().checkSingleStepModel();
 	}
 	

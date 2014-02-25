@@ -43,6 +43,7 @@ public class CPUController extends Thread {
 	private boolean suspendflag = false;
 	
 	private final static Logger logger = Logger.getLogger(CPUController.class);
+	private final static Logger simConsole = Logger.getLogger("simulator.console");
 
 	// Keep a weak reference of mainSimFrame
 	private MainSimFrame mainFrame = null;
@@ -99,11 +100,13 @@ public class CPUController extends Thread {
 
 	public void Suspend() {
 		suspendflag = true;
+		simConsole.info("Simulator is suspended. current PC:" );
 		super.suspend();
 	}
 
 	public void Resume() {
 		suspendflag = false;
+		simConsole.info("Simulator is resumed.");
 		super.resume();
 	}
 

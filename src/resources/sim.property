@@ -7,3 +7,4 @@ sim.mem.cache.wordinblock=8
 sim.mem.cache.linesize=4
 sim.mem.cache.enabled=true
 sim.programfilepath=bin/
+sim.program.startingpoint=100

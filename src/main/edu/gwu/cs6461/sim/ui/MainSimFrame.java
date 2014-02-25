@@ -85,8 +85,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * object to logging purpose
 	 */
 	private final static Logger logger = Logger.getLogger(MainSimFrame.class);
-	private final static Logger simConsole = Logger
-			.getLogger("simulator.console");
+	private final static Logger simConsole = Logger.getLogger("simulator.console");
 
 	/**
 	 * lowest and higtest bit for switches

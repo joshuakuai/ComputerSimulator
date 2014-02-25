@@ -28,6 +28,7 @@ import edu.gwu.cs6461.sim.util.Convertor;
  */
 public class Control {
 	private final static Logger logger = Logger.getLogger(Control.class);
+	private final static Logger simConsole = Logger.getLogger("simulator.console");	
 
 	// Weak reference of registers&memory&ALU
 	private MMU Mem = null;
@@ -91,6 +92,7 @@ public class Control {
 		tmpString = tmpString.substring(tmpString.length()-20);
 		
 		IRobject.setIRstring(tmpString);
+		logger.debug("fetched instr:"+ tmpString);
 	}
 
 	// this creates a new decode class object which breaks down the instruction

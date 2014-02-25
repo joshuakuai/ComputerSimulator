@@ -72,6 +72,7 @@ public class Register extends Observable{
 		
 		CPUController.shareInstance().checkSingleStepModel();
 	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
