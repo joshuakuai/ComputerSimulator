@@ -159,7 +159,9 @@ public class ALU extends Observable {
 
 		if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
 			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
-		} 
+		}else if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
+			setCC(ConditionCode.UNDERFLOW.getCode(),CC);			
+		} 		
 		else {
 			setCC(ConditionCode.NORMAL.getCode(),CC);
 		}
@@ -185,9 +187,11 @@ public class ALU extends Observable {
 		resultMLT=1L*(long)opt1*(long)opt2;
 		logger.debug("Res MLT="+resultMLT);		
 		
-		if (resultMLT > SimConstants.TWOWORD_MAX_VALUE || resultMLT < SimConstants.TWOWORD_MIN_VALUE) {
+		if (resultMLT > SimConstants.TWOWORD_MAX_VALUE ) {
 			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
-		} 
+		} else if( resultMLT < SimConstants.TWOWORD_MIN_VALUE){
+			setCC(ConditionCode.UNDERFLOW.getCode(),CC);
+		}
 		else {
 			setCC(ConditionCode.NORMAL.getCode(),CC);
 		}
@@ -198,8 +202,7 @@ public class ALU extends Observable {
 		CC.setData(Value);
 
 		HardwareData hardwareData = new HardwareData();
-		hardwareData.put("CC",
-				 Integer.toString(Value));
+		hardwareData.put("CC", Integer.toString(Value));
 
 		this.notifyObservers(hardwareData);
 	}

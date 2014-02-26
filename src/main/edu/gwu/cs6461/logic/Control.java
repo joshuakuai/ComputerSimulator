@@ -520,20 +520,19 @@ public class Control {
 		String result = Long.toString(Multi.getResult(), 2);
 		int upperhalf = 0;
 		int lowerhalf = 0;
-		if (CC.getData() == ConditionCode.OVERFLOW.getCode()) {
+	    if (CC.getData() == ConditionCode.NORMAL.getCode()) {
 			if (result.length() > 20) {
-				upperhalf = Integer.parseInt(
-						result.substring(0, result.length() - 20), 2);
-				lowerhalf = Integer.parseInt(
-						result.substring(result.length() - 20), 2);
+				upperhalf = Integer.parseInt(result.substring(0, result.length() - 20), 2);
+				lowerhalf = Integer.parseInt(result.substring(result.length() - 20), 2);
 				RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
 				RFtable.setSwitch(IRobject.getRFI1() + 1, lowerhalf);
 			}
-		} else if (CC.getData() == ConditionCode.NORMAL.getCode()) {
-			upperhalf = 0;
-			lowerhalf = Integer.parseInt(result.substring(0), 2);
-			RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
-			RFtable.setSwitch(IRobject.getRFI1() + 1, lowerhalf);
+			else{
+				upperhalf = 0;
+				lowerhalf = Integer.parseInt(result.substring(0), 2);
+				RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
+				RFtable.setSwitch(IRobject.getRFI1() + 1, lowerhalf);
+			}
 		}
 		logger.debug("HIGHbit=" + upperhalf + "  LOWERbit=" + lowerhalf);
 
