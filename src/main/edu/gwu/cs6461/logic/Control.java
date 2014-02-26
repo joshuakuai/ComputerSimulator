@@ -525,7 +525,7 @@ public class Control {
 			}
 		} else if (CC.getData() == ConditionCode.NORMAL.getCode()) {
 			upperhalf = 0;
-			lowerhalf = Integer.parseInt(result.substring(0, 20), 2);
+			lowerhalf = Integer.parseInt(result.substring(0), 2);
 			RFtable.setSwitch(IRobject.getRFI1(), upperhalf);
 			RFtable.setSwitch(IRobject.getRFI1() + 1, lowerhalf);
 		}
@@ -558,7 +558,7 @@ public class Control {
 		if (opt1 == opt2) {
 			CC.setData(ConditionCode.EQUALORNOT.getCode());
 		} else
-			CC.setData(0);
+			CC.setData(ConditionCode.O.getCode());
 
 		PC.setData(PC.getData() + 1);
 	}
