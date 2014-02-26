@@ -48,7 +48,7 @@ import javax.swing.border.TitledBorder;
 import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.logic.CPUController;
-import edu.gwu.cs6461.logic.unit.MainMemory;
+import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.ConditionCode;
@@ -57,9 +57,6 @@ import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
-import edu.gwu.cs6461.sim.util.PropertiesLoader;
-import edu.gwu.cs6461.sim.util.PropertiesParser;
-import edu.gwu.cs6461.sim.util.TextAreaAppender;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
 import edu.gwu.cs6461.sim.util.PropertiesParser;
 import edu.gwu.cs6461.sim.util.TextAreaAppender;
@@ -873,11 +870,12 @@ public class MainSimFrame extends JFrame implements Observer {
 								ObjButtons[1]);
 				if (promptResult == 0) {
 					resetSimulator(false);
+					txtConsoleText.setText("");
 					simConsole.info("Simulator terminated....");
 					resetMainCtrlBtn(false);
 					
 					//Clean up all data in memory and caches
-					MainMemory.getInstance().cleanMemory();
+					MMU.instance().clean();
 					
 				}
 
@@ -1159,12 +1157,8 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (op != OpCode.NOTEXIST) {
 
 				try {
-					String bits[]=Convertor.bitToArray(bin.substring(0,6) );//bin.substring(bin.length() - 6) );
-					/*String bits[] = new String[bin.length()];
-					for (int i = 0; i < bin.length(); i++) {
-						bits[i] = bin.substring(i, i + 1);
-					}*/
-
+					String bits[]=Convertor.bitToArray(bin.substring(0,6) );
+					
 					for (int i = 0; i < 6; i++) {
 						if (bits[i].equals("1")) {
 							radBinData[i].setSelected(true);
