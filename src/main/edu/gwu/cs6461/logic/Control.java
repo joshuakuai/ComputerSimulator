@@ -449,7 +449,7 @@ public class Control {
 		// get memory contents of address MAR and put it in MDR
 		MAR.setData(IRobject.getAddress());
 		try {
-			// TODO what is it is loading from memory which has too large of
+			// TODO what if it is loading from memory which has too large of
 			// value ???
 			MDR.setData(Mem.getDataFromMem(MAR.getData()));
 		} catch (MemoryException e) {
@@ -784,7 +784,7 @@ public class Control {
 	}
 
 	public void JCC() {
-		if (CC.getData() == 1) {
+		if (CC.getData() >0 && CC.getData()<=8) {
 			MAR.setData(IRobject.getAddress());
 			if (XFtable.getSize(IRobject.getXFI()) != 0) {
 				if (IRobject.getXFI() != 0) {
