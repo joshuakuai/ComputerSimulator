@@ -667,6 +667,7 @@ public class Control {
 
 	public void RRC() {
 		int count = IRobject.getCount();
+		int LogicArithmetic = IRobject.getLogicalorArithmetic();
 		int LeftRight = IRobject.getLeftorRight();
 		//
 		if (count != 0) {
@@ -676,25 +677,27 @@ public class Control {
 					SimConstants.WORD_SIZE);
 			StringBuffer s = new StringBuffer(op1);
 			int lastPos = s.length();
-			if (LeftRight == 0) {
-				for (int i = 0; i < count; i++) {
-					char c = s.charAt(lastPos - 1);
-					s.insert(0, c);
-					s.deleteCharAt(lastPos);
+			if (LogicArithmetic == 1) {
+				if (LeftRight == 0) {
+					for (int i = 0; i < count; i++) {
+						char c = s.charAt(lastPos - 1);
+						s.insert(0, c);
+						s.deleteCharAt(lastPos);
+					}
+					logger.debug("Rot Right=" + s.toString());
 				}
-				logger.debug("Rot Right=" + s.toString());
-			}
-			if (LeftRight == 1) {
-				for (int i = 0; i < count; i++) {
-					char c = s.charAt(0);
-					s.append(c);
-					s.deleteCharAt(0);
+				if (LeftRight == 1) {
+					for (int i = 0; i < count; i++) {
+						char c = s.charAt(0);
+						s.append(c);
+						s.deleteCharAt(0);
+					}
+					logger.debug("Rot Left=" + s.toString());
 				}
-				logger.debug("Rot Left=" + s.toString());
+				//
+				RES.setData(Integer.parseInt(s.toString(), 2));
+				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 			}
-			//
-			RES.setData(Integer.parseInt(s.toString(), 2));
-			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
 
 		PC.setData(PC.getData() + 1);
