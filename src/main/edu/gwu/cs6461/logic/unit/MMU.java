@@ -1,17 +1,6 @@
 package edu.gwu.cs6461.logic.unit;
 
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_COMMENT;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_DATA_HEAD;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_INSTRUCTION_HEAD;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
-import org.omg.CORBA.portable.InputStream;
 
 import edu.gwu.cs6461.logic.unit.MainMemory.Entry;
 import edu.gwu.cs6461.sim.bridge.Observer;

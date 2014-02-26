@@ -216,7 +216,7 @@ public class MainMemory extends Observable{
 	}
 	
 
-	private Address translateAddress(int address){
+/*	private Address translateAddress(int address){
 		return new Address(address);
 	}
 	private static class Address{
@@ -238,6 +238,6 @@ public class MainMemory extends Observable{
 			return lsb;
 		}
 		
-	}
+	}*/
 	
 }
