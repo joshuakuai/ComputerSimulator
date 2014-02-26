@@ -33,12 +33,18 @@ public class MainMemory extends Observable{
 		return memory;
 	}
 	
-	
 	private MainMemory() {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 		numOfbank = prop.getIntProperty("sim.mem.numberofbank", 8);
 		logger.debug("numOfBank in main memory :"+ numOfbank);
 		
+		cleanMemory();
+		};
+	
+	/**
+	 * Build the memory or clean it up 
+	 */
+	public void cleanMemory(){
 		contentInBank = new TreeMap<>();
 		int bank=0;
 		for (int i = 0; i < MEMORY_ADDRESS_LIMIT; i++) {

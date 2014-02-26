@@ -119,7 +119,7 @@ public class Control {
 				|| OpCode == 23 || OpCode == 24 || OpCode == 25 || OpCode == 31
 				|| OpCode == 32 || OpCode == 10 || OpCode == 11 || OpCode == 12
 				|| OpCode == 13 || OpCode == 14 || OpCode == 15 || OpCode == 16
-				|| OpCode == 17 || OpCode == 0) {
+				|| OpCode == 17 || OpCode == 0 || OpCode == 55) {
 
 			if (OpCode == 1)
 				LDR();
@@ -172,6 +172,8 @@ public class Control {
 			else if (OpCode == 17)
 				JGE();
 			else if (OpCode == 0) {
+				HLT();
+			}else if(OpCode == 55){
 				EOP();
 			}
 		} else {
@@ -212,11 +214,15 @@ public class Control {
 			}
 		}
 	}
+	
+	public void EOP(){
+		PC.setData(100);
+	}
 
 	/**
-	 * Terminate the CPU
+	 * HLT the CPU
 	 */
-	public void EOP() {
+	public void HLT() {
 		SI.setData(1);
 		PC.setData(PC.getData() + 1);
 	}

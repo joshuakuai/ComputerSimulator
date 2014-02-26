@@ -126,15 +126,15 @@ public class CPUController extends Thread {
 		while(true){
 			//Fetch the IR
 			cpuControl.FetchIR();
+						
+			cpuControl.Decode();
+
+			cpuControl.RunInstruction();
 			
 			//If is the terminate operate, we will stop the running process
 			if(registerContainer.IRobject.getOpCode() == 55){
 				break;
 			}
-			
-			cpuControl.Decode();
-
-			cpuControl.RunInstruction();
 			
 			if (registerContainer.SI.getData() == 1 && this.isAlive()) {
 				registerContainer.SI.setData(0);

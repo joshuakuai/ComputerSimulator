@@ -48,6 +48,7 @@ import javax.swing.border.TitledBorder;
 import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.logic.CPUController;
+import edu.gwu.cs6461.logic.unit.MainMemory;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.ConditionCode;
@@ -841,9 +842,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 				new Thread(new Runnable() {
 					public void run() {
-						try {
-							cpuController.recreateCPUController(false);
-							reSetCPUController();
+						try {							
 							Thread.sleep(200);
 							resetSimulator(true);
 							simConsole.info("Simulator started....");
@@ -856,7 +855,10 @@ public class MainSimFrame extends JFrame implements Observer {
 				}).start();
 				simConsole.info("Simulator starting....");
 				resetMainCtrlBtn(true);
-
+				
+				cpuController.recreateCPUController(false);
+				reSetCPUController();
+		
 				// TODO:We need to define the initial PC value
 				cpuController.registerContainer.PC.setData(instrStartingPos);
 
@@ -873,7 +875,10 @@ public class MainSimFrame extends JFrame implements Observer {
 					resetSimulator(false);
 					simConsole.info("Simulator terminated....");
 					resetMainCtrlBtn(false);
-
+					
+					//Clean up all data in memory and caches
+					MainMemory.getInstance().cleanMemory();
+					
 				}
 
 			}
@@ -1020,8 +1025,6 @@ public class MainSimFrame extends JFrame implements Observer {
 		// }
 
 		// lstMemory = new JList<String>(lstModel);
-		
-
 	}
 
 	private void maskSwitches(int start, int end, boolean b) {
