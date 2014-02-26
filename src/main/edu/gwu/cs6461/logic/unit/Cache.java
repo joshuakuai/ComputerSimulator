@@ -26,6 +26,10 @@ public class Cache {
 	private Cache() {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 		lineSize = prop.getIntProperty("sim.mem.cache.linesize", 4);
+		init();
+	}
+	
+	public void init(){
 		cacheData = new TreeMap<Integer, LinkedHashMap<Integer,List<Entry>>>();
 	}
 
