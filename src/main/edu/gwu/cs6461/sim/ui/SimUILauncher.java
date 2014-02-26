@@ -26,6 +26,7 @@ public class SimUILauncher {
 		String title = prop.getStringProperty("sim.gui.windowtitle");
 		boolean resize= prop.getBooleanProperty("sim.gui.resizable",true);
 		
+		
 		MainSimFrame mFrame = new MainSimFrame(title,resize);
 		mFrame.init();
 		mFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

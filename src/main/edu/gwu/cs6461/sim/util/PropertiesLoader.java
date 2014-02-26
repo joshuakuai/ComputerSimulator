@@ -21,7 +21,7 @@ public class PropertiesLoader {
 
 
 	
-	private static PropertiesParser  INSTANCE;
+	private final static PropertiesParser  INSTANCE;
 	static{
 		INSTANCE = loadProperties();
 	}

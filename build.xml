@@ -73,7 +73,7 @@
           target: create jar for deployment              
          ================================= -->
 	<target name="Deployment Simulator" depends="compile" description="Deployment Simulator">
-		<jar jarfile="${deploy.folder}/${deploy.jarfilename}" manifest="${resources}/MANIFEST.MF">
+		<jar jarfile="${deploy.folder}/${deploy.jarfilename}">
 			<fileset dir="${build.folder}" />
 		</jar>
 

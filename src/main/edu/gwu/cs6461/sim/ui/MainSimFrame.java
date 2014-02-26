@@ -157,7 +157,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JTextField txtIOInput = new JTextField();
 	private JList<String> lstHistCdms;
 	private DefaultListModel<String> lstModHistCdms= new DefaultListModel<>();
-	private JComboBox<String> cboTESTAllInstr = new JComboBox<String>();
+	private JComboBox<String> cboAllInstrHelper = new JComboBox<String>();
 
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester this is
@@ -549,10 +549,10 @@ public class MainSimFrame extends JFrame implements Observer {
 		JPanel btnPanel = new JPanel();
 
 		// TODO remove
-		createTESTComponent();
-		btnPanel.add(cboTESTAllInstr);
-		cboTESTAllInstr.addActionListener(new TESTComboActionListener());
-		cboTESTAllInstr.setVisible(false);
+		createInstrHelperComponent();
+		btnPanel.add(cboAllInstrHelper);
+		cboAllInstrHelper.addActionListener(new InstrHelperComboActionListener());
+		cboAllInstrHelper.setVisible(false);
 
 		btnPanel.add(lblMemAddress);
 		btnPanel.add(txtMemAdd);
@@ -707,8 +707,13 @@ public class MainSimFrame extends JFrame implements Observer {
 		} else if (dName == HardwarePart.MEMORY) {
 			String key = vals[0];
 			val = vals[1];
+			String comment="";
 
 			String newElementString = padSpace(key, 9) + val;
+			if (vals.length == 3) {
+				comment = vals[2];
+				newElementString = padSpace(newElementString,45) +  comment;
+			}
 
 			// Check if the Element has contained the address
 			for (int i = 0; i < lstModel.getSize(); i++) {
@@ -1010,7 +1015,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtIOInput.setText("");
 		txtIOInput.setEditable(isStart);
 		
-		cboTESTAllInstr.setEnabled(isStart);
+		cboAllInstrHelper.setEnabled(isStart);
 		txtMemAdd.setEnabled(isStart);
 		
 		// try {
@@ -1073,9 +1078,9 @@ public class MainSimFrame extends JFrame implements Observer {
 				}
 
 				if (reg == HardwarePart.MEMORY) {
-					cboTESTAllInstr.setVisible(true);
+					cboAllInstrHelper.setVisible(true);
 				} else {
-					cboTESTAllInstr.setVisible(false);
+					cboAllInstrHelper.setVisible(false);
 				}
 
 			}
@@ -1106,7 +1111,11 @@ public class MainSimFrame extends JFrame implements Observer {
 							// memory value passed in with 'address, content');
 							// presume the content is passed in one by one
 							String[] mVal = v.split(",");
-							loadToControl(k, mVal[0], mVal[1]);
+							if (mVal.length == 2) {
+								loadToControl(k, mVal[0], mVal[1]);
+							} else if(mVal.length == 3){
+								loadToControl(k, mVal[0], mVal[1], mVal[2]);
+							}
 						} else {
 							loadToControl(k, v);
 						}
@@ -1130,7 +1139,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	/***************************************/
 
-	private void createTESTComponent() {
+	private void createInstrHelperComponent() {
 		OpCode[] names = OpCode.values();
 		List<String> tmp = new ArrayList<String>();
 
@@ -1144,10 +1153,10 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		String[] reg = tmp.toArray(new String[tmp.size()]);
 
-		cboTESTAllInstr = new JComboBox<String>(reg);
+		cboAllInstrHelper = new JComboBox<String>(reg);
 	}
 
-	private class TESTComboActionListener implements ActionListener {
+	private class InstrHelperComboActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {

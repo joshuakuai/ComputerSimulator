@@ -51,12 +51,12 @@ public class MMU {
 
 	public void setData(int address, int data, int size) {
 		String binary = Convertor.getSignedBinFromInt(data, 20);
-		setData(address, binary, size);
+		setData(address, binary, size,"");
 	}
 
-	private void setData(int address, String data, int size) {
+	private void setData(int address, String data, int size, String comment) {
 		writeCache(MemoryType.DATA, address, data, size);
-		mainMem.setData(address, data, size); //write through to main memory
+		mainMem.setData(address, data, size, comment); //write through to main memory
 	}
 
 	public void setData(int address, int data) {
@@ -64,12 +64,18 @@ public class MMU {
 	}
 
 	public void setData(int address, String data) {
-		setData(address, data, SimConstants.WORD_SIZE);
+		setData(address, data, SimConstants.WORD_SIZE,"");
+	}
+	public void setData(int address, String data, String comment) {
+		setData(address, data, SimConstants.WORD_SIZE,comment);
 	}
 
-	public void setInstr(int address, String data) {
+	public void setInstr(int address, String data, String comment) {
 		writeCache(MemoryType.INSTR, address, data, SimConstants.WORD_SIZE);
-		mainMem.setInstr(address, data); //write through to main memory
+		mainMem.setInstr(address, data, comment); // write through to main memory
+	}
+	public void setInstr(int address, String data) {
+		setInstr(address, data, "");
 	}
 	
 	private void writeCache(MemoryType type,int address, String data, int size){

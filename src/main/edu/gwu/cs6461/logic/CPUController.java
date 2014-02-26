@@ -163,6 +163,7 @@ public class CPUController extends Thread {
 			br = new BufferedReader(new FileReader(f));
 			
 			String line;
+			String comments="";
 			int instrPos = 100, dataPos = 150;
 			boolean currData = true;
 			boolean dheader = false,iheader = false;
@@ -174,8 +175,10 @@ public class CPUController extends Thread {
 				
 				int cmIdx = line.indexOf(FILE_COMMENT);
 				if (cmIdx> 1) {
+					String tmp = line;
 					line = line.substring(0, cmIdx);
-				}
+					comments = tmp.substring(cmIdx);
+				} else comments ="";
 				line = line.trim();
 				
 				if (line.startsWith(FILE_DATA_HEAD)) {
@@ -202,9 +205,9 @@ public class CPUController extends Thread {
 				}
 			
 				if (currData && !dheader) {
-					mmu.setData(dataPos++, line);
+					mmu.setData(dataPos++, line, comments);
 				} else if (!currData && !iheader) {
-					mmu.setInstr(instrPos++, line);
+					mmu.setInstr(instrPos++, line, comments);
 				}
 			}
 			

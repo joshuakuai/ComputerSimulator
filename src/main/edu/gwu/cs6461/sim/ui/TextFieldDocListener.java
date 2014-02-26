@@ -15,6 +15,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+import org.apache.log4j.Logger;
+
+import edu.gwu.cs6461.sim.util.PropertiesLoader;
+import edu.gwu.cs6461.sim.util.PropertiesParser;
+
 
 /**
  * 
@@ -25,6 +30,8 @@ import javax.swing.text.BadLocationException;
  *
  */
 public class TextFieldDocListener implements DocumentListener {
+	private final static Logger logger = Logger.getLogger(TextFieldDocListener.class);
+
 	private static enum Mode { INSERT, COMPLETION };
 
 	private JTextField txtField;
@@ -40,10 +47,16 @@ public class TextFieldDocListener implements DocumentListener {
         im.put(KeyStroke.getKeyStroke("TAB"), COMMIT_ACTION);
         am.put(COMMIT_ACTION, new CommitAction());
 		
-        commands = new ArrayList<String>(5);
-        commands.add("program1.txt");
-        commands.add("program2.txt");
+        PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+        String [] hints = prop.getPropertyGroups("sim.gui.ioinput.textcompletion");
+        commands = new ArrayList<String>(hints.length);
+		for (String hint : hints) {
+			commands.add(prop.getStringProperty("sim.gui.ioinput.textcompletion."+hint +".hints") );
+			
+		}
         Collections.sort(commands);
+        logger.debug("text completion hints loaded: "+ commands.toString());
+        
 	}
 
 	@Override
@@ -122,7 +135,6 @@ public class TextFieldDocListener implements DocumentListener {
     	
     private class CommitAction extends AbstractAction {
         public void actionPerformed(ActionEvent ev) {
-        	System.out.println("cmmit action ");
             if (mode == Mode.COMPLETION) {
                 int pos = txtField.getSelectionEnd();
                 StringBuilder sb = new StringBuilder(txtField.getText());

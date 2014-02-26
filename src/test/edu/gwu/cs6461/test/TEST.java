@@ -36,7 +36,11 @@ public class TEST {
 	 */
 	public static void main(String[] args) {
 		TEST tester = new TEST();
-		tester.testMap();
+		
+		
+		System.out.println(Convertor.getSignedValFromBin("00000001001101110100", 20));
+		
+//		tester.testMap();
 	}
 
 	void testMap(){

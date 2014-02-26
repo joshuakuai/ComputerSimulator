@@ -9,3 +9,6 @@ sim.mem.cache.enabled=true
 sim.programfilepath=bin/
 sim.program.startingpoint=100
 ##
+sim.gui.ioinput.textcompletion.1.hints=program1.txt
+sim.gui.ioinput.textcompletion.2.hints=program2.txt
+sim.gui.ioinput.textcompletion.3.hints=program3.txt

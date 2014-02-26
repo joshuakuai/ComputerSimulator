@@ -132,7 +132,7 @@ public class MainMemory extends Observable{
 		public void remove() {}
 	}
 	
-	public void setInstr(int address, String data) {
+	public void setInstr(int address, String data, String comment) {
 		int bank = address % numOfbank;
 		
 		if (contentInBank.get(bank) != null) {
@@ -141,24 +141,32 @@ public class MainMemory extends Observable{
 			d.setType(MemoryType.INSTR);
 			logger.info("instruction memory updated, bank:" + bank +", address:"+ address);
 			
-			publishUpdate(address, data);
+			publishUpdate(address, data,comment);
 			
 		} else{
 			logger.error("invalid instruction memory address " + address + " in bank " + bank);
 		}
 		
 	}
+	public void setInstr(int address, String data) {
+		setInstr(address, data,"");
+	}
 
-	private void publishUpdate(int address, String data){
+	private void publishUpdate(int address, String data, String comment){
 		HardwareData hardwareData = new HardwareData();
-		hardwareData.put(HardwarePart.MEMORY.getName(),
-				Integer.toString(address) + "," + data);
+		if (comment!=null && !"".equals(comment.trim())) {
+			hardwareData.put(HardwarePart.MEMORY.getName(),
+					Integer.toString(address) + "," + data +","+comment);
+		} else {
+			hardwareData.put(HardwarePart.MEMORY.getName(),
+					Integer.toString(address) + "," + data);
+		}
 
 		this.notifyObservers(hardwareData);
 		CPUController.shareInstance().checkSingleStepModel();
 	}
 	
-	public void setData(int address, String data, int size) {
+	public void setData(int address, String data, int size, String comment) {
 		int bank = address % numOfbank;
 		
 		if (contentInBank.get(bank) != null) {
@@ -167,10 +175,13 @@ public class MainMemory extends Observable{
 			d.setType(MemoryType.DATA);
 			d.setSize(size);
 			logger.info("data memory update, bank:" + bank +", address:"+ address);
-			publishUpdate(address, data);
+			publishUpdate(address, data,comment);
 		} else{
 			logger.error("invalid data memory address " + address + " in bank " + bank);
 		}
+	}
+	public void setData(int address, String data, int size) {
+		setData(address, data, size, "");
 	}
 	public void setData(int address, String data) {
 		setData(address, data, WORD_SIZE);

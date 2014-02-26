@@ -642,7 +642,7 @@ public class Control {
 				int width = op1.length();
 
 				int iVal = Integer.parseInt(op1, 2);
-
+				
 				String signBit = op1.substring(0, 1);
 				int result = 0;
 				//
