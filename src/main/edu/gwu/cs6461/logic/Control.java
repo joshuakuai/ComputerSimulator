@@ -17,6 +17,8 @@ import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.MemoryException;
 import edu.gwu.cs6461.sim.util.Convertor;
+import edu.gwu.cs6461.sim.util.PropertiesLoader;
+import edu.gwu.cs6461.sim.util.PropertiesParser;
 
 /**
  * This class has the main logic that calls the different classes needed to
@@ -49,7 +51,11 @@ public class Control {
 	private Register RES2 = null;
 	private Multiply Multi = null;
 
+	
+	PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+	int instrStartingPos=100;
 	public Control() {
+		instrStartingPos = prop.getIntProperty("sim.program.startingpoint",100);
 	}
 
 	// References setter
@@ -216,7 +222,7 @@ public class Control {
 	}
 	
 	public void EOP(){
-		PC.setData(100);
+		PC.setData(instrStartingPos);
 	}
 
 	/**
