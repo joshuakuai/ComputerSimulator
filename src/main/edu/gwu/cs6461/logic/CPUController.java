@@ -1,12 +1,4 @@
 package edu.gwu.cs6461.logic;
-/**
- * This class holds most of the objects need to run the CPU. 
- * To run it first checks if the user clicked single mode or run which would set its debug
- * Register (SS), which is used as a condition to control the CPU thread by suspending it
- * after each microcode step is finished. Example after decode, effective address
- * ALU calculation etc.
- * 
- */
 import static edu.gwu.cs6461.sim.common.SimConstants.FILE_COMMENT;
 import static edu.gwu.cs6461.sim.common.SimConstants.FILE_DATA_HEAD;
 import static edu.gwu.cs6461.sim.common.SimConstants.FILE_INSTRUCTION_HEAD;
@@ -15,48 +7,56 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
-
-import edu.gwu.cs6461.logic.unit.MMU;
-import edu.gwu.cs6461.logic.unit.MainMemory;
-import edu.gwu.cs6461.sim.bridge.*;
-import edu.gwu.cs6461.sim.common.HardwarePart;
-import edu.gwu.cs6461.sim.exception.IOCmdException;
-import edu.gwu.cs6461.sim.ui.*;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.logic.unit.MMU;
+import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.exception.IOCmdException;
+import edu.gwu.cs6461.sim.ui.MainSimFrame;
+
+/**
+ * This class holds most of the objects need to run the CPU. 
+ * To run it first checks if the user clicked single mode or run which would set its debug
+ * Register (SS), which is used as a condition to control the CPU thread by suspending it
+ * after each microcode step is finished. Example after decode, effective address
+ * ALU calculation etc.
+ * 
+ */
 public class CPUController extends Thread {
-	//Initial Registers
+	/**Initial Registers */
 	public RegisterContainer registerContainer = new RegisterContainer();
 
-	//Memory unit
+	/** Memory unit */
 	private MMU mmu = MMU.instance();
 	
-	//Logic control
+	/** Logic control */
 	public Control cpuControl = new Control();
 	
-	//Singleton instance
+	/** Singleton instance */
 	private static CPUController instance = new CPUController();
 	
-	//Thread suspend flag
+	/** Thread suspend flag */
 	private boolean suspendflag = false;
 	
+	/**logger to log message into log file */
 	private final static Logger logger = Logger.getLogger(CPUController.class);
+	
+	/**logger to log message into front-end GUI */
 	private final static Logger simConsole = Logger.getLogger("simulator.console");
 
-	// Keep a weak reference of mainSimFrame
+	/** Keep a weak reference of mainSimFrame */
 	private MainSimFrame mainFrame = null;
 
-	// CPU holds a weak reference of the memory but CPU doesn't own the memory
+	/** CPU holds a weak reference of the memory but CPU doesn't own the memory */
 	private CPUController() {
 		cpuControl.setALU(ALU.getInstance());
 		cpuControl.setMem(mmu);
 		cpuControl.setRegisters(registerContainer);
 	}
 
-	//This recreates the cpu thread after an instruction is finished
-	//and a new one is started
+	/** This recreates the cpu thread after an instruction is finished
+	and a new one is started */
 	public void recreateCPUController(boolean isReserveData) {
 		CPUController tmpController = new CPUController();
 		
@@ -68,12 +68,12 @@ public class CPUController extends Thread {
 		instance = tmpController;
 	}
 
-	// Singleton method
+	/**  Singleton method */
 	public static CPUController shareInstance() {
 		return instance;
 	}
 
-	// Suspend is deprecated but we'll still use it
+	/**  Suspend is deprecated but we'll still use it */
 	public void checkSingleStepModel() {
 		if (registerContainer.SS.getData() == 1 && this.isAlive()) {
 			this.Suspend();
@@ -98,6 +98,9 @@ public class CPUController extends Thread {
 		registerContainer.registerObserver(obs);
 	}
 
+	/**
+	 * suspend the main execution thread; this is used to simulate the single step or single instruction mode
+	 */
 	public void Suspend() {
 		if(suspendflag){
 			return;
@@ -110,16 +113,25 @@ public class CPUController extends Thread {
 		super.suspend();
 	}
 
+	/**
+	 * Resume the main execution thread; this is used to simulate the single step or single instruction mode
+	 */
 	public void Resume() {
 		suspendflag = false;
 		simConsole.info("Simulator is resumed.");
 		super.resume();
 	}
 
+	/**
+	 * Returns the main thread suspension status
+	 * */
 	public boolean isSuspended() {
 		return suspendflag;
 	}
 	
+	/**Main execution execution point
+	 * This is the place where the simulation begins.
+	 * */
 	public void run() {
 		logger.debug("CPU thread begins.");
 
@@ -221,8 +233,5 @@ public class CPUController extends Thread {
 			} catch (Exception e) { }
 		}
 	}
-
-
-
 
 }

@@ -37,8 +37,12 @@ public class TEST {
 	public static void main(String[] args) {
 		TEST tester = new TEST();
 		
+		System.out.println(Convertor.getSignedValFromBin("10000000000000000000", 20));
+		int val = 50000;
+		System.out.println(val >> 8);
 		
-		System.out.println(Convertor.getSignedValFromBin("00000001001101110100", 20));
+		tester.testShiftArith("right");
+		                                                  
 		
 //		tester.testMap();
 	}
@@ -308,6 +312,7 @@ public class TEST {
 		int shift = 8;
 		String val20 = "10010000000100000010";                         //string in binary
 		val20 = "10011110000011111111";
+		val20 = "00001100001101010000";
 
 		int width = val20.length();
 		

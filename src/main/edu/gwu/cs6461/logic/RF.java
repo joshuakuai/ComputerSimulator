@@ -14,9 +14,13 @@ import edu.gwu.cs6461.sim.common.HardwarePart;
  *creates all the General registers and updates them
  */
 public class RF {
+	/**create general register with signed value enabled*/
     private Register R0 = new Register(HardwarePart.R0.getBit(),HardwarePart.R0.getName(), true);
+    /**create general register with signed value enabled*/
     private Register R1 = new Register(HardwarePart.R1.getBit(),HardwarePart.R1.getName(),true);
+    /**create general register with signed value enabled*/
     private Register R2 = new Register(HardwarePart.R2.getBit(),HardwarePart.R2.getName(),true);
+    /**create general register with signed value enabled*/
     private Register R3 = new Register(HardwarePart.R3.getBit(),HardwarePart.R3.getName(),true);
     
     public RF(){

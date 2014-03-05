@@ -23,6 +23,8 @@ import edu.gwu.cs6461.sim.util.PropertiesParser;
 
 /**
  * 
+ * Class to provide text completion function to IO input text box
+ * 
  * From java Tutorial 
  * Credit to Oracle
  *  

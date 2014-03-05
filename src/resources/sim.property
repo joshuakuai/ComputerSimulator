@@ -6,7 +6,7 @@ sim.mem.numberofbank=8
 sim.mem.cache.wordinblock=8
 sim.mem.cache.linesize=4
 sim.mem.cache.enabled=true
-sim.programfilepath=bin/
+sim.programfilepath=bin
 sim.program.startingpoint=100
 ##
 sim.gui.ioinput.textcompletion.1.hints=program1.txt

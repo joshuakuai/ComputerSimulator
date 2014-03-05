@@ -41,6 +41,7 @@ public enum OpCode {
 	DATA(99,"000000-"),
 	NOTEXIST(-1,"-1111111",false);
 	
+	/**determine whether this opcode can be display in front-end Gui*/
 	private final boolean editable;
 	/**
 	 * 6 bits fixed length in unsigned binary form
@@ -59,13 +60,17 @@ public enum OpCode {
 		this.binVal = binVal;
 		this.editable = editable;
 	}
+	
+	/**
+	 *Return true is this OpCode can also be used in Front-end GUI 
+	 * */
 	public boolean isEditable(){
 		return editable;
 	}
 	
 	/**
 	 * return the integer value of opcode 
-	 * @return
+	 * @return   integer value of opcode
 	 */
 	public int getiVal(){
 		return iVal;
@@ -73,7 +78,7 @@ public enum OpCode {
 	
 	/**
 	 * return the bit value of opcode
-	 * @return
+	 * @return  bit value of opcode
 	 */
 	public String getbStr(){
 		return binVal;
@@ -83,7 +88,7 @@ public enum OpCode {
 	 * 	return NOTEXIST if bits pattern is not defined.
 	 * 
 	 * @param bits
-	 * @return
+	 * @return    OpCode if it is defined
 	 */
 	public static OpCode fromBit(String bits){
 		if (bits == null || "".equals(bits.trim())) {
@@ -97,6 +102,12 @@ public enum OpCode {
         }
         return NOTEXIST;
 	}
+	
+	/***
+	 * Return the OpCode enum object if opcode value is provided
+	 * @param code
+	 * @return OpCode enum object
+	 */
 	public static OpCode fromCode(int code) {
 		
         for (OpCode value : OpCode.values()) {

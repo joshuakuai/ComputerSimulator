@@ -44,7 +44,7 @@ public enum HardwarePart {
 	
 	/**
 	 * returns the hardware part name
-	 * @return
+	 * @return    hardware part name
 	 */
 	public String getName(){
 		return name;
@@ -53,7 +53,7 @@ public enum HardwarePart {
 	/**
 	 * return the number of bits is used for this hardware part in memory or program
 	 * 
-	 * @return
+	 * @return  number of bits   
 	 */
 	public int getBit(){
 		return numOfBit;
@@ -63,7 +63,7 @@ public enum HardwarePart {
 	 * Whether or not to allow this hardware component to be edited through
 	 * switches in GUI 
 	 * 
-	 * @return
+	 * @return   True if this part can be displayed in Front-end GUI
 	 */
 	public boolean isEditable(){
 		return editable;

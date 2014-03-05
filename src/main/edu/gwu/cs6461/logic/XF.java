@@ -14,8 +14,12 @@ import edu.gwu.cs6461.sim.common.HardwarePart;
  *creates all the index registers and updates them
  */
 public class XF {
+	
+	/**create index register with signed value enabled*/
     private Register X1 = new Register(HardwarePart.X1.getBit(),HardwarePart.X1.getName(),true);
+    /**create index register with signed value enabled*/
     private Register X2 = new Register(HardwarePart.X2.getBit(),HardwarePart.X2.getName(),true);
+    /**create index register with signed value enabled*/
     private Register X3 = new Register(HardwarePart.X3.getBit(),HardwarePart.X3.getName(),true);
     
     public XF(){

@@ -114,7 +114,7 @@ public class Control {
 	 * cpucontroller class are passed here, this allows the function to share
 	 * the appropriate objects with the instruction functions.
 	 * 
-	 * @run depending on the opcode from IR the right instruction is called
+	 *  depending on the opcode from IR the right instruction is called
 	 */
 	public void RunInstruction() {
 		int OpCode = IRobject.getOpCode();
@@ -234,9 +234,8 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @run Load Register from memory instruction
+	 * IRobject  IR object with decoded instruction
+	 *  Load Register from memory instruction
 	 */
 	public void LDR() {
 		this.calculateEAOffset();
@@ -252,11 +251,7 @@ public class Control {
 
 	/**
 	 * 
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @param CC
-	 *            passed to ALU
-	 * @run Add memory to register
+	 *  Add memory to register
 	 */
 	public void AMR() {
 		this.calculateEAOffset();
@@ -277,9 +272,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @run store register to memory
+	 *  store register to memory
 	 */
 	public void STR() {
 		this.calculateEAOffset();
@@ -303,11 +296,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @param CC
-	 *            passed to ALU
-	 * @run Subtract Memory from Register
+	 *  Subtract Memory from Register
 	 */
 	public void SMR() {
 		this.calculateEAOffset();
@@ -328,11 +317,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @param CC
-	 *            passed to ALU
-	 * @run Add Immediate to Register
+	 *  Add Immediate to Register
 	 */
 	public void AIR() {
 		// if immed is zero no need to change register but the value is
@@ -373,11 +358,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @param CC
-	 *            passed to ALU
-	 * @run Subtract Immediate from Register
+	 * Subtract Immediate from Register
 	 */
 	public void SIR() {
 		// if immed is zero no need to change register but the value is
@@ -413,9 +394,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @run Load Register with Address
+	 * Load Register with Address
 	 */
 	public void LDA() {
 		this.calculateEAOffset();
@@ -441,9 +420,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @run Load Index Register from Memory
+	 * Load Index Register from Memory
 	 */
 	public void LDX() {
 		// get memory contents of address MAR and put it in MDR
@@ -476,9 +453,7 @@ public class Control {
 	}
 
 	/**
-	 * @param IRobject
-	 *            IR object with decoded instruction
-	 * @run Store Index Register to Memory
+	 * Store Index Register to Memory
 	 */
 	public void STX() {
 		MAR.setData(IRobject.getAddress());
@@ -513,7 +488,7 @@ public class Control {
 //////////////////////////////////////////PART II////////////////////////////////////////////////////////////
 	/////////////////////////////////////        ///////////////////////////////////////////////////////
 	/**
-	 * @run Multiplication of two general registers (rx,ry)
+	 * Multiplication of two general registers (rx,ry)
 	 * and store the result in register one(rx) (upper half of result)
 	 * and register after it(rx+1)(lower half of the result)
 	 */
@@ -547,7 +522,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run divide two general registers(rx,ry)
+	 * divide two general registers(rx,ry)
 	 * and store the result in register one(rx) (the result)
 	 * and register after it(rx+1)(the reminder)
 	 */
@@ -563,7 +538,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run check if two general registers are equal (rx,ry)
+	 * check if two general registers are equal (rx,ry)
 	 * if equal set condition code to Equal or Not
 	 * else Condition code 0
 	 */
@@ -584,7 +559,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run logical and the two general registers (rx,ry)
+	 * ogical and the two general registers (rx,ry)
 	 * and store the result in the first general register(rx) 
 	 */
 	public void AND() {
@@ -602,7 +577,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run logical OR the two general registers(rx,ry)
+	 * logical OR the two general registers(rx,ry)
 	 * and store result in the first general register(rx)
 	 */
 	public void ORR() {
@@ -620,7 +595,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run logical not of general register (rx)
+	 * logical not of general register (rx)
 	 * and store the result back in register(rx)	
 	 */
 	public void NOT() {
@@ -635,7 +610,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run logic or arithmetic left or right the general register value 
+	 * logic or arithmetic left or right the general register value 
 	 */
 	public void SRC() {
 		int count = IRobject.getCount();
@@ -696,7 +671,7 @@ public class Control {
 		PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run logical rotate left or right the general register value
+	 * logical rotate left or right the general register value
 	 *  
 	 */
 	public void RRC() {
@@ -742,7 +717,7 @@ public class Control {
 	}
 
 	/**
-	 * @run  jump if register value =0
+	 *   jump if register value =0
 	 */
 	public void JZ() {
 		if (RFtable.getSwitch(IRobject.getRFI1()) == 0) {
@@ -785,7 +760,7 @@ public class Control {
 	}
 
 	/**
-	 * @run jump if register !=0
+	 *  jump if register !=0
 	 */
 	public void JNE() {
 		if (RFtable.getSwitch(IRobject.getRFI1()) != 0) {
@@ -827,7 +802,7 @@ public class Control {
 			PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run jump if condition code is set
+	 *  jump if condition code is set
 	 */
 	public void JCC() {
 		if (CC.getData() >0 && CC.getData()<=8) {
@@ -869,7 +844,7 @@ public class Control {
 			PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run jump unconditionally
+	 *  jump unconditionally
 	 */
 	public void JMP() {
 		MAR.setData(IRobject.getAddress());
@@ -905,7 +880,7 @@ public class Control {
 		logger.debug("PC JMP=" + PC.getData());
 	}
 	/**
-	 * @run jump and save the return address to register 4
+	 *  jump and save the return address to register 4
 	 */
 	public void JSR() {
 		// save PC+1 into R3
@@ -945,14 +920,14 @@ public class Control {
 
 	}
 	/**
-	 * @run gets the return address from register 4 and puts in PC
+	 *  gets the return address from register 4 and puts in PC
 	 */
 	public void RFS() {
 		RFtable.setR0(IRobject.getImmed());
 		PC.setData(RFtable.getR3());
 	}
 	/**
-	 * @run subtracts one from the register and if the register is still >0
+	 *  subtracts one from the register and if the register is still >0
 	 * than it branch's to effective address	
 	 */
 	public void SOB() {
@@ -1001,7 +976,7 @@ public class Control {
 			PC.setData(PC.getData() + 1);
 	}
 	/**
-	 * @run if register is greate than zero than jump
+	 *  if register is greater than zero than jump
 	 */
 	public void JGE() {
 		if (RFtable.getSwitch(IRobject.getRFI1()) >= 0) {

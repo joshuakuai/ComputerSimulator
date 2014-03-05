@@ -9,6 +9,8 @@ import edu.gwu.cs6461.sim.util.PropertiesParser;
 
 /**
  * 
+ * Main class to launch the simulator
+ * 
  * @author marcoyeung
  * 
  */
