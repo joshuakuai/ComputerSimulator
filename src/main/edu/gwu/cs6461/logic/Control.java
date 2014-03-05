@@ -118,7 +118,7 @@ public class Control {
 	 */
 	public void RunInstruction() {
 		int OpCode = IRobject.getOpCode();
-
+//check opcode if illegal set MFR
 		if (OpCode == 1 || OpCode == 2 || OpCode == 3 || OpCode == 4
 				|| OpCode == 5 || OpCode == 6 || OpCode == 7 || OpCode == 41
 				|| OpCode == 42 || OpCode == 20 || OpCode == 21 || OpCode == 22
@@ -510,7 +510,13 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+//////////////////////////////////////////PART II////////////////////////////////////////////////////////////
+	/////////////////////////////////////        ///////////////////////////////////////////////////////
+	/**
+	 * @run Multiplication of two general registers (rx,ry)
+	 * and store the result in register one(rx) (upper half of result)
+	 * and register after it(rx+1)(lower half of the result)
+	 */
 	public void MLT() {
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
 				RFtable.getSwitch(IRobject.getRFI2()), IRobject.getOpCode(),
@@ -520,6 +526,8 @@ public class Control {
 		String result = Long.toString(Multi.getResult(), 2);
 		int upperhalf = 0;
 		int lowerhalf = 0;
+		//if result is bigger than 20 than divide into upper and lower
+		//else upper half is zero and lower half is what is left
 	    if (CC.getData() == ConditionCode.NORMAL.getCode()) {
 			if (result.length() > 20) {
 				upperhalf = Integer.parseInt(result.substring(0, result.length() - 20), 2);
@@ -538,7 +546,11 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run divide two general registers(rx,ry)
+	 * and store the result in register one(rx) (the result)
+	 * and register after it(rx+1)(the reminder)
+	 */
 	public void DVD() {
 		ALU.Calculate(RFtable.getSwitch(IRobject.getRFI1()),
 				RFtable.getSwitch(IRobject.getRFI2()), IRobject.getOpCode(),
@@ -550,7 +562,11 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run check if two general registers are equal (rx,ry)
+	 * if equal set condition code to Equal or Not
+	 * else Condition code 0
+	 */
 	public void TRR() {
 		String op1 = "", op2 = "";
 		op1 = Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()),
@@ -567,7 +583,10 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run logical and the two general registers (rx,ry)
+	 * and store the result in the first general register(rx) 
+	 */
 	public void AND() {
 		String op1 = "", op2 = "";
 		op1 = Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()),
@@ -582,7 +601,10 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run logical OR the two general registers(rx,ry)
+	 * and store result in the first general register(rx)
+	 */
 	public void ORR() {
 		String op1 = "", op2 = "";
 		op1 = Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()),
@@ -597,7 +619,10 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run logical not of general register (rx)
+	 * and store the result back in register(rx)	
+	 */
 	public void NOT() {
 		String op1 = "";
 		op1 = Convertor.getBinFromInt(RFtable.getSwitch(IRobject.getRFI1()),
@@ -609,7 +634,9 @@ public class Control {
 
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run logic or arithmetic left or right the general register value 
+	 */
 	public void SRC() {
 		int count = IRobject.getCount();
 		int LogicArithmetic = IRobject.getLogicalorArithmetic();
@@ -621,14 +648,16 @@ public class Control {
 					RFtable.getSwitch(IRobject.getRFI1()),
 					SimConstants.WORD_SIZE);
 			StringBuilder sb = new StringBuilder(op1);
-			//
+			//logical shift
 			if (LogicArithmetic == 1) {
+				//logic shift left
 				if (LeftRight == 1)
 					for (int i = 0; i < count; i++) {
 						sb.append("0");
 						sb.deleteCharAt(0);
 						logger.debug("Left=" + sb);
 					}
+				//logic shift right
 				if (LeftRight == 0) {
 					int lastPos = sb.length();
 					for (int i = 0; i < count; i++) {
@@ -638,6 +667,7 @@ public class Control {
 					}
 				}
 				RES.setData(Integer.parseInt(sb.toString(), 2));
+				//Arithmetic shift
 			} else if (LogicArithmetic == 0) {
 				int width = op1.length();
 
@@ -645,14 +675,16 @@ public class Control {
 				
 				String signBit = op1.substring(0, 1);
 				int result = 0;
-				//
+				//arithmetic left shift
 				if (LeftRight == 1) {
 					result = iVal << count;
 					logger.debug("left a=" + result);
+					//arithmetic right shift
 				} else if (LeftRight == 0) {
 					result = iVal >> count;
 					logger.debug("Right a=" + Integer.toString(result, 2));
 				}
+				//keeping the sign bit
 				String res19 = Convertor.getBinFromInt(result, width - 1);
 				String res20 = signBit + res19;
 
@@ -661,10 +693,12 @@ public class Control {
 			RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 		}
 		// else if count is zero do nothing
-
 		PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run logical rotate left or right the general register value
+	 *  
+	 */
 	public void RRC() {
 		int count = IRobject.getCount();
 		int LogicArithmetic = IRobject.getLogicalorArithmetic();
@@ -677,7 +711,10 @@ public class Control {
 					SimConstants.WORD_SIZE);
 			StringBuffer s = new StringBuffer(op1);
 			int lastPos = s.length();
+			//if user inputs arithmetic option nothing happens
+			//only logic option
 			if (LogicArithmetic == 1) {
+				//logic rotate right
 				if (LeftRight == 0) {
 					for (int i = 0; i < count; i++) {
 						char c = s.charAt(lastPos - 1);
@@ -686,6 +723,7 @@ public class Control {
 					}
 					logger.debug("Rot Right=" + s.toString());
 				}
+				//logic rotate left
 				if (LeftRight == 1) {
 					for (int i = 0; i < count; i++) {
 						char c = s.charAt(0);
@@ -699,12 +737,13 @@ public class Control {
 				RFtable.setSwitch(IRobject.getRFI1(), RES.getData());
 			}
 		}
-
+		//else if count is zero do nothing
 		PC.setData(PC.getData() + 1);
 	}
 
-	// ///////////////////////////////////////////
-	// ////////////////////////////////////////////
+	/**
+	 * @run  jump if register value =0
+	 */
 	public void JZ() {
 		if (RFtable.getSwitch(IRobject.getRFI1()) == 0) {
 			MAR.setData(IRobject.getAddress());
@@ -745,7 +784,9 @@ public class Control {
 			PC.setData(PC.getData() + 1);
 	}
 
-	// ////
+	/**
+	 * @run jump if register !=0
+	 */
 	public void JNE() {
 		if (RFtable.getSwitch(IRobject.getRFI1()) != 0) {
 			MAR.setData(IRobject.getAddress());
@@ -785,7 +826,9 @@ public class Control {
 		else
 			PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run jump if condition code is set
+	 */
 	public void JCC() {
 		if (CC.getData() >0 && CC.getData()<=8) {
 			MAR.setData(IRobject.getAddress());
@@ -825,7 +868,9 @@ public class Control {
 		else
 			PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run jump unconditionally
+	 */
 	public void JMP() {
 		MAR.setData(IRobject.getAddress());
 		if (XFtable.getSize(IRobject.getXFI()) != 0) {
@@ -859,7 +904,9 @@ public class Control {
 		PC.setData(MAR.getData());
 		logger.debug("PC JMP=" + PC.getData());
 	}
-
+	/**
+	 * @run jump and save the return address to register 4
+	 */
 	public void JSR() {
 		// save PC+1 into R3
 		RFtable.setR3(PC.getData() + 1);
@@ -897,12 +944,17 @@ public class Control {
 		logger.debug("PC JMP=" + PC.getData());
 
 	}
-
+	/**
+	 * @run gets the return address from register 4 and puts in PC
+	 */
 	public void RFS() {
 		RFtable.setR0(IRobject.getImmed());
 		PC.setData(RFtable.getR3());
 	}
-
+	/**
+	 * @run subtracts one from the register and if the register is still >0
+	 * than it branch's to effective address	
+	 */
 	public void SOB() {
 		// subtract 1 from the selected general register
 		int RegValue = RFtable.getSwitch(IRobject.getRFI1()) - 1;
@@ -948,7 +1000,9 @@ public class Control {
 		else
 			PC.setData(PC.getData() + 1);
 	}
-
+	/**
+	 * @run if register is greate than zero than jump
+	 */
 	public void JGE() {
 		if (RFtable.getSwitch(IRobject.getRFI1()) >= 0) {
 			MAR.setData(IRobject.getAddress());

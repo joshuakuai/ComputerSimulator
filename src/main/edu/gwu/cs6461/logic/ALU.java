@@ -21,7 +21,8 @@ import edu.gwu.cs6461.sim.util.Convertor;
 
 /**
  * ALU to support arithmetic logics
- * Two functionalities available subtract and add
+ * Four functionalities available subtract and add
+ * multiply and divide
  */
 public class ALU extends Observable {
 	private final static Logger logger = Logger.getLogger(ALU.class);
@@ -75,11 +76,7 @@ public class ALU extends Observable {
 		return this;
 	}
 	
-	/**
-	 * need to be enhanced to support more complex result
-	 * 
-	 * @return
-	 */
+	
 	public int getResult (){
 		return result.getData();
 	}
@@ -95,6 +92,7 @@ public class ALU extends Observable {
 	 * the result will be set at the result register.
 	 * 
 	 */
+	@Deprecated
 	public void calculate() {
 		if (operand1 == null ||operand2 == null || 
 				operation == null || bitSize<=0) {
@@ -129,7 +127,7 @@ public class ALU extends Observable {
 	public void Calculate(int operand1, int operand2, int opcode, Register RES, Register CC, Register RES2, Multiply Multi) {
 		Calculate(operand1, operand2, SimConstants.WORD_SIZE, opcode, RES, CC, RES2, Multi);
 	}
-	@Deprecated
+	
 	public void Calculate(int operand1, int operand2, int bitSize, int opcode, Register RES, Register CC, Register RES2, Multiply Multi) {
 		String op1="", op2="";
 		op1= Convertor.getBinFromInt(operand1, bitSize);;
@@ -151,12 +149,13 @@ public class ALU extends Observable {
 			operation = ALUOperator.Division;
 				
 		int ret=0; 
+		//do addition or subtraction depending on the opcode
 		if ("+".equals(operation.getOpt())) {
 			ret = opt1+opt2;
 		} else if ("-".equals(operation.getOpt())) {
 			ret = opt1-opt2;
 		}
-
+		//check if the result is overflow or underflow
 		if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
 			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
 		}else if (ret > SimConstants.WORD_MAX_VALUE || ret < SimConstants.WORD_MIN_VALUE) {
@@ -165,17 +164,19 @@ public class ALU extends Observable {
 		else {
 			setCC(ConditionCode.NORMAL.getCode(),CC);
 		}
-		//set RES for subtract, add, multiply
+		//set RES for subtract, add
 		RES.setData(ret);
-		
+		//do division
 		if("/".equals(operation.getOpt())){
 			if(opt2!=0){
 				RES.setData(opt1/opt2);
 				RES2.setData(opt1%opt2);
 			}
+			//set condition code if divide by zero
 			else
 				setCC(ConditionCode.DIVZERO.getCode(),CC);
 		}
+		//do multiplication
 		if ("*".equals(operation.getOpt())){
 			multiply(opt1, opt2, CC,Multi);
 		}
@@ -183,10 +184,11 @@ public class ALU extends Observable {
 	}
 	public void multiply(int opt1, int opt2, Register CC, Multiply Multi){
 		long resultMLT=0;		
-		
+		//the multiplication result is 40bit so we had to use long for it
+		//so are using multiply a special register that is 40bit and uses long instead of int
 		resultMLT=1L*(long)opt1*(long)opt2;
 		logger.debug("Res MLT="+resultMLT);		
-		
+		//check if the result is overflow for signed 40bits
 		if (resultMLT > SimConstants.TWOWORD_MAX_VALUE ) {
 			setCC(ConditionCode.OVERFLOW.getCode(),CC);			
 		} else if( resultMLT < SimConstants.TWOWORD_MIN_VALUE){
@@ -198,6 +200,7 @@ public class ALU extends Observable {
 		
 		Multi.setResult(resultMLT);
 	}
+	//set the codition code register and update its value in the GUI
 	public void setCC(int Value, Register CC) {
 		CC.setData(Value);
 

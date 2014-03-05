@@ -9,7 +9,7 @@ package edu.gwu.cs6461.logic;
 import org.apache.log4j.Logger;
 
 /**
- * Decode the IR instructions into the various part opcode r x address I T
+ * Decode the IR instructions into the various part opcode r x address I T immed
  */
 public class Decode {
 	private final static Logger logger = Logger.getLogger(Decode.class);
