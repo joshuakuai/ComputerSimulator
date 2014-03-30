@@ -175,7 +175,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * Business logic objects
 	 */
 	private CPUController cpuController = CPUController.shareInstance();
-	private boolean captureKeyEvent = true;
+	private boolean captureKeyEvent = false;
 
 	/**
 	 * Constructor:init GUI component; register GUi component event listeners
@@ -910,7 +910,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 		String filePath = prop.getStringProperty("sim.programfilepath");
 		filePath = filePath + File.separator+cmd;
-		if (filePath != null && !"".equals(filePath)) {
+		if (filePath != null && !"".equals(filePath)  && new File(filePath).exists()) {
 			cpuController.loadFromFile(filePath);
 			logger.debug("program file "+filePath+" is loaded");
 			simConsole.info("program file "+cmd+" is loaded");
@@ -1082,16 +1082,21 @@ public class MainSimFrame extends JFrame implements Observer {
 				maskSwitches(0, HIGHESTBIT - numBit, false);
 				maskSwitches(HIGHESTBIT - numBit + 1, 19, true);
 
+				String sel = (String)cboAllInstrHelper.getSelectedItem();
 				if (reg == HardwarePart.MEMORY) {
 					setMemorySwitch(true);
+					cboAllInstrHelper.setVisible(true);
+					
+					if (OpCode.valueOf(sel) == OpCode.IN || OpCode.valueOf(sel) == OpCode.OUT)  {
+						setSwithes4InOutInstr(false);
+					}
+					
 				} else {
 					setMemorySwitch(false);
-				}
-
-				if (reg == HardwarePart.MEMORY) {
-					cboAllInstrHelper.setVisible(true);
-				} else {
 					cboAllInstrHelper.setVisible(false);
+					if (OpCode.valueOf(sel) == OpCode.IN || OpCode.valueOf(sel) == OpCode.OUT)  {
+						setSwithes4InOutInstr(true);
+					}
 				}
 
 			}
@@ -1199,11 +1204,9 @@ public class MainSimFrame extends JFrame implements Observer {
 					if (op == OpCode.IN || op == OpCode.OUT) {
 						//TODO need a place to store this nu-used bit range?!
 						//hard coded for now
-						setSwitchesEditable(6,7,false); 
-						setSwitchesEditable(10,15,false);
+						setSwithes4InOutInstr(false);
 					} else  {
-						setSwitchesEditable(6,7,true);
-						setSwitchesEditable(10,15,true);
+						setSwithes4InOutInstr(true);
 					}
 					
 					
@@ -1214,6 +1217,11 @@ public class MainSimFrame extends JFrame implements Observer {
 			logger.debug("selected :  " + op);
 		}
 
+	}
+	
+	private void setSwithes4InOutInstr(boolean b) {
+		setSwitchesEditable(6,7,b);
+		setSwitchesEditable(10,15,b);
 	}
 
 	private class InputKeyEventHandler implements KeyListener {

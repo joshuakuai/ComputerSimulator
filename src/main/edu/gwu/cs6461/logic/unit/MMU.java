@@ -1,11 +1,21 @@
 package edu.gwu.cs6461.logic.unit;
 
+import static edu.gwu.cs6461.sim.common.SimConstants.FILE_COMMENT;
+import static edu.gwu.cs6461.sim.common.SimConstants.FILE_DATA_HEAD;
+import static edu.gwu.cs6461.sim.common.SimConstants.FILE_INSTRUCTION_HEAD;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+
 import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.logic.unit.MainMemory.Entry;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.MemoryType;
 import edu.gwu.cs6461.sim.common.SimConstants;
+import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.exception.MemoryException;
 import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
@@ -232,5 +242,71 @@ public class MMU {
 		Cache.getInstance().init();
 	}
 
+	
+	/**
+	 * load up program from file into memory
+	 * @param fileName
+	 * @throws IOCmdException 
+	 */
+	public void loadFromFile(String fileName) throws IOCmdException  {
+		File f = new File(fileName);
+		try (FileInputStream fis = new FileInputStream(f);
+				BufferedReader br = new BufferedReader(new FileReader(f));) {
+			
+			String line;
+			String comments="";
+			int instrPos = 100, dataPos = 150;
+			boolean currData = true;
+			boolean dheader = false,iheader = false;
+			while ((line = br.readLine()) != null) {
+				
+				if (line.startsWith(FILE_COMMENT) || "".equals(line.trim())) {
+					continue;
+				}
+				
+				int cmIdx = line.indexOf(FILE_COMMENT);
+				if (cmIdx> 1) {
+					String tmp = line;
+					line = line.substring(0, cmIdx);
+					comments = tmp.substring(cmIdx);
+				} else comments ="";
+				line = line.trim();
+				
+				if (line.startsWith(FILE_DATA_HEAD)) {
+					int pos = line.indexOf(":");
+					if (pos >1) {
+						dataPos = Integer.parseInt(line.substring(pos+1));
+						logger.debug("save " + FILE_DATA_HEAD +" from " + dataPos);
+					}
+					currData = true;
+					dheader = true;
+				} else {
+					dheader = false;
+				}
+				if (line.startsWith(FILE_INSTRUCTION_HEAD)) {
+					int pos = line.indexOf(":");
+					if (pos >1) {
+						instrPos = Integer.parseInt(line.substring(pos+1));
+						logger.debug("save " + FILE_INSTRUCTION_HEAD +" from " + instrPos);
+					}
+					currData = false;
+					iheader = true;
+				} else {
+					iheader = false;
+				}
+			
+				if (currData && !dheader) {
+					setData(dataPos++, line, comments);
+				} else if (!currData && !iheader) {
+					setInstr(instrPos++, line, comments);
+				}
+			}
+			
+		} catch (Exception e) {
+			logger.error("failed to read file ",e);
+			throw new IOCmdException(e.getMessage());
+		} 
+	}
+	
 
 }
