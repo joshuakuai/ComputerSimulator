@@ -22,30 +22,19 @@ public class TEST {
 		System.out.println(Convertor.getSignedValFromBin(sVal, 20));
 		
 	}
-	
-	/**
-	 * 
-	 * 
-	 * http://stackoverflow.com/questions/15837899/java-twos-complement-binary-to-integer
-	 * 
-	 * 
-	 * short res = (short)Integer.parseInt("1111111111001110", 2);
-		System.out.println(res);
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		TEST tester = new TEST();
+	void testmask(){
 		
-		System.out.println(Convertor.getSignedValFromBin("10000000000000000000", 20));
-		int val = 50000;
-		System.out.println(val >> 8);
+		int net = 17;
 		
-		tester.testShiftArith("right");
-		                                                  
+		int iMask = net & 0b11111111; 
+		System.out.println(iMask);
+		System.out.println(Convertor.display(iMask));		
+		System.out.println(Integer.toBinaryString(iMask));
+		System.out.println(Convertor.getSignedBinFromInt(iMask, 8));
 		
-//		tester.testMap();
 	}
+	
+
 
 	void testMap(){
 		LinkedHashMap<Integer, String>link = new LinkedHashMap<>();
@@ -70,46 +59,53 @@ public class TEST {
 		
 	}
 	
-	void testmask(){
-		
-		int net = 4385;
-		
-		int iMask = net & 0b11111111111111111111; 
-		System.out.println(iMask);
-		System.out.println(Convertor.display(iMask));		
-		System.out.println(Integer.toBinaryString(iMask));
-		
-	}
 	
-	
+	/**
+	 * 
+	 * 
+	 * http://stackoverflow.com/questions/15837899/java-twos-complement-binary-to-integer
+	 * 
+	 * 
+	 * short res = (short)Integer.parseInt("1111111111001110", 2);
+		System.out.println(res);
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		TEST tester = new TEST();
+		tester.instrTest();
+//		tester.testShiftArith("right");
+		                                                  
+//		tester.testMap();
+	}	
 	
 	void instrTest() {
 		System.out.println("---------Multiply----");
 		test2complementMlt_2();
-//		System.out.println("---------Division----");
-//		tester.testDVD();
-//		System.out.println("---------subtraction----");
-//		tester.test2complementSub();
-//		System.out.println("---------Add-----------");
-//		tester.test2complementAdd();
-//		System.out.println("---------bit AND-----------");
-//		tester.testANDOrOR("AND");
-//		System.out.println("---------bit or -----------");
-//		tester.testANDOrOR("OR");
-//		System.out.println("--------Arithmetic Shift-----------");
-//		tester.testShiftArith("left");
-//		System.out.println("-----------");
-//		tester.testShiftArith("right");
-//		System.out.println("-------Rotate Left--------");
-//		tester.testRRCLeft();
-//		System.out.println("-------Rotate Right-------");
-//		tester.testRRCRight();
-//		System.out.println("-------Shift logical left-------");
-//		tester.testLeftShiftLogical();
-//		System.out.println("-------Shift logical right-------");
-//		tester.testRightShiftLogical();
-//		System.out.println("-------NOT-------");
-//		tester.testNOT();
+		System.out.println("---------Division----");
+		testDVD();
+		System.out.println("---------subtraction----");
+		test2complementSub();
+		System.out.println("---------Add-----------");
+		test2complementAdd();
+		System.out.println("---------bit AND-----------");
+		testANDOrOR("AND");
+		System.out.println("---------bit or -----------");
+		testANDOrOR("OR");
+		System.out.println("--------Arithmetic Shift-----------");
+		testShiftArith("left");
+		System.out.println("-----------");
+		testShiftArith("right");
+		System.out.println("-------Rotate Left--------");
+		testRRCLeft();
+		System.out.println("-------Rotate Right-------");
+		testRRCRight();
+		System.out.println("-------Shift logical left-------");
+		testLeftShiftLogical();
+		System.out.println("-------Shift logical right-------");
+		testRightShiftLogical();
+		System.out.println("-------NOT-------");
+		testNOT();
 //		
 	}
 	
@@ -312,7 +308,7 @@ public class TEST {
 		int shift = 8;
 		String val20 = "10010000000100000010";                         //string in binary
 		val20 = "10011110000011111111";
-		val20 = "00001100001101010000";
+//		val20 = "00001100001101010000";
 
 		int width = val20.length();
 		

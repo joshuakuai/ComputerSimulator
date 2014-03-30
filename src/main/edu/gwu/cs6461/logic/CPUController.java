@@ -10,8 +10,10 @@ import java.io.FileReader;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.logic.unit.IODevice;
 import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.ui.MainSimFrame;
 
@@ -48,11 +50,19 @@ public class CPUController extends Thread {
 	/** Keep a weak reference of mainSimFrame */
 	private MainSimFrame mainFrame = null;
 
+	
+	private IODevice inputDevice =null;
+	private IODevice outputDevice =null;	
+	
 	/** CPU holds a weak reference of the memory but CPU doesn't own the memory */
 	private CPUController() {
 		cpuControl.setALU(ALU.getInstance());
 		cpuControl.setMem(mmu);
 		cpuControl.setRegisters(registerContainer);
+
+		inputDevice = new IODevice(DeviceType.Keyboard);
+		outputDevice = new IODevice(DeviceType.ConsolePrinter);
+				
 	}
 
 	/** This recreates the cpu thread after an instruction is finished
@@ -91,11 +101,16 @@ public class CPUController extends Thread {
 	public void clearObserver(){
 		mmu.clearObserver();
 		registerContainer.clearAllRegistersObserver();
+		inputDevice.clear();
+		outputDevice.clear();
 	}
 
 	public void setRegisterObserver(Observer obs) {
 		mmu.registerObserver(obs);
 		registerContainer.registerObserver(obs);
+		inputDevice.register(obs);
+		outputDevice.register(obs);
+		
 	}
 
 	/**
@@ -233,5 +248,12 @@ public class CPUController extends Thread {
 			} catch (Exception e) { }
 		}
 	}
+	
+	public void setInputDeviceData(DeviceType type, int data) {
+		inputDevice.putData(data);
+	}
 
+	public int getOuputDeviceData() {
+		return outputDevice.getData(); //output device
+	}
 }

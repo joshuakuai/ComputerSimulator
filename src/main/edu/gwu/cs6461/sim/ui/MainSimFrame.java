@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -52,6 +53,7 @@ import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.ConditionCode;
+import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
@@ -156,7 +158,9 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	private JTextField txtIOInput = new JTextField();
 	private JList<String> lstHistCdms;
+	/**history of IO commands user has input*/
 	private DefaultListModel<String> lstModHistCdms= new DefaultListModel<>();
+	/**all supported instructions, use to setup switches*/
 	private JComboBox<String> cboAllInstrHelper = new JComboBox<String>();
 
 	/**
@@ -171,6 +175,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * Business logic objects
 	 */
 	private CPUController cpuController = CPUController.shareInstance();
+	private boolean captureKeyEvent = true;
 
 	/**
 	 * Constructor:init GUI component; register GUi component event listeners
@@ -393,12 +398,18 @@ public class MainSimFrame extends JFrame implements Observer {
  		lstHistCdms = new JList<String>(lstModHistCdms);
 		lstHistCdms.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		
+		txtIOInput.addKeyListener(new InputKeyEventHandler());
 		txtIOInput.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-		        String cmd = txtIOInput.getText();
+				String cmd = txtIOInput.getText();
+				
+				if (captureKeyEvent) {
+					lstModHistCdms.insertElementAt(DeviceType.Keyboard + " " + cmd, 0);
+					return;
+				}
+				
 		        lstModHistCdms.insertElementAt("Loading "+ cmd, 0);
 		        lstHistCdms.setSelectedIndex(0);
 		        txtIOInput.selectAll();
@@ -720,8 +731,8 @@ public class MainSimFrame extends JFrame implements Observer {
 				String addString = lstModel.getElementAt(i);
 
 				int spIdx = addString.indexOf(" ");
-				if (spIdx>0) {
-					addString = addString.substring(0,spIdx);
+				if (spIdx > 0) {
+					addString = addString.substring(0, spIdx);
 				}
 				if (addString.equals(key) ) { //further enhance in the next phase
 					lstModel.setElementAt(newElementString, i);
@@ -1116,6 +1127,15 @@ public class MainSimFrame extends JFrame implements Observer {
 							} else if(mVal.length == 3){
 								loadToControl(k, mVal[0], mVal[1], mVal[2]);
 							}
+						} else if (HardwarePart.fromName(k) == HardwarePart.OUTPUT) {
+							logger.debug("output request from hardware :" + v + " creating handler.");
+							
+							new printOutHandler();
+							
+						} else if (HardwarePart.fromName(k) == HardwarePart.INPUT) {
+							logger.debug("input request from hardware:" + v + " activate the keyboard for input." );
+							captureKeyEvent = true;
+							
 						} else {
 							loadToControl(k, v);
 						}
@@ -1167,7 +1187,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			if (op != OpCode.NOTEXIST) {
 
 				try {
-					String bits[]=Convertor.bitToArray(bin.substring(0,6) );
+					String bits[] = Convertor.bitToArray(bin.substring(0, 6));
 					
 					for (int i = 0; i < 6; i++) {
 						if (bits[i].equals("1")) {
@@ -1176,6 +1196,17 @@ public class MainSimFrame extends JFrame implements Observer {
 							radBinData[i].setSelected(false);
 						}
 					}
+					if (op == OpCode.IN || op == OpCode.OUT) {
+						//TODO need a place to store this nu-used bit range?!
+						//hard coded for now
+						setSwitchesEditable(6,7,false); 
+						setSwitchesEditable(10,15,false);
+					} else  {
+						setSwitchesEditable(6,7,true);
+						setSwitchesEditable(10,15,true);
+					}
+					
+					
 				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
@@ -1185,4 +1216,56 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
+	private class InputKeyEventHandler implements KeyListener {
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+			handleInput(e, "keyTyped");
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {}
+
+		@Override
+		public void keyReleased(KeyEvent e) {}
+			
+	}
+	
+    private void handleInput(KeyEvent e, String keyStatus){
+        if (!captureKeyEvent) {
+			return;
+		}
+        //You should only rely on the key char if the event
+        //is a key typed event.
+        char c = e.getKeyChar();
+
+        logger.debug("keyboard value: " + c + " val:"+ (int)c);
+        
+        if (c == '\n') {
+			captureKeyEvent = false; //end of this capture keyboard cycle
+		}
+        cpuController.setInputDeviceData(DeviceType.Keyboard, (int)c);
+        
+        //simConsole.debug("keyboard input :"+ (int)c);
+    }	
+
+    private class printOutHandler implements Runnable {
+    	
+    	public printOutHandler() {
+			new Thread(this,"printerConsole").start();
+		}
+    	
+		String result ="";
+    	@Override
+    	public void run() {
+    		while(true) {
+    			int val = cpuController.getOuputDeviceData();
+    			if (val == '\n') {
+					break;
+				}
+    			result = result + (char)val;
+    		} //
+    		simConsole.info(result);
+    	}
+    } //
 }

@@ -183,7 +183,7 @@ public class MainMemory extends Observable{
 	}
 	
 	/***
-	 * Set instrcution data into memory.<BR>
+	 * Set instruction data into memory.<BR>
 	 * By default, the size is the word size. e.g. 20 bits <BR>
 	 * the update will be published to observer if there is any
 	 *

@@ -8,11 +8,13 @@ package edu.gwu.cs6461.logic;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.logic.unit.IODevice;
 import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.ALUFlags;
 import edu.gwu.cs6461.sim.common.ALUOperator;
 import edu.gwu.cs6461.sim.common.ConditionCode;
+import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.MemoryException;
@@ -56,6 +58,7 @@ public class Control {
 	int instrStartingPos=100;
 	public Control() {
 		instrStartingPos = prop.getIntProperty("sim.program.startingpoint",100);
+
 	}
 
 	// References setter

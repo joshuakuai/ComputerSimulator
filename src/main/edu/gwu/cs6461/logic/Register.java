@@ -20,7 +20,7 @@ import edu.gwu.cs6461.sim.util.Convertor;
 public class Register extends Observable{
 	private final static Logger logger = Logger.getLogger(Register.class);
 	private int data = 0;
-	private String dataStr = "";
+//	private String dataStr = "";
 	private boolean signedVal = false;
 	private int size = 0;
 	private String name;
@@ -87,5 +87,4 @@ public class Register extends Observable{
 	public void setSize(int newSize) {
 		size = newSize;
 	}
-
 }
