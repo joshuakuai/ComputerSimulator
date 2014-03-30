@@ -407,6 +407,7 @@ public class MainSimFrame extends JFrame implements Observer {
 				
 				if (captureKeyEvent) {
 					lstModHistCdms.insertElementAt(DeviceType.Keyboard + " " + cmd, 0);
+					logger.info("Ignore keyboard 'Enter' since IO operation is in action");
 					return;
 				}
 				
@@ -1140,7 +1141,7 @@ public class MainSimFrame extends JFrame implements Observer {
 						} else if (HardwarePart.fromName(k) == HardwarePart.INPUT) {
 							logger.debug("input request from hardware:" + v + " activate the keyboard for input." );
 							captureKeyEvent = true;
-							
+							txtIOInput.setBackground(Color.YELLOW);
 						} else {
 							loadToControl(k, v);
 						}
@@ -1247,14 +1248,13 @@ public class MainSimFrame extends JFrame implements Observer {
         //is a key typed event.
         char c = e.getKeyChar();
 
-        logger.debug("keyboard value: " + c + " val:"+ (int)c);
+        logger.debug("keyboard value to hardware: " + c + " val:"+ (int)c);
         
-        if (c == '\n') {
-			captureKeyEvent = false; //end of this capture keyboard cycle
-		}
         cpuController.setInputDeviceData(DeviceType.Keyboard, (int)c);
         
-        //simConsole.debug("keyboard input :"+ (int)c);
+        logger.debug("end of this capture keyboard cycle.");
+        txtIOInput.setBackground(Color.WHITE);
+        captureKeyEvent = false; //
     }	
 
     private class printOutHandler implements Runnable {
@@ -1266,14 +1266,16 @@ public class MainSimFrame extends JFrame implements Observer {
 		String result ="";
     	@Override
     	public void run() {
-    		while(true) {
+    		/*while(true) {
     			int val = cpuController.getOuputDeviceData();
     			if (val == '\n') {
 					break;
 				}
     			result = result + (char)val;
-    		} //
-    		simConsole.info(result);
+    		} 	*/
+    		
+    		int val = cpuController.getOuputDeviceData();
+    		simConsole.info((char)val);
     	}
     } //
 }

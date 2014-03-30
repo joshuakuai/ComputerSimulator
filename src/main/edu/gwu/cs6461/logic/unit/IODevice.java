@@ -31,18 +31,19 @@ public class IODevice extends Observable{
 		
 
 		//TODO REMOVE IT
-		tester();
+//		tester();
 	}
 	
+	@Deprecated
 	private void tester() {
 		if (type == DeviceType.Keyboard) {
 
-			logger.debug("I'll get data from keyboard.");
 			new Thread(new Runnable() {
 				String result ="";
 
 				@Override
 				public void run() {
+					logger.debug("I'll get data from keyboard.");
 
 					int d;
 
@@ -50,10 +51,9 @@ public class IODevice extends Observable{
 					 * delimited by '\n'
 					 * */
 					for (int i = 0; i < 3; i++) {
-						notifyProducer();
 						
 						while (true) {
-							d = getData(false);
+							d = getData(true);
 
 							if ((char)d =='\n') {
 								break;
@@ -64,18 +64,17 @@ public class IODevice extends Observable{
 						result="";
 					} //
 				}
-			},"INPUT")/*.start()*/;
+			},"INPUT").start();
 
 		}
 		if (type == DeviceType.ConsolePrinter) {
-			String result ="this is from cpu";
-			
-			logger.debug("I'll send back to gui");
 			/**************************************************/
+			String result ="this is from cpu";
 			final String toOut = result;
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
+					logger.debug("I'll send back to gui");
 					int len = toOut.length();
 					for (int i = 0; i < len; i++) {
 
@@ -103,7 +102,7 @@ public class IODevice extends Observable{
 	 * After getting the data , the register will be emptied
 	 * 
 	 * @return   		data that is in register.
-	 * @param notify   	true means to notify data producer; otherwise, simply wait for data
+	 * @param notify   	true means to notify data producer to get ready to create data; otherwise, simply wait for data
 	 */
 	public int getData(boolean notify) {
 		int d = -1;
@@ -165,10 +164,10 @@ public class IODevice extends Observable{
 	 * CPU/IO devices put data into IO devices' register
 	 * Wait if the there is data has not yet been consumed
 	 * <br>
-	 * after putting data, the register will be full and available for consuming
+	 * After putting data, the register will be full and available for consuming
 	 * 
 	 * @param data  data to be put into IO devices register.
-	 * @param notify   true means to notify data consumer; otherwise, put the data and quit
+	 * @param notify   true means to notify data consumer to get ready to pick data; otherwise, put the data and quit
 	 */
 	public void putData(int data, boolean notify) {
 		try {

@@ -3,6 +3,8 @@ package edu.gwu.cs6461.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.gwu.cs6461.sim.util.Convertor;
+
 public class TEST2 implements AutoCloseable {
 
 	
@@ -32,7 +34,7 @@ public class TEST2 implements AutoCloseable {
 	
 	
 	public static void main(String[] args) {
-
+		System.out.println(Convertor.getSignedValFromBin("11110100000000000000", 20));
 			new TEST2().testChar();
 	}
 

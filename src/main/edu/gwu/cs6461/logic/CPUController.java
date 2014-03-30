@@ -1,12 +1,4 @@
 package edu.gwu.cs6461.logic;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_COMMENT;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_DATA_HEAD;
-import static edu.gwu.cs6461.sim.common.SimConstants.FILE_INSTRUCTION_HEAD;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 
 import org.apache.log4j.Logger;
 
@@ -62,7 +54,8 @@ public class CPUController extends Thread {
 
 		inputDevice = new IODevice(DeviceType.Keyboard);
 		outputDevice = new IODevice(DeviceType.ConsolePrinter);
-				
+		cpuControl.setINDevices(inputDevice);
+		cpuControl.setOUTDevices(outputDevice);
 	}
 
 	/** This recreates the cpu thread after an instruction is finished
@@ -73,6 +66,8 @@ public class CPUController extends Thread {
 		if(isReserveData){
 			tmpController.registerContainer = instance.registerContainer;
 			tmpController.cpuControl = instance.cpuControl;
+			tmpController.inputDevice = instance.inputDevice;
+			tmpController.outputDevice = instance.outputDevice;
 		}
 		
 		instance = tmpController;

@@ -28,6 +28,7 @@ public class IR extends Register {
 	private int count=0;
 	private int LeftorRight=0;
 	private int LogicalorArithmetic=0;
+	private int deviceID=0;
 	private int cc=0;
 	IR(int size, String IR) {
 		super(size,"IR");
@@ -88,6 +89,10 @@ public class IR extends Register {
 	public int getTrace() {
 		return Trace;
 	}
+	
+	public int getDeviceID() {
+		return deviceID;
+	}
 
 	/*
 	 * *****Set functions**********************
@@ -140,6 +145,10 @@ public class IR extends Register {
 		this.setData(Integer.parseInt(IRstring,2));
 				
 		this.IRstring = IRstring;
+	}
+	
+	public void setDeviceID(int deviceID) {
+		this.deviceID = deviceID;
 	}
 
 	/*

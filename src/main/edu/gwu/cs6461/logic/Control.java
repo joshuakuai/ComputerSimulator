@@ -10,12 +10,8 @@ import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.logic.unit.IODevice;
 import edu.gwu.cs6461.logic.unit.MMU;
-import edu.gwu.cs6461.sim.bridge.Observer;
-import edu.gwu.cs6461.sim.common.ALUFlags;
-import edu.gwu.cs6461.sim.common.ALUOperator;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.DeviceType;
-import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.MemoryException;
 import edu.gwu.cs6461.sim.util.Convertor;
@@ -53,6 +49,8 @@ public class Control {
 	private Register RES2 = null;
 	private Multiply Multi = null;
 
+	private IODevice inputDevice =null;
+	private IODevice outputDevice =null;	
 	
 	PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 	int instrStartingPos=100;
@@ -69,7 +67,12 @@ public class Control {
 	public void setALU(ALU aLU) {
 		ALU = aLU;
 	}
-
+	public void setINDevices(IODevice inputDevice) {
+		this.inputDevice = inputDevice;
+	}
+	public void setOUTDevices(IODevice outputDevice) {
+		this.outputDevice = outputDevice;
+	}
 	public void setRegisters(RegisterContainer registerContainer) {
 		IRobject = registerContainer.IRobject;
 		PC = registerContainer.PC;
@@ -128,7 +131,8 @@ public class Control {
 				|| OpCode == 23 || OpCode == 24 || OpCode == 25 || OpCode == 31
 				|| OpCode == 32 || OpCode == 10 || OpCode == 11 || OpCode == 12
 				|| OpCode == 13 || OpCode == 14 || OpCode == 15 || OpCode == 16
-				|| OpCode == 17 || OpCode == 0 || OpCode == 55) {
+				|| OpCode == 17 || OpCode == 0 || OpCode == 55 ||
+				OpCode == 61 || OpCode == 62) {
 
 			if (OpCode == 1)
 				LDR();
@@ -184,6 +188,10 @@ public class Control {
 				HLT();
 			}else if(OpCode == 55){
 				EOP();
+			} else if (OpCode == edu.gwu.cs6461.sim.common.OpCode.IN.getiVal()) {
+				IN();
+			} else if (OpCode == edu.gwu.cs6461.sim.common.OpCode.OUT.getiVal()) {
+				OUT();
 			}
 		} else {
 			MFR.setData(2);
@@ -1019,5 +1027,30 @@ public class Control {
 		// ////////////////////////
 		else
 			PC.setData(PC.getData() + 1);
+	}
+
+	public void OUT() {
+		int dId=  IRobject.getDeviceID();
+		
+		if (DeviceType.fromId(dId) == DeviceType.ConsolePrinter ) {
+			int ch = RFtable.getSwitch(IRobject.getRFI1());
+
+			outputDevice.putData(ch, true);
+			
+		} else {
+			logger.warn("[OUT]Unknown device id: "+ dId);
+		}
+	}
+	public void IN() {
+		int dId=  IRobject.getDeviceID();
+		
+		if (DeviceType.fromId(dId) == DeviceType.Keyboard ) {
+			int ch = 54;//inputDevice.getData();
+			ch = inputDevice.getData(true);
+			
+			RFtable.setSwitch(IRobject.getRFI1(), ch);
+		} else {
+			logger.warn("[IN]Unknown device id: "+ dId);
+		}
 	}
 }

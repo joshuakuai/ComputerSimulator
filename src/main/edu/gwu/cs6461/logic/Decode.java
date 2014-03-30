@@ -8,6 +8,8 @@ package edu.gwu.cs6461.logic;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.sim.common.DeviceType;
+
 /**
  * Decode the IR instructions into the various part opcode r x address I T immed
  */
@@ -25,6 +27,7 @@ public class Decode {
 	private int Count=0;
 	private int LeftorRight=0;
 	private int LogicalorArithmetic=0;
+	private int deviceID = 0;
 	private int cc=0;
 	//depending on the opcode the functions decided which decode function to use to break down
 	//the instruction
@@ -46,6 +49,9 @@ public class Decode {
 			function7(IRobject);		
 		else if(OpCode==12)
 			function8(IRobject);
+		else if (OpCode== 61 || OpCode== 62)
+			ioInstructions(IRobject);
+			
 		
 	}
 //shared function1, function3, function4 shared functions between the different 
@@ -124,4 +130,20 @@ public class Decode {
 		IRobject.setAddress(Address);
 		logger.debug("Address=" + Address);
 	}
+	
+	/***
+	 * Decode IN and OUT IO operations
+	 * 
+	 * @param IRobject
+	 */
+	public void ioInstructions(IR IRobject) {
+		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(8,10), base);
+		IRobject.setRFI1(RFI1);
+		logger.debug("RFI=" + RFI1);
+		deviceID = Integer.parseInt(IRobject.getIRstring().substring(16, 20), base);
+		IRobject.setDeviceID(deviceID);
+		logger.debug("deviceID=" + DeviceType.fromId(deviceID) );
+		
+	}
+	
 }

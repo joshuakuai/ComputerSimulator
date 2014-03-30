@@ -138,12 +138,13 @@ public class SetAssociativeMapper implements CacheMapper {
 		
 		List<Integer>block = getMemBlockByAddress(add.getAddress());//construct block of memory entry
 		List<Entry> bkData = new ArrayList<>(); 
-		for (Integer word : block) {
-			Entry ee = mainMem.getData(word);
+		for (Integer b : block) {
+			Entry ee = mainMem.getData(b);
 			
 			//detach from mainmem instance
 			Entry ec = new Entry(ee.getType(),ee.getData(),ee.getAddress(),ee.getSize());
-			if (tobeWrite != null && add.wordField == word) {
+			/*if (tobeWrite != null && add.wordField == word) {*/
+			if (tobeWrite != null && add.wordField == (b%wordInBlock)) {
 				ec = new Entry(tobeWrite.getType(),tobeWrite.getData(),tobeWrite.getAddress(),tobeWrite.getSize());
 			}
 			bkData.add(ec);
