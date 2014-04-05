@@ -55,6 +55,8 @@ import edu.gwu.cs6461.sim.bridge.Observer;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.common.HardwarePart;
+import edu.gwu.cs6461.sim.common.MachineFault;
+import edu.gwu.cs6461.sim.common.MachineStatus;
 import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.util.Convertor;
@@ -163,6 +165,8 @@ public class MainSimFrame extends JFrame implements Observer {
 	/**all supported instructions, use to setup switches*/
 	private JComboBox<String> cboAllInstrHelper = new JComboBox<String>();
 
+	
+	private static Color registerColor = new Color(238,238,238);
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester this is
 	 * will be default IR. Terminate and reset button will reset back to IR
@@ -714,8 +718,26 @@ public class MainSimFrame extends JFrame implements Observer {
 			txtPC.setText(val);
 		} else if (dName == HardwarePart.IR) {
 			txtIR.setText(val);
+		} else if (dName == HardwarePart.MSR) {
+			MachineStatus sta = MachineStatus.fromCode(Integer.parseInt(val) );
+			if (sta != MachineStatus.Unknown) {
+				txtMSR.setText(sta.name());
+				if (sta == MachineStatus.MachineFault) {
+					txtMSR.setBackground(Color.RED);
+				} else if (sta == MachineStatus.TrapInstruction) {
+					txtMSR.setBackground(Color.YELLOW);
+				} else 
+					txtMSR.setBackground(registerColor);
+			} else {
+				txtMSR.setText(val);
+				txtMSR.setBackground(registerColor);
+			}
 		} else if (dName == HardwarePart.MFR) {
-			txtMFR.setText(val);
+			MachineFault fau = MachineFault.valueOf(Integer.parseInt(val) ); 
+			if (fau != MachineFault.Unknown) {
+				txtMFR.setText(fau.name());
+			} else txtMFR.setText(val);
+			
 		} else if (dName == HardwarePart.MEMORY) {
 			String key = vals[0];
 			val = vals[1];
@@ -1029,7 +1051,11 @@ public class MainSimFrame extends JFrame implements Observer {
 		
 		cboAllInstrHelper.setEnabled(isStart);
 		txtMemAdd.setEnabled(isStart);
+		txtMSR.setBackground(registerColor);
 		
+		if (isStart) {
+			cpuController.loadROM();
+		}
 		// try {
 		// lstModel.clear();
 		// for (int j = 0; j < 2048; j++) {
@@ -1257,25 +1283,30 @@ public class MainSimFrame extends JFrame implements Observer {
         captureKeyEvent = false; //
     }	
 
+    String result ="";
     private class printOutHandler implements Runnable {
     	
     	public printOutHandler() {
 			new Thread(this,"printerConsole").start();
 		}
     	
-		String result ="";
     	@Override
     	public void run() {
-    		/*while(true) {
-    			int val = cpuController.getOuputDeviceData();
+    		int val=0;
+    		while(true) {
+    			val = cpuController.getOuputDeviceData();
     			if (val == '\n') {
 					break;
 				}
     			result = result + (char)val;
-    		} 	*/
+    		}
+    		if (val == '\n') {
+    			simConsole.info(result);
+    			result="";
+			}
     		
-    		int val = cpuController.getOuputDeviceData();
-    		simConsole.info((char)val);
+//    		int val = cpuController.getOuputDeviceData();
+//    		simConsole.info((char)val);
     	}
     } //
 }

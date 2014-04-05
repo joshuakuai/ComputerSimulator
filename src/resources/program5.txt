@@ -1,0 +1,9 @@
+# test program
+#start to define instructions
+INSTR:100
+01111000000000000011	  #Trap instruction with code =3
+11111100000000000000      #test instr to cause machine fault
+11011100000000000000	  #END of program
+#start to define data portion
+DATA:200
+00001100001101010000

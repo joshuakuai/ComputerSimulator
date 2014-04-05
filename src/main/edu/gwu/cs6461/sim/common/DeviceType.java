@@ -4,6 +4,7 @@ public enum DeviceType {
 	Keyboard("Keyboard",0),
 	ConsolePrinter("ConsolePrinter",1),
 	CarReader("CardReader",2),
+	DirectOut("DirectOut",15),	
 	Unknown("unknown",-1);
 	
 	private final String name;

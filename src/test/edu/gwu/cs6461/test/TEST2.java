@@ -1,8 +1,10 @@
 package edu.gwu.cs6461.test;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.gwu.cs6461.sim.common.MachineFault;
 import edu.gwu.cs6461.sim.util.Convertor;
 
 public class TEST2 implements AutoCloseable {
@@ -32,10 +34,24 @@ public class TEST2 implements AutoCloseable {
 		
 	}
 	
+	/**
+	 * Apress - Pro Java Programming, Second Edition (2005).pdf
+	 */
+	private void testMessage() {
+		String msg = MessageFormat.format("this is for {2}  !!", "eh","22","33");
+				System.out.println(msg);
+
+	}
+	
+	private void testEnum() {
+		System.out.println(MachineFault.valueOf(10));
+
+	}
 	
 	public static void main(String[] args) {
-		System.out.println(Convertor.getSignedValFromBin("11110100000000000000", 20));
-			new TEST2().testChar();
+		System.out.println(Convertor.getSignedBinFromInt(6, 20));
+		System.out.println(Convertor.getSignedValFromBin("00000000000011001000",20));
+		new TEST2().testEnum();
 	}
 
 	@Override

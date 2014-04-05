@@ -16,4 +16,11 @@ public class SimConstants {
 	
 	public static final int MEMORY_ADDRESS_LIMIT = 8192;
 	public static final int MEMORY_ADDRESS_SPACE = 13;
+	
+	public static final int TRAP_HDLER_ADDRESS =0;
+	public static final int FAULT_HDLER_ADDRESS =1;
+	public static final int TRAP_PC_STORE = 2;
+	public static final int TRAP_MSR_STORE = 3;
+	public static final int FAULT_PC_STORE = 4;
+	public static final int FAULT_MSR_STORE = 5;
 }

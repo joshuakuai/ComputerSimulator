@@ -16,7 +16,9 @@ import edu.gwu.cs6461.sim.common.DeviceType;
 public class Decode {
 	private final static Logger logger = Logger.getLogger(Decode.class);
 	
+	 /**store Operator code in int format */
 	private int OpCode = 0;
+	
 	private int base = 2;
 	private int RFI1 = 0;
 	private int RFI2 = 0;
@@ -51,6 +53,9 @@ public class Decode {
 			function8(IRobject);
 		else if (OpCode== 61 || OpCode== 62)
 			ioInstructions(IRobject);
+		else if (OpCode == 30) {
+			trapInstructions(IRobject);
+		}
 			
 		
 	}
@@ -86,6 +91,9 @@ public class Decode {
 		logger.debug("Address=" + Address);
 	}
 
+	/**
+	 * Decode 
+	 * */
 	public void function4(IR IRobject) {
 		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
 		IRobject.setRFI1(RFI1);
@@ -145,5 +153,12 @@ public class Decode {
 		logger.debug("deviceID=" + DeviceType.fromId(deviceID) );
 		
 	}
-	
+	/**
+	 * Decode TRAP instruction
+	 * get the address where stores the trap instruction handler.
+	 * */
+	public void trapInstructions(IR IRobject) {
+		int trapCode = Integer.parseInt(IRobject.getIRstring().substring(12, 20), base);
+		IRobject.setTrapCode(trapCode);
+	}
 }

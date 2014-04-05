@@ -29,6 +29,7 @@ public class IR extends Register {
 	private int LeftorRight=0;
 	private int LogicalorArithmetic=0;
 	private int deviceID=0;
+	private int trapCode=0;
 	private int cc=0;
 	IR(int size, String IR) {
 		super(size,"IR");
@@ -94,6 +95,10 @@ public class IR extends Register {
 		return deviceID;
 	}
 
+	public int getTrapCode() {
+		return trapCode;
+	}
+
 	/*
 	 * *****Set functions**********************
 	 */
@@ -149,6 +154,10 @@ public class IR extends Register {
 	
 	public void setDeviceID(int deviceID) {
 		this.deviceID = deviceID;
+	}
+
+	public void setTrapCode(int trapCode) {
+		this.trapCode = trapCode;
 	}
 
 	/*

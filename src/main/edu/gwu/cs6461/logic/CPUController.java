@@ -172,7 +172,9 @@ public class CPUController extends Thread {
 	public void loadFromFile(String fileName) throws IOCmdException  {
 		mmu.loadFromFile(fileName);
 	}
-
+	public void loadROM() {
+		mmu.loadROM();
+	}
 
 	public void setInputDeviceData(DeviceType type, int data) {
 		inputDevice.putData(data);

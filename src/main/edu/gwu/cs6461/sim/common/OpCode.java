@@ -9,7 +9,7 @@ package edu.gwu.cs6461.sim.common;
  */
 public enum OpCode {
 	HLT(0,"000000"),
-	TRAP(30,"011110",false),
+	TRAP(30,"011110"),
 	LDR(1,"000001"),
 	STR(2,"000010"),
 	LDA(3,"000011"),
@@ -72,7 +72,7 @@ public enum OpCode {
 	 * return the integer value of opcode 
 	 * @return   integer value of opcode
 	 */
-	public int getiVal(){
+	public int getCode(){
 		return iVal;
 	}
 	
@@ -111,7 +111,7 @@ public enum OpCode {
 	public static OpCode fromCode(int code) {
 		
         for (OpCode value : OpCode.values()) {
-            if (value.getiVal()== code) {
+            if (value.getCode()== code) {
                 return value;
             }
         }
@@ -122,7 +122,7 @@ public enum OpCode {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[").append(name()).append(",").append(getbStr()).append(",")
-		.append(getiVal()).append("]");
+		.append(getCode()).append("]");
 		return sb.toString();
 	}
 }

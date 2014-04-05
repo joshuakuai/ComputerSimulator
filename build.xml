@@ -4,8 +4,8 @@
 	<property name="src.main" 			value="${basedir}/src/main" />
 	<property name="build.folder" 		value="${basedir}/build"/>
 	<property name="deploy.folder" 		value="${basedir}/deploy"/>
-	<property name="deploy.jarfilename" value="ciscsimulator.jar" />
-	<property name="deploy.srcjarfilename" value="ciscsimulator-src.jar" />
+	<property name="deploy.jarfilename" value="cs6461simulator.jar" />
+	<property name="deploy.srcjarfilename" value="cs6461simulator-src.jar" />
 	<property name="lib" 				value="${basedir}/lib"/>
 	<property name="resources" 			value="${basedir}/src/resources"/>
 	<property name="java.doc.folder" 			value="${basedir}/deploy/doc"/>

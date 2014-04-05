@@ -29,68 +29,8 @@ public class IODevice extends Observable{
 		this.type = type;
 		this.register = new IORegister(SimConstants.WORD_SIZE, type.name());
 		
-
-		//TODO REMOVE IT
-//		tester();
 	}
-	
-	@Deprecated
-	private void tester() {
-		if (type == DeviceType.Keyboard) {
-
-			new Thread(new Runnable() {
-				String result ="";
-
-				@Override
-				public void run() {
-					logger.debug("I'll get data from keyboard.");
-
-					int d;
-
-					/**get data value from keyboard
-					 * delimited by '\n'
-					 * */
-					for (int i = 0; i < 3; i++) {
-						
-						while (true) {
-							d = getData(true);
-
-							if ((char)d =='\n') {
-								break;
-							}
-							result = result + (char)d;
-						}
-						logger.debug(" data got from keyboard: "+ result);
-						result="";
-					} //
-				}
-			},"INPUT").start();
-
-		}
-		if (type == DeviceType.ConsolePrinter) {
-			/**************************************************/
-			String result ="this is from cpu";
-			final String toOut = result;
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					logger.debug("I'll send back to gui");
-					int len = toOut.length();
-					for (int i = 0; i < len; i++) {
-
-						if (i == 0) {
-							putData(toOut.charAt(i), true);
-						} else {
-							putData(toOut.charAt(i), false);
-						}
-
-					}
-					putData('\n', false);
-				}
-			},"OUTPUT")/*.start()*/;
-		}
-	}
-	
+		
 	
 	public int getData() {
 		return getData(false);
@@ -113,7 +53,7 @@ public class IODevice extends Observable{
 			}
 			lock.lock();
 			while (!register.isDataAvailable()) {
-				logger.debug("no data available in "+type+" register, waiting...");
+//				logger.debug("no data available in "+type+" register, waiting...");
 				hasData.await();
 			}
 			d = register.getData();
@@ -176,7 +116,7 @@ public class IODevice extends Observable{
 			}
 			lock.lock();
 			while (register.isDataAvailable()) {
-				logger.debug("data is already in register "+type+". waiting to be consumed...");
+//				logger.debug("data is already in register "+type+". waiting to be consumed...");
 				noData.await();
 			}
 			register.setData(data);

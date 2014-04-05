@@ -25,6 +25,8 @@ public class RegisterContainer {
 	//create registers shared by most instructions.
 	public Register MAR = new Register(HardwarePart.MAR.getBit(),HardwarePart.MAR.getName());
 	public Register MDR = new Register(HardwarePart.MDR.getBit(),HardwarePart.MDR.getName());
+
+	public Register MSR = new Register(HardwarePart.MSR.getBit(),HardwarePart.MSR.getName());
 	
 	//from ALU calculation
 	public Register RES = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
@@ -40,6 +42,7 @@ public class RegisterContainer {
 		MFR.clear();
     	MAR.clear();
     	MDR.clear();
+    	MSR.clear();
 	}
 	
 	void registerObserver(Observer obs){
@@ -51,5 +54,6 @@ public class RegisterContainer {
 		XFtable.setRegisterObserver(obs);
 		MAR.register(obs);
 		MDR.register(obs);
+		MSR.register(obs);
 	}
 }

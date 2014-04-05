@@ -8,11 +8,22 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import sun.nio.cs.ext.MacUkraine;
+
+import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
+
 import edu.gwu.cs6461.logic.unit.MainMemory.Entry;
 import edu.gwu.cs6461.sim.bridge.Observer;
+import edu.gwu.cs6461.sim.common.MachineFault;
 import edu.gwu.cs6461.sim.common.MemoryType;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
@@ -57,6 +68,11 @@ public class MMU {
 	/**True to enable cache mechanism; otherwise, data will not be put/read into/from cache*/
 	private boolean enableCache = true;
 	
+	private PropertiesParser prop;
+	private Map<Integer,String[]>ROM = new HashMap<>();
+	private Map<Integer,String>systemMsg = new HashMap<>();
+	private Map<Integer,String>trapMsg = new HashMap<>();
+	
 	/**Return the singlteon instance for MMU*/
 	public static MMU instance() {
 		return instance;
@@ -64,8 +80,13 @@ public class MMU {
 
 	/**Private constructor to control the number of MMU instance can be created*/
 	private MMU() {
-		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+		prop = PropertiesLoader.getPropertyInstance();
 		enableCache = prop.getBooleanProperty("sim.mem.cache.enabled", true);
+	
+		ROM = new HashMap<>();
+		systemMsg = new HashMap<>();
+		trapMsg = new HashMap<>();
+		
 	}
 	
 	
@@ -102,7 +123,14 @@ public class MMU {
 	 */
 	private void setData(int address, String data, int size, String comment) {
 		writeCache(MemoryType.DATA, address, data, size);
-		mainMem.setData(address, data, size, comment); //write through to main memory
+		
+		if (ROM.get(address)!=null) {
+			String[] msg = ROM.get(address);
+			mainMem.setData(address, data, size, msg[1]); //write through to main memory
+		} else 
+			mainMem.setData(address, data, size, comment); //write through to main memory
+		
+		
 	}
 
 	/**
@@ -243,6 +271,63 @@ public class MMU {
 	}
 
 	
+	
+	public void loadROM() {
+		
+		String[]add = prop.getPropertyGroups("sim.mem.reserved.");
+
+		for (String ad : add) {
+			String va  = prop.getStringProperty("sim.mem.reserved."+ad + ".rom"); 
+			
+			int idx = va.indexOf(FILE_COMMENT);
+			
+			String content = "", comment = "";
+			if (idx > 1) {
+				content = va.substring(0, idx).trim();
+				comment = va.substring(idx).trim();
+				
+				if (!ROM.containsKey(ad)) {
+					content = MessageFormat.format(content, "-");
+					String[] data = { content, comment};
+					ROM.put(Integer.valueOf(ad), data);
+					
+				}//
+			}
+			logger.debug(Arrays.asList(ROM.get(Integer.valueOf(ad))) );
+		}
+		for (int i = 0; i < add.length; i++) {
+			String[]val = ROM.get(i);
+			setData(i, val[0], val[1]);
+		}
+		
+		String[]msg = prop.getPropertyGroups("sim.mem.fault.");
+		for (String m: msg) {
+			String va  = prop.getStringProperty("sim.mem.fault."+m + ".msg");
+			systemMsg.put(Integer.valueOf(m), va);
+		} //
+		
+		String []tmsg = prop.getPropertyGroups("sim.mem.trap.");
+		for (String t: tmsg) {
+			String va  = prop.getStringProperty("sim.mem.trap."+t + ".msg");
+			trapMsg.put(Integer.valueOf(t), va);
+		} //
+		
+	}
+	
+	public String getTrapMsg(int address) {
+		String msg = trapMsg.get(address);
+		if (msg==null) {
+			msg = "Unknown trap";
+		}
+		return msg;
+	}
+	public String getSystemMsg(MachineFault fault) {
+		String msg = systemMsg.get(fault.getId());
+		if (msg==null) {
+			msg = "Unknown Fault";
+		}
+		return msg;
+	}
 	/**
 	 * load up program from file into memory
 	 * @param fileName

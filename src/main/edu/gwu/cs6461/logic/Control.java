@@ -12,6 +12,9 @@ import edu.gwu.cs6461.logic.unit.IODevice;
 import edu.gwu.cs6461.logic.unit.MMU;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.DeviceType;
+import edu.gwu.cs6461.sim.common.MachineFault;
+import edu.gwu.cs6461.sim.common.MachineStatus;
+import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.MemoryException;
 import edu.gwu.cs6461.sim.util.Convertor;
@@ -34,22 +37,30 @@ public class Control {
 	private MMU Mem = null;
 	private ALU ALU = null;
 
+	/**Instruction register - singleton */
 	private IR IRobject = null;
+	/**Program counter  - singleton */
 	private Register PC = null;
+	/**Condition Code  - singleton */
 	private Register CC = null;
+	/**Machine Fault Register  - singleton */
 	private Register MFR = null;
+	/**Machine Fault Register  - singleton */
 	private Register SI = null;
 	private RF RFtable = null;
 	private XF XFtable = null;
 	private Register MAR = null;
 	private Register MDR = null;
+	private Register MSR = null;
 
 	// from ALU calculation
 	private Register RES = null;
 	private Register RES2 = null;
 	private Multiply Multi = null;
 
+	/**input device - keyboard */
 	private IODevice inputDevice =null;
+	/**output device - console printer */
 	private IODevice outputDevice =null;	
 	
 	PropertiesParser prop = PropertiesLoader.getPropertyInstance();
@@ -83,6 +94,7 @@ public class Control {
 		XFtable = registerContainer.XFtable;
 		MAR = registerContainer.MAR;
 		MDR = registerContainer.MDR;
+		MSR = registerContainer.MSR;
 		RES = registerContainer.RES;
 		RES2 = registerContainer.RES2;
 		Multi = registerContainer.Multi;
@@ -123,78 +135,80 @@ public class Control {
 	 *  depending on the opcode from IR the right instruction is called
 	 */
 	public void RunInstruction() {
-		int OpCode = IRobject.getOpCode();
+		int code = IRobject.getOpCode();
 //check opcode if illegal set MFR
-		if (OpCode == 1 || OpCode == 2 || OpCode == 3 || OpCode == 4
-				|| OpCode == 5 || OpCode == 6 || OpCode == 7 || OpCode == 41
-				|| OpCode == 42 || OpCode == 20 || OpCode == 21 || OpCode == 22
-				|| OpCode == 23 || OpCode == 24 || OpCode == 25 || OpCode == 31
-				|| OpCode == 32 || OpCode == 10 || OpCode == 11 || OpCode == 12
-				|| OpCode == 13 || OpCode == 14 || OpCode == 15 || OpCode == 16
-				|| OpCode == 17 || OpCode == 0 || OpCode == 55 ||
-				OpCode == 61 || OpCode == 62) {
+		if (code == 1 || code == 2 || code == 3 || code == 4
+				|| code == 5 || code == 6 || code == 7 || code == 41
+				|| code == 42 || code == 20 || code == 21 || code == 22
+				|| code == 23 || code == 24 || code == 25 || code == 31
+				|| code == 32 || code == 10 || code == 11 || code == 12
+				|| code == 13 || code == 14 || code == 15 || code == 16
+				|| code == 17 || code == 0 || code == 55 ||
+				code == 61 || code == 62 || code == 30) {
 
-			if (OpCode == 1)
+			if (code == 1)
 				LDR();
-			else if (OpCode == 2)
+			else if (code == 2)
 				STR();
-			else if (OpCode == 3)
+			else if (code == 3)
 				LDA();
-			else if (OpCode == 4)
+			else if (code == 4)
 				AMR();
-			else if (OpCode == 5)
+			else if (code == 5)
 				SMR();
-			else if (OpCode == 6)
+			else if (code == 6)
 				AIR();
-			else if (OpCode == 7)
+			else if (code == 7)
 				SIR();
-			else if (OpCode == 41)
+			else if (code == 41)
 				LDX();
-			else if (OpCode == 42)
+			else if (code == 42)
 				STX();
-			else if (OpCode == 20)
+			else if (code == 20)
 				MLT();
-			else if (OpCode == 21)
+			else if (code == 21)
 				DVD();
-			else if (OpCode == 22)
+			else if (code == 22)
 				TRR();
-			else if (OpCode == 23)
+			else if (code == 23)
 				AND();
-			else if (OpCode == 24)
+			else if (code == 24)
 				ORR();
-			else if (OpCode == 25)
+			else if (code == 25)
 				NOT();
-			else if (OpCode == 31)
+			else if (code == 31)
 				SRC();
-			else if (OpCode == 32)
+			else if (code == 32)
 				RRC();
-			else if (OpCode == 10)
+			else if (code == 10)
 				JZ();
-			else if (OpCode == 11)
+			else if (code == 11)
 				JNE();
-			else if (OpCode == 12)
+			else if (code == 12)
 				JCC();
-			else if (OpCode == 13)
+			else if (code == 13)
 				JMP();
-			else if (OpCode == 14)
+			else if (code == 14)
 				JSR();
-			else if (OpCode == 15)
+			else if (code == 15)
 				RFS();
-			else if (OpCode == 16)
+			else if (code == 16)
 				SOB();
-			else if (OpCode == 17)
+			else if (code == 17)
 				JGE();
-			else if (OpCode == 0) {
+			else if (code == 0) {
 				HLT();
-			}else if(OpCode == 55){
+			}else if(code == 55){
 				EOP();
-			} else if (OpCode == edu.gwu.cs6461.sim.common.OpCode.IN.getiVal()) {
+			} else if (code == OpCode.IN.getCode()) {
 				IN();
-			} else if (OpCode == edu.gwu.cs6461.sim.common.OpCode.OUT.getiVal()) {
+			} else if (code == OpCode.OUT.getCode()) {
 				OUT();
+			} else if (code == OpCode.TRAP.getCode()) {
+				trapInstructionHandler();
 			}
 		} else {
-			MFR.setData(2);
+			machineFaultHandler(MachineFault.IllegalOpCode);
 		}
 	}
 
@@ -233,6 +247,7 @@ public class Control {
 	}
 	
 	public void EOP(){
+		//TODO simulator should force to restart simulator
 		PC.setData(instrStartingPos);
 	}
 
@@ -1036,7 +1051,27 @@ public class Control {
 			int ch = RFtable.getSwitch(IRobject.getRFI1());
 
 			outputDevice.putData(ch, true);
-			
+		} else if (DeviceType.fromId(dId) == DeviceType.DirectOut ) {
+
+			MachineStatus mstatus = MachineStatus.fromCode(MSR.getData());
+
+			String msg ="";
+			if (mstatus == MachineStatus.MachineFault.MachineFault) {
+				MachineFault fa = MachineFault.valueOf(MSR.getData());
+				msg = Mem.getSystemMsg(fa);
+			} else if (mstatus == MachineStatus.MachineFault.TrapInstruction) {
+				int tCode = IRobject.getTrapCode();
+				msg = Mem.getTrapMsg(tCode);
+				MSR.setData(MachineStatus.Normal.getCode());
+			}
+			if (!"".equals(msg)) {
+				for (int i = 0; i < msg.length(); i++) {
+					outputDevice.putData(msg.charAt(i), true);
+				}
+				outputDevice.putData('\n',true);
+				
+				PC.setData(PC.getData() + 1);
+			}
 		} else {
 			logger.warn("[OUT]Unknown device id: "+ dId);
 		}
@@ -1053,4 +1088,35 @@ public class Control {
 			logger.warn("[IN]Unknown device id: "+ dId);
 		}
 	}
+	
+	private void trapInstructionHandler() {
+		MSR.setData(MachineStatus.TrapInstruction.getCode());
+		//PC point to next instruction
+		Mem.setData(SimConstants.TRAP_PC_STORE, PC.getData() +1, PC.getSize());
+		Mem.setData(SimConstants.TRAP_MSR_STORE, MSR.getData(), MSR.getSize());
+		
+		try {
+			PC.setData(Mem.getDataFromMem(SimConstants.TRAP_HDLER_ADDRESS));
+		} catch (MemoryException e) {
+			e.printStackTrace();
+		}
+	}
+	private void machineFaultHandler(MachineFault fault) {
+		MSR.setData(MachineStatus.MachineFault.getCode());
+		MFR.setData(fault.getId());
+		//handler should have logic to return back to saved PC before fault.
+		Mem.setData(SimConstants.FAULT_PC_STORE, PC.getData(), PC.getSize());
+		Mem.setData(SimConstants.FAULT_MSR_STORE, MSR.getData(), MSR.getSize());
+		
+		try {
+			//RFtable.setSwitch(IRobject.getRFI1(), fault.getId());
+
+			PC.setData(Mem.getDataFromMem(SimConstants.FAULT_HDLER_ADDRESS));
+		} catch (MemoryException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
 }
