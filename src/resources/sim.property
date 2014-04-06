@@ -34,6 +34,7 @@ sim.gui.ioinput.textcompletion.1.hints=program1.txt
 sim.gui.ioinput.textcompletion.2.hints=program2.txt
 sim.gui.ioinput.textcompletion.3.hints=program3.txt
 sim.gui.ioinput.textcompletion.4.hints=program5.txt
+sim.gui.ioinput.textcompletion.4.hints=bin1.txt
 #################################################################################
 #Simulator ROM
 #################################################################################

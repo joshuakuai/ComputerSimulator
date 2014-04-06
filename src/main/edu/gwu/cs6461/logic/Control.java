@@ -891,7 +891,7 @@ public class Control {
 				}
 			}
 		}
-		// if indirect bit is enabled get the memory content
+		// if indirect bit is ena bled get the memory content
 		// of MAR address and put it in MDR then copy MDR into MAR
 		if (IRobject.getIndirect() == 1) {
 			try {
