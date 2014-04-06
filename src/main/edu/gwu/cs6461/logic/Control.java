@@ -1051,6 +1051,7 @@ public class Control {
 			int ch = RFtable.getSwitch(IRobject.getRFI1());
 
 			outputDevice.putData(ch, true);
+			outputDevice.putData('\n',true);
 		} else if (DeviceType.fromId(dId) == DeviceType.DirectOut ) {
 
 			MachineStatus mstatus = MachineStatus.fromCode(MSR.getData());
