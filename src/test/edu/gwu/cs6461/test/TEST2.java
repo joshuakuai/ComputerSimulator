@@ -1,5 +1,8 @@
 package edu.gwu.cs6461.test;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +51,28 @@ public class TEST2 implements AutoCloseable {
 
 	}
 	
-	public static void main(String[] args) {
+	private void testIO() throws Exception {
+		BufferedReader in = new BufferedReader(new FileReader("D:/java_stuff/githome/ComputerSimulator/src/resources/sample.txt"));
+		String text = "";
+		String input="";
+		
+		while ( (text=in.readLine()) != null)  {
+			if(text.charAt(0)!='#'){
+				System.out.println(text);
+			}
+		}
+		
+
+	}
+	
+	private void testDivide() {
+		int result = 3/2;
+		System.out.println(result);
+	}
+	public static void main(String[] args) throws Exception {
 		System.out.println(Convertor.getSignedBinFromInt(6, 20));
 		System.out.println(Convertor.getSignedValFromBin("00000000000011001000",20));
-		new TEST2().testEnum();
+		new TEST2().testIO();
 	}
 
 	@Override
