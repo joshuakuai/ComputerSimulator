@@ -412,6 +412,7 @@ public class MainSimFrame extends JFrame implements Observer {
 				if (captureKeyEvent) {
 					lstModHistCdms.insertElementAt(DeviceType.Keyboard + " " + cmd, 0);
 					logger.info("Ignore keyboard 'Enter' since IO operation is in action");
+					txtIOInput.setText("");
 					return;
 				}
 				

@@ -1084,6 +1084,7 @@ public class Control {
 			ch = inputDevice.getData(true);
 			
 			RFtable.setSwitch(IRobject.getRFI1(), ch);
+			PC.setData(PC.getData()+1);
 		} else {
 			logger.warn("[IN]Unknown device id: "+ dId);
 		}

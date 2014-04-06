@@ -145,7 +145,7 @@ public class Decode {
 	 * @param IRobject
 	 */
 	public void ioInstructions(IR IRobject) {
-		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(8,10), base);
+		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6,8), base);
 		IRobject.setRFI1(RFI1);
 		logger.debug("RFI=" + RFI1);
 		deviceID = Integer.parseInt(IRobject.getIRstring().substring(16, 20), base);
