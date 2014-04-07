@@ -1248,7 +1248,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	}
 	
 	private void setSwithes4InOutInstr(boolean b) {
-		setSwitchesEditable(6,7,b);
+		setSwitchesEditable(8,9,b);
 		setSwitchesEditable(10,15,b);
 	}
 
