@@ -1071,11 +1071,11 @@ public class Control {
 				}
 				outputDevice.putData('\n',true);
 				
-				PC.setData(PC.getData() + 1);
 			}
 		} else {
 			logger.warn("[OUT]Unknown device id: "+ dId);
 		}
+		PC.setData(PC.getData() + 1);
 	}
 	public void IN() {
 		int dId=  IRobject.getDeviceID();
