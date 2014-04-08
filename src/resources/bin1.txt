@@ -1,9 +1,9 @@
 INSTR:51
 00110100000011111001     #jump to main function
 00000101000000110001     #zero out R1
+00001011000000101100	 #store return address in address 44
 00001001000000101000     #empty space in address 40 for temp stortage(of pointers values)
 00001001000000101001     #empty space in address 41 for temp stortage(of pointers values)
-00001001000000101010     #empty space in address 42 for temp stortage(of pointers values)
 00001000000000101000     #store digits array pointer into address 40
 00001000000000101001     #store digits array pointer into address 41(to pass to create integer subroutine)
 00000101000000101000     #load the pointer into R1
@@ -14,14 +14,13 @@ INSTR:51
 00000110000000101010     #pass the value from address 42 to R2
 00000100000000101001     #pass pointer to start of digit array to R0 (to save as arugment pointer for subroutinue call)
 00000000000000000000     #and restart user input loop
-00101010000001011110     #else exit the loop and go to subroutine to collect the digits into a final integer
+00101010000001011101     #else exit the loop and go to subroutine to collect the digits into a final integer
 00000101000000101000     #load back digit array pointer to R1
 00000100000000101010     #load the value of R0 back from address 42
 00011000000000001010     #and return the character to original ascii number by adding 10
 00011100000000110000     #subtract 48 to convert ascii to digit  eg 48-48=0 so user input character is zero
 00001000000000101011	 #store r0 into address 43
 00000111000000101011	 #load the value into R3
-00000000000000000000     #the character is integer "0" go to save number into memory subroutine
 00011100000000000001     #if it is not zero than subtract 1 same as 49-49=0 therefore the digit is 1
 00101000000001100000     #the character is integer "1" go to save number into memory subroutine
 00011100000000000001     #subtract one from R0
@@ -43,6 +42,7 @@ INSTR:51
 00101100000011100011     #inform the user what they entered is not a digit and they should enter a valid digit character
 00110100000000111011     #continue loop
 00111000000011000111     #go to create integer subroutine
+00000111000000101100     #put back return address into R3 from address 44
 00111100000000000000     #return to calling routine  R0 contains integer after returning from create integer subroutine
 00001011001000101000     #Store input digit into memory cell pointed to by address 40
 00011001000000000001     #Increment the array position pointer
@@ -50,7 +50,7 @@ INSTR:51
 00000111000000110001     #empty R0 (address 49 contains zero)
 00011011000011111110     #put 254 in R0
 01100111000000000000     #turn R0 into -255
-00000111001000101000     #put -255 in the next digit space in the array to indicate end of array
+00001011001000101000     #put -255 in the next digit space in the array to indicate end of array
 00110100000000111011     #go back to user input loop
 00000101000000110001     #zero out R1
 00001001000000101000     #empty space in address 40 for temp stortage(of pointers values)
@@ -157,7 +157,7 @@ INSTR:51
 00011001000000000001     #increment digit array pointer
 00001001000000101000     #store new pointer in address 40
 00000110001000101000     #load next digit in array
-00011010000011111111     #check if value is -255 if so -255+255=0 the array has reached its end
+00011000000011111111     #check if value is -255 if so -255+255=0 the array has reached its end
 00101010000011100010     #there is only one digit so exit and save it as the final integer
 00000100000000101001     #if it is not end of array then load saved integer from address 41 into R0
 00000110000000110001     #zero out R2
