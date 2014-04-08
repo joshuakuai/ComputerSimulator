@@ -213,27 +213,32 @@ public class MMU {
 	 */
 	public Integer getDataFromMem(int address) throws MemoryException {
 		Entry entry;
-		if (enableCache) {
-			entry = cacheMap.getDataFromCache(address);
-		} else {
-			entry = mainMem.getData(address);
-		}
-		
-		if (entry != null) {
-			if (!entry.isData()) {
-				logger.warn("instruction is retrieved for data use.");
+		try {
+
+			if (enableCache) {
+				entry = cacheMap.getDataFromCache(address);
+			} else {
+				entry = mainMem.getData(address);
 			}
-			int size = entry.getSize();
-			String da = entry.getData();
-			int len = da.length();
-			
-			int subStringStartPoint = len - size;
-			if(subStringStartPoint < 0){
-				subStringStartPoint = 0;
+
+			if (entry != null) {
+				if (!entry.isData()) {
+					logger.warn("instruction is retrieved for data use.");
+				}
+				int size = entry.getSize();
+				String da = entry.getData();
+				int len = da.length();
+
+				int subStringStartPoint = len - size;
+				if(subStringStartPoint < 0){
+					subStringStartPoint = 0;
+				}
+				da = da.substring(subStringStartPoint);
+				int val = Convertor.getSignedValFromBin(da, size);
+				return val;
 			}
-			da = da.substring(subStringStartPoint);
-			int val = Convertor.getSignedValFromBin(da, size);
-			return val;
+		} catch (Exception e) {
+			logger.debug("failed to get data from mem.", e);
 		}
 		throw new MemoryException("Address not found in memory: " + address);
 	}

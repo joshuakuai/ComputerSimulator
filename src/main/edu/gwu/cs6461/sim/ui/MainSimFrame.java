@@ -1157,7 +1157,7 @@ public class MainSimFrame extends JFrame implements Observer {
 							String[] mVal = v.split(",");
 							if (mVal.length == 2) {
 								loadToControl(k, mVal[0], mVal[1]);
-							} else if(mVal.length == 3){
+							} else if(mVal.length >= 3){
 								loadToControl(k, mVal[0], mVal[1], mVal[2]);
 							}
 						} else if (HardwarePart.fromName(k) == HardwarePart.OUTPUT) {

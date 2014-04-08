@@ -240,6 +240,7 @@ public class Control {
 			try {
 				MDR.setData(Mem.getDataFromMem(MAR.getData()));
 			} catch (MemoryException e) {
+				machineFaultHandler(MachineFault.IllegalMemoryAddress);
 				logger.error(
 						"failed to get data from memory: " + e.getMessage(), e);
 			}

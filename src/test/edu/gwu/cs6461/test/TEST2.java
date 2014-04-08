@@ -76,6 +76,9 @@ public class TEST2 implements AutoCloseable {
 
 	}
 	public static void main(String[] args) throws Exception {
+		System.out.println(Convertor.getSignedValFromBin("00001000001000101000", 20));
+		System.out.println(Convertor.getSignedBinFromInt(16467, 20));
+		
 		new TEST2().testShift();
 	}
 
