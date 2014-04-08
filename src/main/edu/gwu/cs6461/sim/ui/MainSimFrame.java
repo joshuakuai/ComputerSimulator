@@ -78,6 +78,7 @@ import edu.gwu.cs6461.sim.util.TextAreaAppender;
  * simlator, memory area to show the content in simulator memory, console area
  * to show the system message.
  * 
+ *
  * 
  * @author marcoyeung
  * 
@@ -96,10 +97,13 @@ public class MainSimFrame extends JFrame implements Observer {
 	private static final int HIGHESTBIT = 19;
 	private static final int LOWESTBIT = 0;
 
+	/**define switch radio buttons*/
 	private JRadioButton[] radBinData = new JRadioButton[20];
 	private JLabel[] lblBinPosInfo = new JLabel[20];
 	private Dimension shortField = new Dimension(100, 50);
 
+	
+	/**defining Swing components for registers */
 	private JLabel lblR0 = new JLabel(HardwarePart.R0.getName());
 	private JLabel lblR1 = new JLabel(HardwarePart.R1.getName());
 	private JLabel lblR2 = new JLabel(HardwarePart.R2.getName());
@@ -137,35 +141,42 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JTextField txtIR = new JTextField(20); // current instruction
 	private JTextField txtPC = new JTextField(13); // address of next
 													// instruction
-
+	/**define Control panel button for simulator run */
 	private JButton btnHalt = new JButton("Halt");
 	private JButton btnRun = new JButton("Run");
 	private JButton btnSingleInstr = new JButton("Single Instr.");
 	private JButton btnSingleStep = new JButton("Single Step");
 
+	/**define Simulator start up and terminate buttons */
 	private JButton btnIPL = new JButton("IPL");
 	private JButton btnTerminate = new JButton("Terminate");
 
+	/**define switches panel buttons to reset and deposit instruction and data */
 	private JComboBox<String> cboSwithOptions = new JComboBox<String>();
 	private JButton btnReset = new JButton("Reset");
 	private JButton btnDeposit = new JButton("Deposit");
 
-	// set memory
+	/** set memory */
 	private JLabel lblMemAddress = new JLabel("Address:");
 	private JTextField txtMemAdd = new JTextField(4);
 
+	/**console printer swing component */
 	private JTextArea txtConsoleText = new JTextArea();
+	/**Swint list model for Memory display */
 	private DefaultListModel<String> lstModel = new DefaultListModel<String>();
 	private JList<String> lstMemory = new JList<String>(lstModel);
 
+	/**IO input text field*/
 	private JTextField txtIOInput = new JTextField();
+	
+	/**all supported instruction for user to select to assign switches buttons quickly*/
 	private JList<String> lstHistCdms;
 	/**history of IO commands user has input*/
 	private DefaultListModel<String> lstModHistCdms= new DefaultListModel<>();
 	/**all supported instructions, use to setup switches*/
 	private JComboBox<String> cboAllInstrHelper = new JComboBox<String>();
 
-	
+	/**default register background color*/
 	private static Color registerColor = new Color(238,238,238);
 	/**
 	 * The first switch, in ComboBox ,to be allow to edit by the tester this is
@@ -173,12 +184,15 @@ public class MainSimFrame extends JFrame implements Observer {
 	 */
 	private int mainSwitchIdx = 0;
 	
+	/**initial PC; load from property file while starting up simulator*/
 	private int instrStartingPos = 0;
 
 	/**
 	 * Business logic objects
 	 */
 	private CPUController cpuController = CPUController.shareInstance();
+	
+	/**activate / deactivate IN IODevice*/
 	private boolean captureKeyEvent = false;
 
 	/**
@@ -266,6 +280,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		});
 
 	}
+	
+	/**message prompt for user to confirm exiting simulator*/
 	private void promptExit() {
 		String ObjButtons[] = { "Yes", "No" };
 		int PromptResult = JOptionPane.showOptionDialog(
@@ -364,6 +380,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		reSetCPUController();
 	}
 
+	/**create Register panel*/
 	private JPanel createMiscRPanel() {
 		GriddedPanel gPanel = new GriddedPanel();
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Registers"));
@@ -393,7 +410,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		return wrap;
 	}
 
-	
+	/**create IO Input Panel*/
 	private JPanel createIOConsolePanel(){
 		JPanel gConsole = new JPanel();
 		gConsole.setLayout(new GridBagLayout());
@@ -445,6 +462,8 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		return gConsole;
 	}
+	
+	/**create index panel*/
 	private JPanel createIndexRPanel() {
 		GriddedPanel gPanel = new GriddedPanel();
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Index"));
@@ -465,6 +484,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		return wrap;
 	}
 
+	/**create control panel*/
 	private JPanel createControlPanel() {
 		GriddedPanel gPanel = new GriddedPanel();
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Control Panel"));
@@ -477,6 +497,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		return gPanel;
 	}
 
+	/**create console panel*/
 	private JPanel createConsolePanel() {
 
 		txtConsoleText.setFont(new Font("consolas", Font.PLAIN, 13));
@@ -493,6 +514,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
+	/**Create start up and terminate panel */
 	private JPanel createMainCtrlPanel() {
 
 		JPanel btnPanel = new JPanel(new GridLayout(1, 3, 5, 5));
@@ -507,6 +529,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		return wrap;
 	}
 
+	/**Create general register panel*/
 	private JPanel createGeneralRPanel() {
 		GriddedPanel gPanel = new GriddedPanel();
 		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "General"));
@@ -531,6 +554,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
+	/**Create Radio button Switch Panel*/
 	private JPanel createBinPanel(int start, int end) {
 		JPanel pBinPanel = new JPanel();
 
@@ -561,6 +585,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		return pBinPanel;
 	}
 
+	/**Create Switch panel */
 	private JPanel createSwitchPanel(int start, int end) {
 		// Button only
 		JPanel btnPanel = new JPanel();
@@ -774,6 +799,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		}
 	}
 
+	/**padding space for aligning the string */
 	private String padSpace(String key, int space) {
 
 		if (key == null && "".equals(key)) {
@@ -825,6 +851,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		}
 	}
 
+	/**reinitialize the hardware components */
 	private void reSetCPUController() {
 		cpuController = CPUController.shareInstance();
 		cpuController.clearObserver();
@@ -925,6 +952,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 	
+	/**Event handler for IO Input textbook */
 	private void performIOCommand(String cmd) throws IOCmdException{
 		
 		if (cmd==null || "".equals(cmd)) {
@@ -946,10 +974,8 @@ public class MainSimFrame extends JFrame implements Observer {
 	}
 
 	private void setMemorySwitch(boolean b) {
-
 		lblMemAddress.setVisible(b);
 		txtMemAdd.setVisible(b);
-
 	}
 
 	private void resetMainCtrlBtn(boolean isStart) {
@@ -964,6 +990,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
+	/**adjust Switches component for user selection*/
 	private void clearSwitches(int start, int end) {
 		for (int i = start; i <= end; i++) {
 			if (radBinData[i] != null) {
@@ -1070,6 +1097,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		// lstMemory = new JList<String>(lstModel);
 	}
 
+	/**re-adjust the UI component display*/
 	private void maskSwitches(int start, int end, boolean b) {
 
 		for (int i = start; i <= end; i++) {
@@ -1096,6 +1124,8 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	}
 
+	/**Event handler to re-adjust switch radio button to reflect the number of bits 
+	 * for different instructions*/
 	private class SwitchComboActionListener implements ActionListener {
 
 		@Override
@@ -1192,6 +1222,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 	/***************************************/
 
+	/**list all the supported instrctions in dropbox so that user can assign switch buttons easily */
 	private void createInstrHelperComponent() {
 		OpCode[] names = OpCode.values();
 		List<String> tmp = new ArrayList<String>();
@@ -1209,6 +1240,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		cboAllInstrHelper = new JComboBox<String>(reg);
 	}
 
+	/**Event handler for all support instruction; mainly to easily turn on/off switches */
 	private class InstrHelperComboActionListener implements ActionListener {
 
 		@Override
@@ -1252,6 +1284,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		setSwitchesEditable(10,15,b);
 	}
 
+	/**
+	 * capture keyboard event for IN IO Instruction
+	 * */
 	private class InputKeyEventHandler implements KeyListener {
 
 		@Override
@@ -1267,7 +1302,9 @@ public class MainSimFrame extends JFrame implements Observer {
 			
 	}
 	
-    private void handleInput(KeyEvent e, String keyStatus){
+	/**Capture keyboard event and send the keyboard value to hardware side 
+	 * */
+	private void handleInput(KeyEvent e, String keyStatus){
         if (!captureKeyEvent) {
 			return;
 		}
@@ -1284,7 +1321,11 @@ public class MainSimFrame extends JFrame implements Observer {
         captureKeyEvent = false; //
     }	
 
-    String result ="";
+	
+	/***
+	 * Handle OUT IO event from hardware so that message
+	 * can be printed in console printer
+	 * */
     private class printOutHandler implements Runnable {
     	
     	public printOutHandler() {
@@ -1310,4 +1351,6 @@ public class MainSimFrame extends JFrame implements Observer {
 //    		simConsole.info((char)val);
     	}
     } //
+    /**holding OUT char for console printer*/
+    private String result ="";
 }

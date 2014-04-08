@@ -1,0 +1,20 @@
+# test program
+#start to define instructions
+INSTR:100
+01111000000000000011	  #Trap instruction with code =3
+11111100000000000000      #test instr to cause machine fault
+11011100000000000000	  #END of program
+INSTR:200
+11111000000000001111      #Machine Fault handler--output fault message to console
+11011100000000000000	  #END of program
+INSTR:210
+11111000000000001111      #Trap instruction handler--output trap handling message to console
+00000111000000000010      #load up return PC from mem 2
+00111100000000000000      #return back
+#start to define data portion
+DATA:300
+00001100001101010000      #value 50000
+10010000000100000010  	  #201 value: -458494
+01000100000000100010  	  #202 value: 278562
+00000100000000100010 	  #203 value: 16418
+00000001001101110100 	  #204 memory data 4980

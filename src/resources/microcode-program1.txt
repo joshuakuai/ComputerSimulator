@@ -1,0 +1,457 @@
+JMP 249			#jump to main function
+#UserInput(2):add:STR r3,44		#store return address in address 44
+LDR r1,49		#zero out R1
+STR r1,40		#empty space in address 40 for temp stortage(of pointers,values)
+STR r1,41		#empty space in address 41 for temp stortage(of pointers,values)
+STR r0,40		#store digits array pointer into address 40
+STR r0,41		#store digits array pointer into address 41(to pass to create integer subroutine)
+LDR r1,40		#load the pointer into R1
+#NumLoop(9):IN  r0,0		#Insert integer from keyboard into R0
+SIR r0,10		#check if the character is (enter) by subtracting 10 from it, R0-10=0
+LDR r2,49		#zero out R2
+STR r0,42		#save current R0 value in address 42
+LDR r2,42		#pass the value from address 42 to R2
+LDR r0,41		#pass pointer to start of digit array to R0 (to save as arugment pointer for subroutinue call)
+STR r0,29		#padding line(cant delete or have to change all addresses)
+chg:JZ  r2,93		#else exit the loop and go to subroutine to collect the digits into a final integer
+LDR r1,40		#load back digit array pointer to R1
+LDR r0,42		#load the value of R0 back from address 42
+AIR r0,10		#and return the character to original ascii number by adding 10
+SIR r0,48		#subtract 48 to convert ascii to digit, eg 48-48=0 so user input character is zero
+add:STR r0,43		#store r0 into address 43
+add:LDR r3,43		#load the value into R3
+SIR r0,1		#if it is not zero than subtract 1 same as 49-49=0 therefore the digit is 1
+JZ  r0,96		#the character is integer "1" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "2" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "3" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "4" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "5" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "6" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "7" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "8" go to save number into memory subroutine
+SIR r0,1		#subtract one from R0
+JZ  r0,96		#the character is integer "9" go to save number into memory subroutine
+JNE r0,227		#inform the user what they entered is not a digit and they should enter a valid digit character
+JMP 59			#continue loop
+#GoToIntegerCreate(43):JSR 199			#go to create integer subroutine
+add:LDR r3,44		#put back return address into R3 from address 44
+RFS			#return to calling routine, R0 contains integer after returning from create integer subroutine
+#SaveNumToMem(46):STR r3,40,I		#Store input digit into memory cell pointed to by address 40
+AIR r1,1		#Increment the array position pointer
+STR r1,40		#Store the new array position in memory address 40
+LDR r3,49		#empty R0 (address 49 contains zero)
+AIR r3,254		#put 254 in R0
+NOT r3			#turn R0 into -255
+STR r3,40,I		#put -255 in the next digit space in the array to indicate end of array
+JMP 59			#go back to user input loop
+#PrintInteger(54):LDR r1,49		#zero out R1
+STR r1,40		#empty space in address 40 for temp stortage(of pointers,values)
+STR r1,41		#empty space in address 41 for temp stortage(of pointers,values)
+STR r1,42		#empty space in address 42 for temp stortage(of pointers,values)
+STR r0,40,I		#store pointer to integer in address 40
+AIR r0,1		#add one to R0 to get digits array pointer(which was stored in the next address space after integer pointer)
+STR r0,41,I		#store digits array pointer into address 41
+STR r3,42		#store Return address in address 42
+LDR r3,41		#load pointer to digits array into R3
+LDR r0,49		#zero out R0
+AIR r0,10		#put 10 in R0
+STR r0,41,I		#put new line character in start of digit array to know we reached the end of printing in reverse
+LDR r0,40,I		#load integer into R0
+#Continue(67):AIR r3,1		#increment pointer
+STR r3,41		#put new pointer in address 41
+LDR r2,49		#zero out R2
+AIR r2,10		#put 10 in R2
+DVD r0,r2		#divide by 10 to get first digit as reminder e.g. 713/10, R0=71 R1=3
+STR r1,41,I		#store reminder ie digit into digit array
+JNE r0,117		#if r0 is not zero that means the integer still has more digits to convert
+#PrintLoop(74):LDR r1,41,I		#Load the left most digit eg 713 leftmost digit is 7....etc
+OUT r1,1		#Print Digit
+SIR r1,10		#check for newline character if R1-10=0 exit loop and Return
+SIR r3,1		#decrement the pointer to print next leftmost digit
+STR r3,41 		#store new pointer in address 41
+JNE r1,124		#else if not new line continue print loop
+LDR r3,42		#Load return address into R3 from address 42
+RFS			#Return to calling function
+#DistanceCalculation(82):LDR r1,49		#zero out R1
+STR r1,40		#empty space in address 40 for temp stortage(of pointers,values)
+STR r0,40		#store user selected number address into address 40
+AIR r0,1		#add one to R0 to get integer array pointer
+STR r0,41		#store pointer to pointer to integer array in address 41
+add:LDR r1,41,I		#load pointer to integer array into R1
+add:STR r1,41		#store the pointer in address 41
+AIR r0,1		#add one to R0 to get distance array pointer
+STR r0,42		#store distance array pointer into address 42
+add:LDR r1,42,I		#load pointer to integer array into R1
+add:STR r1,42		#store the pointer in address 42
+AIR r0,1		#add one to R0 to get loop counter pointer
+STR r0,43		#store loop counter address into address 43
+STR r3,44		#store Return address in address 44
+LDR r3,43,I		#load loop counter into R3
+LDR r0,41		#load integer array pointer into R0
+LDR r1,42		#load distance array pointer into R1
+#DISTANCELOOP(99):LDR r2,40,I		#Load user number to compare into R2
+SMR r2,41,I		#Subtract user number from the integer in the integer array to get the distance between them
+JGE r2,154		#if distance is positive continue loop
+NOT r2			#else convert to positive using NOT instruction to turn negative into positive
+AIR r2,1		#add 1 because using NOT to convert to positive there is one number missing(eg -7!=6 so 6+1=7)
+#ContinueLoop(104):STR r2,42,I		#store positive distance value into distance array
+AIR r0,1		#increment current distance array pointer by one
+AIR r1,1		#increment current integer array pointer by one
+STR r0,41		#Store new distance array pointer into memory address 41
+STR r1,42		#Store new integer array pointer into memory address 42
+SOB r3,149		#continue loop
+LDR r3,44		#load return address from address 44 back into R3
+RFS 			#return back to calling routine
+#ClosestNumber(112):LDR r1,49		#zero out R1
+STR r1,40		#empty space in address 40 for temp stortage(of pointers,values)
+STR r1,41		#empty space in address 41 for temp stortage(of pointers,values)
+STR r1,42		#empty space in address 42 for temp stortage(of pointers,values)
+STR r1,43		#empty space in address 43 for temp stortage(of pointers,values)
+STR r1,44		#empty space in address 44 for temp stortage(of pointers,values)
+STR r0,40,I		#store pointer to distance array into address 40
+AIR r0,1		#add one to R0 to get loop counter address
+STR r0,41		#store loop counter address into address 41
+STR r3,42		#store return address(R3) into address 42
+LDR r3,41,I		#Load loop counter into R3
+STR r3,41		#store loop counter value in address 41
+LDR r1,40		#load distance array pointer into R1 from address 40
+LDR r2,40,I		#load first element from distance array
+LDR r0,49		#zero out R0
+AIR r1,1		#increment distance array pointer by one
+STR r1,40		#Store next element pointer into memory address 40
+SIR r3,1		#the first two elements are preloaded so one less loop counter is needed
+#Compare(130):SMR r2,40,I		#subtract previous element from next element
+JGE r2, 183		#if R1>=0 go to FirstCondition
+JMP 194			#else the first element is smaller
+#FirstCondition(133):LDR r2,40,I		#load second distance integer into R2 (as smallest distance) for next round of comparison
+STR r3,43		#backup current loop counter(R3) into address 43
+SMR r3,41		#subtract current loop counter R3 from original loop counter address 41
+NOT r3			#result is negative so we convert it back to positve by NOT
+AIR r3,1		#add the missing one after using NOT instruction
+STR r3,44		#save the value in address 44
+LDR r0,44		#load the value in address 44 into R0 to get the closest integer position
+LDR r3,43		#return current loop counter(address 43) back into R3
+AIR r1,1		#increment distance array pointer by one
+STR r1,40		#Store next element pointer into memory address 40
+JMP 196			#go to next loop increment
+#SecondCondition(144):AIR r1,1		#increment distance array pointer by one
+STR r1,40		#Store next element pointer into memory address 161
+#ContinueLOOP(146):SOB r3, 180		#continue loop
+LDR r3,42		#put return address back into R3 from address 42
+RFS			#return to calling function and R0 has the element position in integer array of closest integer to user selected number
+#CreateInteger(149):LDR r1,49		#zero out R1
+STR r1,40		#empty space in address 40 for temp stortage(of pointers,values)
+STR r1,41		#empty space in address 41 for temp stortage(of pointers,values)
+STR r0,40		#store digits array pointer into address 40
+LDR r1,40		#load the pointer into R1
+LDR r0,40,I		#load digit from array into R0
+STR r0,41		#store the digit into memory address 41
+AIR r1,1		#increment digit array pointer
+STR r1,40		#store new pointer in address 40
+LDR r2,40,I		#load next digit in array
+AIR r2,255		#check if value is -255 if so -255+255=0 the array has reached its end
+JZ  r2,226		#there is only one digit so exit and save it as the final integer
+#IntegerConstruct(161):LDR r0,41		#if it is not end of array then load saved integer from address 41 into R0
+LDR r2,49		#zero out R2
+AIR r2,10		#add 10 to R2 to multiply by R0 so we can reconstruct the integer eg 71...(7)*10=70 and then 70+(1)=71
+MLT r0,r2		#R0*10
+STR r1,41		#store the new value in 41
+LDR r2,40,I		#load following digit in the array
+AMR r2,41		#add the two digits together eg R2=1 and MEM=70 so R2=1+70=71
+STR r2,41		#store integer back in 41
+LDR r1,40		#load digit array pointer back into R1
+AIR r1,1		#increment pointer
+STR r1,40		#store new pointer in memory address 40
+LDR r0,40,I		#load next digit into R0
+AIR r0,255		#check if value is -255 if so -255+255=0 the array has reached its end
+JNE r0,211		#else continue building the integer
+LDR r0,41		#load integer in address 41 into R0
+#ExitLoop(176):RFS			#Finished building the integer go back to calling routine with integer in R0
+#NotDigitMessage(177):LDR r1,46		#load point to error string into R1
+STR r1,50		#store pointer to error string in address 50
+LDR r2,49		#zero out R2
+SIR r1,1		#the first time around the loop will increase the pointer so we decrement it before it begins
+#ContinuePrinting(181):AIR r1,1		#increment string array pointer
+STR r1,50		#store new pointer
+LDR r2,50,I		#load a character from the string array into R2
+OUT r2,1		#print out the character to console printer
+SMR r2,10		#check to see if character in R2 is new line character(indicating end of the string)
+JNE r2,231 		#if not newline continue loop
+RFS			#else exit and return to calling routine
+#PrintOutMessage(188):STR r0,50		#store pointer to character array in address 50
+LDR r1,50		#load the string array pointer from address 50 into R1
+LDR r2,49		#zero out R2
+SIR r1,1		#the first time around the loop will increase the pointer so we decrement it before it begins
+#ContinuePrinting(192):AIR r1,1		#increment string array pointer
+STR r1,50		#store new pointer
+LDR r2,50,I		#load a character from the string array into R2
+OUT r2,1		#print out the character to console printer
+SMR r2,10		#check to see if character in R2 is new line character(indicating end of the string)
+JNE r2,242		 #if not newline continue loop
+RFS			#else exit and return to calling routine
+#MAIN(199):STR r0,49		#put zero in address 49 (use this later to empty out registers)
+STR r0,30		#initialize loop counter in address 30 to zero
+AIR r0,255       	#add 255 to R0
+AIR r0,255		#add 255 to R0
+AIR r0,40		#add 40 to R0
+STR r0,31		#R0=550 put this in address 31 as pointer to integer array
+AIR r0,100		#add 100 to R0
+STR r0,32		#R0=650 put this in address 32 as pointer to distance array
+AIR r0,100		#add 100 to R0
+STR r0,33		#R0=750 put this in address 33 as pointer to digits array
+AIR r0,50		#add 50 to R0
+STR r0,34		#R0=800 put this in address 34 as pointer to Integer Total number Message
+AIR r0,50		#add 50 to R0
+STR r0,35		#R0=850	put this in address 35 as pointer to Insert Integers Message
+STR r0,47		#store R0 into address 47
+LDR r0,49		#zero out(empty out) R0
+STR r0,36		#empty space in address 36 for user selected number(that will use to find closest number)
+STR r0,37		#empty space in address 37 for temp stortage(of pointers,values)
+STR r0,38		#empty space in address 38 for temp stortage(of pointers,values)
+STR r0,39		#empty space in address 39 for temp stortage(of pointers,values)
+STR r0,48		#empty space in address 48 for closest number
+LDR r0,47		#load back R0 from address 47
+AIR r0,50		#add 50 to R0
+STR r0,45		#R0=900 put this in address 45 as pointer to User Number Message
+AIR r0,50		#add 50 to R0
+STR r0,46		#R0=950 put this in address 46 as pointer to Error Message
+AIR r3,90		#add 90 to R3
+STR r3,39		#store R3 into address 39
+LDX x3,39		#load 90 into X3
+JSR x3,255		#jump to subroutine for loading error string into memory
+LDR r0,33		#load digits array pointer into R0(as arugment to pass to user input subroutine)
+LDR r0,49	        #zero out R0
+AIR r0,38               #add 38 to R0
+STR r0,38		#store R0 into address 38
+LDX x1,38               #load 38 into X1
+JSR 52			#jump to user input subroutine
+STR r0,30		#R0 has the pointer to the result integer, store it as the loop counter in address 30
+LDR r1,31		#load pointer to integer array into R1
+STR r1,37		#store pointer from R1 into temp space address 37
+LDR r2,30		#LDR loop counter in R2
+LDR r3,49               #zero out R3
+AIR r3,52		#add 52 to R3
+STR r3,39	        #store R3 into address 39
+LDR x2,39	        #load 52 into X2
+#InputLoop(243):LDR r0,33		#load digits array pointer into R0(as arugment to pass to user input subroutine)
+STR r2,38		#store current loop counter in temp space 38
+JSR 52			#jump to user input subroutine, R0 has the return result
+STR r0,37,I		#Store integer in R0 into integer array
+LDR r1,37		#load current integer array pointer into R1
+AIR r1,1		#increment integer array pointer(R1) by one
+STR r1,37		#store new pointer in address 37
+LDR r2,38		#restore current loop counter into R2
+SOB r2,x1,255		#decrement loop counter and continue loop (InputLoop)
+LDR r0,31		#load pointer to integer array into R0
+STR r0,37		#store R0 into address 37
+LDR r0,33		#load digits array pointer into R0
+STR r0,38		#store R0 into address 38
+LDR r2,30		#LDR loop counter in R2
+#PrintTheIntegers(257):LDA r0,37		#load address 37 into R0(to pass as arugment to print subroutine)
+STR r2,39		#store current loop counter in temp space 39
+JSR 104			#call PrintInteger and pass to it integer array(address 31) and digits array locations(address 33)
+LDR r1,37		#load current integer array pointer into R1 from address 37
+AIR r1,1		#increment pointer by one
+STR r1,37		#store new pointer(R3) into address 37
+LDR r2,39		#restore current loop counter into R2
+SOB r2,x2,255		#decrement loop counter and continue loop
+LDR r0,33		#load digits array pointer into R0(as arugment to pass to user input subroutine)
+JSR 52			#jump to user input subroutine
+STR r0,36		#R0 has the pointer to the integer, store it as user selected number in address 36
+LDR r0,31		#load pointer to integer array into R0
+STR r0,37		#store R0 into address 37
+LDR r0,32		#load distance array pointer into R0
+STR r0,38		#store R0 into address 38
+LDR r0,30		#load loop counter in R0
+STR r0,39		#Store loop counter into address 39
+LDA r0,36		#load address 36 into R0(to pass as start of arugment list to distance subroutine)
+JSR 132			#go to distance array calculation subroutine
+LDR r0,32		#load distance array pointer into R0
+STR r0,37		#store R0 into address 37
+LDR r0,30		#load loop counter in R0
+STR r0,38		#Store loop counter into address 38
+LDA r0,37		#load address 37 into R0(to pass as start of arugment list to closest number subroutine)
+JSR 162			#go to closest number subroutine
+AMR r0,31		#add integer array position to array address pointer to get memory location of the integer
+STR r0,48		#STR closest number(R0) into address 48
+LDR r0,36		#load pointer to user number into R0
+STR r0,37		#store R0 into address 37
+LDR r0,33		#load digits array pointer into R0
+STR r0,38		#store R0 into address 38
+LDA r0,37		#load address 37 into R0(to pass as arugment list to print subroutine)
+JSR 104			#call print subroutine to print user number
+LDR r0,48		#load pointer to user number into R0
+STR r0,37		#store R0 into address 37
+LDR r0,33		#load digits array pointer into R0
+STR r0,38		#store R0 into address 38
+LDA r0,37		#load address 37 into R0(to pass as arugment list to print subroutine)
+JSR 104			#call print subroutine to print user number
+#NotDigitMessage(296):STR r0,37		#store pointer to error string into address 37
+LDR r1,37		#load the pointer into R1
+LDR r2,49		#zero out R2
+AIR r2,30		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,108		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,101		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,97		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,115		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,101		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,32		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,105		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,110		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,115		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,101		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,114		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,116		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,32		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,97		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,32		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,118		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,97		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,108		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,105		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,100		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,32		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,99		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,104		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,97		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,114		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,97		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,99		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,116		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,101		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,114		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+AIR r1,1		#increment character array pointer
+STR r1,37		#store new pointer
+LDR r2,49		#zero out R2
+AIR r2,10		#put a character in R2
+STR r2,37,I		#store the character in the character array space in memory
+RFS			#return to calling function
+EOP			#end of the program
