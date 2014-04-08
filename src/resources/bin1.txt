@@ -14,7 +14,7 @@ INSTR:51
 00000110000000101010     #pass the value from address 42 to R2
 00000100000000101001     #pass pointer to start of digit array to R0 (to save as arugment pointer for subroutinue call)
 00010101000000101001     #check if digit array is empty and user pressed enter by subtracting current pointer from intial pointer if =0 then digit array empty
-00000000000000000000     #if digits array is empty tell user to re-enter a valid number
+00101001000011100011     #if digits array is empty tell user to re-enter a valid number
 00101001000000111011     #and restart user input loop
 00101010000000101100     #else exit the loop and go to subroutine to collect the digits into a final integer
 00000101000000101000     #load back digit array pointer to R1
@@ -77,7 +77,7 @@ INSTR:51
 00011101000000001010     #check for newline character if R1-10=0 exit loop and Return
 00011111000000000001     #decrement the pointer to print next leftmost digit
 00001011000000101001     #store new pointer in address 41
-00101101000001111100     #else if not new line continue print loop
+00101101000001111100	 #else if not new line continue print loop
 00000111000000101010     #Load return address into R3 from address 42
 00111100000000000000     #Return to calling function
 00000101000000110001     #zero out R1
