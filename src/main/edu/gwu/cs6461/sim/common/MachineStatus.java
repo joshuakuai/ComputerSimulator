@@ -1,5 +1,9 @@
 package edu.gwu.cs6461.sim.common;
 
+
+/**
+ *  Machine status constant class
+ * */
 public enum MachineStatus {
 	Normal(0), TrapInstruction(1), MachineFault(2), Unknown(-1);
 

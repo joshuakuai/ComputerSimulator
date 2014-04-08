@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-/*
+/**
  *  @author Marco Yeung
  *  
  *   A utility class to load the property setting.

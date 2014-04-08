@@ -27,13 +27,14 @@ import edu.gwu.cs6461.sim.util.PropertiesParser;
  * in this class. To run the RunInstruction function is called and depending on
  * the opcode from IR it will choose which instruction function to run.
  * 
- * 
+ * @Revised   Mar 23, 2014 - 1:59:29 PM 
+ * @Revised   Apr 8, 2014 - 10:59:29 AM   
  */
 public class Control {
+	/**logger to log message to file*/
 	private final static Logger logger = Logger.getLogger(Control.class);
-	private final static Logger simConsole = Logger.getLogger("simulator.console");	
 
-	// Weak reference of registers&memory&ALU
+	/** singleton object to of registers&memory&ALU */
 	private MMU Mem = null;
 	private ALU ALU = null;
 
@@ -47,15 +48,23 @@ public class Control {
 	private Register MFR = null;
 	/**Machine Fault Register  - singleton */
 	private Register SI = null;
+	
+	/**register file for general registers*/
 	private RF RFtable = null;
+	/**register file for index registers*/
 	private XF XFtable = null;
+	/**Memory address register*/
 	private Register MAR = null;
+	/**Memory data register*/
 	private Register MDR = null;
+	/**Machine status register*/
 	private Register MSR = null;
 
-	// from ALU calculation
+	/** from ALU calculation :internal register  */
 	private Register RES = null;
+	/** from ALU calculation :internal register  */
 	private Register RES2 = null;
+	/** Class to hold multiplication result */
 	private Multiply Multi = null;
 
 	/**input device - keyboard */
@@ -63,27 +72,34 @@ public class Control {
 	/**output device - console printer */
 	private IODevice outputDevice =null;	
 	
+	/**singleton object for holding simulator properties */
 	PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+	
+	/**simulator initial program counter, default to 100, but it can be read from property file */
 	int instrStartingPos=100;
 	public Control() {
 		instrStartingPos = prop.getIntProperty("sim.program.startingpoint",100);
 
 	}
 
-	// References setter
+	/**memory instance setup */
 	public void setMem(MMU mem) {
 		Mem = mem;
 	}
 
+	/**ALU instance setup */
 	public void setALU(ALU aLU) {
 		ALU = aLU;
 	}
+	/**IO device instance setup */
 	public void setINDevices(IODevice inputDevice) {
 		this.inputDevice = inputDevice;
 	}
+	/**IO device instance setup */
 	public void setOUTDevices(IODevice outputDevice) {
 		this.outputDevice = outputDevice;
 	}
+	/**Register instances setup */
 	public void setRegisters(RegisterContainer registerContainer) {
 		IRobject = registerContainer.IRobject;
 		PC = registerContainer.PC;
@@ -100,6 +116,7 @@ public class Control {
 		Multi = registerContainer.Multi;
 	}
 
+	/**Perform instruction fetch from main memory with PC */
 	public void FetchIR() {
 		// MAR <- PC
 		MAR.setData(PC.getData());
@@ -119,19 +136,25 @@ public class Control {
 		logger.debug("fetched instr:" + PC.getData()+":"+ tmpString);
 	}
 
-	// this creates a new decode class object which breaks down the instruction
-	// into the different parts opcode, r,x,address,[,I] (depending the
-	// instruction)
+	/** 
+	 * Perform instruction decoding 
+	 * <BR>
+	 * this creates a new decode class object which breaks down the instruction
+	* into the different parts opcode, r,x,address,[,I] (depending the * instruction)
+	*  
+	*/
 	public void Decode() {
 		Decode dec = new Decode();
 		dec.decodeSwitch(IRobject);
 	}
 
 	/**
+	 * Execute the decoded instruction
+	 * <BR>
 	 * this functions runs all instructions so all the objects created in the
 	 * cpucontroller class are passed here, this allows the function to share
 	 * the appropriate objects with the instruction functions.
-	 * 
+	 * <BR> 
 	 *  depending on the opcode from IR the right instruction is called
 	 */
 	public void RunInstruction() {
@@ -212,7 +235,10 @@ public class Control {
 		}
 	}
 
-	// Common Function
+	/**  
+	 * Calculate the effective address
+	 * Common Function
+	 * */
 	public void calculateEAOffset() {
 		if (IRobject.getXFI() != 0
 				&& (IRobject.getXFI() == 1 || IRobject.getXFI() == 2 || IRobject
@@ -232,6 +258,9 @@ public class Control {
 		}
 	}
 
+	 /**
+	  *  Calculate the effective address with indirect flag set
+	 */
 	public void calculateEAIndirect() {
 		// if indirect bit is enabled put MDR in MAR and get the memory content
 		// of MAR address and put it in MDR
@@ -247,6 +276,7 @@ public class Control {
 		}
 	}
 	
+	/**End of program instruction handling */
 	public void EOP(){
 		//TODO simulator should force to restart simulator
 		PC.setData(instrStartingPos);
@@ -1046,6 +1076,12 @@ public class Control {
 			PC.setData(PC.getData() + 1);
 	}
 
+	/**
+	 * Perform OUT IO instruction
+	 * <BR>
+	 * character is sent in ascii form to output device one by one
+	 * 
+	 * */
 	public void OUT() {
 		int dId=  IRobject.getDeviceID();
 		
@@ -1079,6 +1115,14 @@ public class Control {
 		}
 		PC.setData(PC.getData() + 1);
 	}
+	
+	 
+	 /**
+	  *  Perform IN IO instruction
+	  *  <BR>
+	  *  Character is received one by one in ascii form from input device
+	  *  
+	  * */
 	public void IN() {
 		int dId=  IRobject.getDeviceID();
 		
@@ -1094,6 +1138,10 @@ public class Control {
 		PC.setData(PC.getData()+1);
 	}
 	
+	/**
+	 * handling trap instruction
+	 * 
+	 * */
 	private void trapInstructionHandler() {
 		MSR.setData(MachineStatus.TrapInstruction.getCode());
 		//PC point to next instruction
@@ -1106,6 +1154,9 @@ public class Control {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * handling Machine Fault instruction
+	 * */
 	private void machineFaultHandler(MachineFault fault) {
 		MSR.setData(MachineStatus.MachineFault.getCode());
 		MFR.setData(fault.getId());

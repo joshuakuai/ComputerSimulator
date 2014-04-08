@@ -22,6 +22,9 @@ import edu.gwu.cs6461.sim.util.PropertiesParser;
  * <BR>
  * Data lines in cache are stored in LinkedHashMap so that replacement policy could be easily achieved. 
  * @author marcoyeung
+ * 
+ * @Revised   Feb 20, 2014 - 11:24:39 AM
+ * 
  */
 public class Cache {
 	/**logger to log message to log file*/

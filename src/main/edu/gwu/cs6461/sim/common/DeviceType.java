@@ -1,5 +1,10 @@
 package edu.gwu.cs6461.sim.common;
 
+
+/**
+ * 
+ * IO Device constant class
+ * */
 public enum DeviceType {
 	Keyboard("Keyboard",0),
 	ConsolePrinter("ConsolePrinter",1),

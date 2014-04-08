@@ -1,5 +1,10 @@
 package edu.gwu.cs6461.sim.common;
 
+
+/**
+ * Machine fault constant class
+ * 
+ * */
 public enum MachineFault {
     IllegalMemoryAddress (0,"Illegal Memory Address"),
 	IllegalTrapCode(1,"Illegal Trap Code"),

@@ -2,6 +2,7 @@ package edu.gwu.cs6461.logic;
 /**
  * This is a temp 40bit register to hold the result of the 
  * multiplication
+ * @Revised   Jan 20, 2014 - 11:24:39 AM
  *
  */
 public class Multiply extends Register{

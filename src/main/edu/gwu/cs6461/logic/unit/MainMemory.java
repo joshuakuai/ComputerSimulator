@@ -213,6 +213,7 @@ public class MainMemory extends Observable{
 	 * Set instrcution data into memory.<BR>
 	 * An overloaded method.  this method do not set comment to front-end GUI
 	 * @see setInstr(int address, String data, String comment)
+	 *
 	 */
 	public void setInstr(int address, String data) {
 		setInstr(address, data,"");

@@ -11,15 +11,9 @@ import java.io.FileReader;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-
-import sun.nio.cs.ext.MacUkraine;
-
-import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 
 import edu.gwu.cs6461.logic.unit.MainMemory.Entry;
 import edu.gwu.cs6461.sim.bridge.Observer;
@@ -276,7 +270,14 @@ public class MMU {
 	}
 
 	
-	
+	/**
+	 * Load and setup inital ROM data 
+	 * <BR>
+	 * create procedure to handle tran instruction
+	 *  <BR>
+	 * create procedure to handle machine fault
+	 * 
+	 * */
 	public void loadROM() {
 		
 		String[]add = prop.getPropertyGroups("sim.mem.reserved.");
@@ -319,6 +320,7 @@ public class MMU {
 		
 	}
 	
+	/**return default trap instruction message */
 	public String getTrapMsg(int address) {
 		String msg = trapMsg.get(address);
 		if (msg==null) {
@@ -326,6 +328,7 @@ public class MMU {
 		}
 		return msg;
 	}
+	/**return default Machine Fault message */
 	public String getSystemMsg(MachineFault fault) {
 		String msg = systemMsg.get(fault.getId());
 		if (msg==null) {

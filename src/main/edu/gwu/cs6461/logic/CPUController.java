@@ -15,7 +15,7 @@ import edu.gwu.cs6461.sim.ui.MainSimFrame;
  * Register (SS), which is used as a condition to control the CPU thread by suspending it
  * after each microcode step is finished. Example after decode, effective address
  * ALU calculation etc.
- * 
+ * @Revised   Jan 20, 2014 - 11:24:39 AM
  */
 public class CPUController extends Thread {
 	/**Initial Registers */
@@ -42,8 +42,9 @@ public class CPUController extends Thread {
 	/** Keep a weak reference of mainSimFrame */
 	private MainSimFrame mainFrame = null;
 
-	
+	/**input device - keyboard */
 	private IODevice inputDevice =null;
+	/**output device - console printer */
 	private IODevice outputDevice =null;	
 	
 	/** CPU holds a weak reference of the memory but CPU doesn't own the memory */
@@ -93,6 +94,7 @@ public class CPUController extends Thread {
 		mainFrame = mf;
 	}
 	
+	/**Clear all the observers from hardwares */
 	public void clearObserver(){
 		mmu.clearObserver();
 		registerContainer.clearAllRegistersObserver();
@@ -100,6 +102,7 @@ public class CPUController extends Thread {
 		outputDevice.clear();
 	}
 
+	/**Register all the observers to hardwares */
 	public void setRegisterObserver(Observer obs) {
 		mmu.registerObserver(obs);
 		registerContainer.registerObserver(obs);
@@ -169,17 +172,22 @@ public class CPUController extends Thread {
 	
 		logger.debug("CPU thread ends.");
 	}
+	
+	/**load up program file into memory and publish data to GUI*/
 	public void loadFromFile(String fileName) throws IOCmdException  {
 		mmu.loadFromFile(fileName);
 	}
+	/**load up ROM file into memory and publish data to GUI*/
 	public void loadROM() {
 		mmu.loadROM();
 	}
 
+	/**perform IN io instruction */
 	public void setInputDeviceData(DeviceType type, int data) {
 		inputDevice.putData(data);
 	}
 
+	/**perform OUT io instruction */
 	public int getOuputDeviceData() {
 		return outputDevice.getData(); //output device
 	}

@@ -5,7 +5,7 @@ import java.util.*;
 
 /** 
  * 
- * Observer pattern for data communication between GUI and back-end hareware logic  
+ * Observer pattern for data communication between GUI and back-end hardware logic  
  * 
  * Each hardware piece, like Registers, memory, that have data to publish to GUI will extends 
  * this class, and will later publish data back to GUI by calling observer's refreshdata method

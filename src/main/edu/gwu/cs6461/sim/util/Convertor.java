@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class Convertor {
+	/**logger to log message to file*/
 	private final static Logger logger = Logger.getLogger(Convertor.class);
 
 	/**
@@ -75,6 +76,8 @@ public class Convertor {
 
 		return resBin;
 	}
+	
+	/**padding Zero in-front of string for alignment purpose*/
 	private static String padZero(String val, int length){
 		if (val==null || "".equals(val) || val.length() >= length) {
 			return val;
@@ -92,6 +95,7 @@ public class Convertor {
 		
 	}
 	
+	/**split the bit into array */
 	public static String[] bitToArray(String bit) {
 		String[] rst = { "" };
 		if (bit == null || "".equals(bit.trim())) {
@@ -106,7 +110,7 @@ public class Convertor {
 
 	}
 	
-	
+	/**Convert the int to binary without consider complement*/
 	public static String  display(int value) {
 		String str="",tmp;
 		int displayMask = 1 << 31;

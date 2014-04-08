@@ -12,6 +12,7 @@ import edu.gwu.cs6461.sim.common.DeviceType;
 
 /**
  * Decode the IR instructions into the various part opcode r x address I T immed
+ * @Revised   Apr 8, 2014 - 1:09:33 AM  
  */
 public class Decode {
 	private final static Logger logger = Logger.getLogger(Decode.class);
@@ -19,20 +20,33 @@ public class Decode {
 	 /**store Operator code in int format */
 	private int OpCode = 0;
 	
+	/**the base of instruction, default is base 2: binary*/
 	private int base = 2;
+	/**General register reference variable*/
 	private int RFI1 = 0;
+	/**General register reference variable*/
 	private int RFI2 = 0;
+	/**Index register reference variable*/
 	private int XFI  = 0;
+	/**Address to main memory*/
 	private int Address = 0;
+	/**indirect mode of the instruction */
 	private int Indirect = 0;
+	/**immediate value in the instruction */
 	private int Immediate = 0;
+	/**count for shift/rotate instructions */
 	private int Count=0;
+	/**left or right shift/rotate */
 	private int LeftorRight=0;
+	/**logica or arithmetic shift/rotate */
 	private int LogicalorArithmetic=0;
+	/** Device id for IO instructions*/
 	private int deviceID = 0;
+	/**Condition code for transfer instructions*/
 	private int cc=0;
-	//depending on the opcode the functions decided which decode function to use to break down
-	//the instruction
+	
+	/**depending on the opcode the functions decided which decode function to use to break down
+	the instruction */
 	public void decodeSwitch(IR IRobject) {
 		OpCode = Integer.parseInt(IRobject.getIRstring().substring(0, 6), base);
 		IRobject.setOpCode(OpCode);
@@ -59,8 +73,11 @@ public class Decode {
 			
 		
 	}
-//shared function1, function3, function4 shared functions between the different 
-//instructions
+	/**
+	 * Generic functions to decode instructions
+	 * 
+	 * shared function1, function3, function4 shared functions between the different 
+	instructions */
 	public void function1(IR IRobject) {
 		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
 		IRobject.setRFI1(RFI1);
@@ -77,6 +94,10 @@ public class Decode {
 		IRobject.setAddress(Address);
 		logger.debug("Address=" + Address);
 	}
+	/**
+	 * Generic functions to decode instructions
+	 * 
+	 * */
 	public void function3(IR IRobject) {
 		XFI = Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
 		IRobject.setXFI(XFI);
@@ -92,7 +113,7 @@ public class Decode {
 	}
 
 	/**
-	 * Decode 
+	 * Generic functions to decode instructions
 	 * */
 	public void function4(IR IRobject) {
 		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
@@ -103,12 +124,18 @@ public class Decode {
 		IRobject.setImmed(Immediate);
 		logger.debug("Immediate=" + Immediate);
 	}
+	/**
+	 * Generic functions to decode instructions
+	 * */
 	public void function5(IR IRobject){
 		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
 		IRobject.setRFI1(RFI1);
 		RFI2 = Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
 		IRobject.setRFI2(RFI2);
 	}
+	/**
+	 * Generic functions to decode instructions
+	 * */
 	public void function6(IR IRobject){
 		RFI1 = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
 		IRobject.setRFI1(RFI1);		
@@ -119,11 +146,17 @@ public class Decode {
 		Count = Integer.parseInt(IRobject.getIRstring().substring(15, 20), base);
 		IRobject.setCount(Count);		
 	}
+	/**
+	 * Generic functions to decode instructions
+	 * */
 	public void function7(IR IRobject){
 		Immediate = Integer.parseInt(IRobject.getIRstring().substring(12, 20),base);
 		IRobject.setImmed(Immediate);
 		logger.debug("Immediate=" + Immediate);
 	}
+	/**
+	 * Generic functions to decode instructions
+	 * */
 	public void function8(IR IRobject){
 		cc = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
 		IRobject.setCC(cc);

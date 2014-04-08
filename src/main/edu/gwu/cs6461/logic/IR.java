@@ -13,24 +13,42 @@ import edu.gwu.cs6461.sim.common.HardwarePart;
  * The decoded parts are sent back to it for storage 
  * to be used by other classes.
  * it extends the Register class so has the normal properties of Register
- * but has the extension of holding the break down of the instruction 
+ * but has the extension of holding the break down of the instruction
+ * @Revised   Jan 20, 2014 - 11:24:39 AM 
  */
 public class IR extends Register {
+	/**intruction in binary form */
 	private String IRstring = "";
+	/**Opcode of the instruction */
 	private int OpCode = 0;
+	/**General register for the instruction */
 	private int RFI1 = 0;
+	/**General register for the instruction */
 	private int RFI2 = 0;
+	/**Index register for the instruction */
 	private int XFI = 0;
+	/**Address to main memory*/
 	private int Address = 0;
+	/**immediate value in the instruction */
 	private int Immed = 0;
+	/**indirect mode of the instruction */
 	private int Indirect = 0;
+	/**Trace mode of the instruction */
 	private int Trace = 0;
+	/**count for shift/rotate instructions */
 	private int count=0;
+	/**left or right shift/rotate */
 	private int LeftorRight=0;
+	/**logica or arithmetic shift/rotate */
 	private int LogicalorArithmetic=0;
+	/** Device id for IO instructions*/
 	private int deviceID=0;
+	/**Trap code in the instruction*/
 	private int trapCode=0;
+	/**Condition code for transfer instructions*/	
 	private int cc=0;
+	
+	/** Constructor */
 	IR(int size, String IR) {
 		super(size,"IR");
 		IRstring = IR;
@@ -160,8 +178,8 @@ public class IR extends Register {
 		this.trapCode = trapCode;
 	}
 
-	/*
-	 * *****Checking functions********************
+	/**
+	 * check if instruction register is empty or not
 	 */
 	public boolean isEmpty() {
 		if (IRstring == null || "".equals(IRstring.trim()) || this.getData() == 0) {

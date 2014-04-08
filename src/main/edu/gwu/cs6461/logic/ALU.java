@@ -23,30 +23,46 @@ import edu.gwu.cs6461.sim.util.Convertor;
  * ALU to support arithmetic logics
  * Four functionalities available subtract and add
  * multiply and divide
+ * @Revised   Jan 20, 2014 - 11:24:39 AM
  */
 public class ALU extends Observable {
+	/**logger to log message to file*/
 	private final static Logger logger = Logger.getLogger(ALU.class);
 	
 	//final result sign bit
 	private int RSignBit=0;
 	
-	private ALUFlags currFlag = ALUFlags.NotReady; 
+	/**flag to reflect ALU current status*/
+	private ALUFlags currFlag = ALUFlags.NotReady;
+	
+	/**singleton object for ALU hardware*/
 	private static ALU INSTANCE = new ALU();
+	/**internal ALU register for holding arithmetic result*/
 	private Register result = new Register(HardwarePart.RES.getBit(),HardwarePart.RES.getName());
 	
-	
-	//type of operation + , -
+	/**type of operation + , -*/
 	private ALUOperator operation = null;
+	
+	/**operand value 1 */
 	private Integer operand1 = null;
+	/**operand value 2 */
 	private Integer operand2 = null;
+	/**bit size for the calculation*/
 	private int bitSize = 0;
+	
+	/**Constructor */
 	protected ALU(){
 		reset();
 	}
+	
+	/**
+	 * return singleton object for ALU hardware
+	 * */
 	public static ALU getInstance(){
 		return INSTANCE;
 	}
 	
+	/**reinitialize all ALU attributes*/
 	public void reset( ) {
 		operation = null;
 		operand1 = null;
@@ -68,6 +84,7 @@ public class ALU extends Observable {
 	public void setBitSize(int bitSize) {
 		this.bitSize = bitSize;
 	}
+	/** setting up ALU values before perform arithmetic operation */
 	public ALU setALU(int operand1,int operand2, ALUOperator operation, int bitSize){
 		setOperand1(operand1);
 		setOperand2(operand2);
@@ -124,10 +141,12 @@ public class ALU extends Observable {
 	
 	
 	@Deprecated
+	/**main method to perform Arithmetic calculation*/
 	public void Calculate(int operand1, int operand2, int opcode, Register RES, Register CC, Register RES2, Multiply Multi) {
 		Calculate(operand1, operand2, SimConstants.WORD_SIZE, opcode, RES, CC, RES2, Multi);
 	}
 	
+	/**main method to perform Arithmetic calculation*/
 	public void Calculate(int operand1, int operand2, int bitSize, int opcode, Register RES, Register CC, Register RES2, Multiply Multi) {
 		String op1="", op2="";
 		op1= Convertor.getBinFromInt(operand1, bitSize);;
@@ -182,6 +201,8 @@ public class ALU extends Observable {
 		}
 		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);	
 	}
+	
+	/**method to handle 2s complementation multiplication*/
 	public void multiply(int opt1, int opt2, Register CC, Multiply Multi){
 		long resultMLT=0;		
 		//the multiplication result is 40bit so we had to use long for it
@@ -200,7 +221,7 @@ public class ALU extends Observable {
 		
 		Multi.setResult(resultMLT);
 	}
-	//set the codition code register and update its value in the GUI
+	/**set the codition code register and update its value in the GUI*/
 	public void setCC(int Value, Register CC) {
 		CC.setData(Value);
 

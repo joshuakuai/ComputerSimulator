@@ -11,7 +11,7 @@ import edu.gwu.cs6461.sim.exception.MemoryException;
  * Full associative Mapper or Set Assocciative Mapper
  * 
  * @author marcoyeung
- *
+ *@Revised   Feb 20, 2014 - 11:24:39 AM
  */
 public interface CacheMapper {
 

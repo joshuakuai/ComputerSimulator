@@ -1,7 +1,10 @@
 package edu.gwu.cs6461.sim.exception;
 
-public class IOCmdException extends Exception {
 
+/**
+ * Exception for handling IO instrution
+ */
+public class IOCmdException extends Exception {
 	
 	private String message;
 	public IOCmdException(String message) {

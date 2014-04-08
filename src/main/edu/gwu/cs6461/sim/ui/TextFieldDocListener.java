@@ -32,12 +32,18 @@ import edu.gwu.cs6461.sim.util.PropertiesParser;
  *
  */
 public class TextFieldDocListener implements DocumentListener {
+	/**log message to file for debugging purpose */
 	private final static Logger logger = Logger.getLogger(TextFieldDocListener.class);
 
+	/**record the editor input status*/
 	private static enum Mode { INSERT, COMPLETION };
 
 	private JTextField txtField;
+	
+	/**all the available commands for text completion*/
 	private final List<String> commands;
+	
+	/**initial the mode as insert */
 	private Mode mode = Mode.INSERT;
     private static final String COMMIT_ACTION = "commit";
 
@@ -74,6 +80,7 @@ public class TextFieldDocListener implements DocumentListener {
 	}
 
 	@Override
+	/**handle user key stokes and perform text completion*/
 	public void insertUpdate(DocumentEvent ev) {
 		
 		
@@ -116,6 +123,7 @@ public class TextFieldDocListener implements DocumentListener {
 		}
 	}
     
+	/** Threaded task calculate the text completion  */
     private class CompletionTask implements Runnable {
         String completion;
         int position;
@@ -135,6 +143,7 @@ public class TextFieldDocListener implements DocumentListener {
         }
     }
     	
+    /** Action class to capture user tab event for text completion */
     private class CommitAction extends AbstractAction {
         public void actionPerformed(ActionEvent ev) {
             if (mode == Mode.COMPLETION) {

@@ -8,26 +8,35 @@ package edu.gwu.cs6461.logic;
 
 import org.apache.log4j.Logger;
 
-import edu.gwu.cs6461.sim.bridge.*;
+import edu.gwu.cs6461.sim.bridge.HardwareData;
+import edu.gwu.cs6461.sim.bridge.Observable;
 import edu.gwu.cs6461.sim.common.HardwarePart;
-import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.util.Convertor;
 
 /**
  * Register class
  * Holds the size, value, and name of the register
+ * @Revised   Jan 20, 2014 - 11:24:39 AM
  */
 public class Register extends Observable{
+
+	/**logger to log message to file*/
 	private final static Logger logger = Logger.getLogger(Register.class);
+	/**holding the data in this register*/
 	private int data = 0;
-//	private String dataStr = "";
+
+	/**indicate if the data in the register is signed value*/
 	private boolean signedVal = false;
+	/**size of the register */
 	private int size = 0;
+	/**name of the register */
 	private String name;
 
+	/**Constructor */
 	public Register(int size, String name) {
 		this(size,name, false);
 	}
+	/**Constructor */
 	public Register(int size,String name, boolean signed) {
 		this.size = size;
 		this.name = name;
@@ -42,6 +51,7 @@ public class Register extends Observable{
 		this.name = name;
 	}
 
+	/**return value and convert to 2s complement if the data is signed*/
 	public int getData() {
 		int dData=data;
 		
@@ -58,7 +68,7 @@ public class Register extends Observable{
 	public int getSize() {
 		return size;
 	}
-	//sets the value of the register both internally and on the GUI
+	/**sets the value of the register both internally and on the GUI*/
 	public void setData(int newData) {
 		data = newData;
 		

@@ -24,7 +24,7 @@ public class XF {
     
     public XF(){
     }
-    //update the values to GUI
+    /**update the values to GUI */
     public void setRegisterObserver(Observer obs){
     	X1.register(obs);
     	X2.register(obs);
@@ -60,7 +60,7 @@ public class XF {
     }
     
     //***********************************//
-    //inserts Data into the index register with index XFI
+    /**inserts Data into the index register with index XFI*/
     public void setSwitch(int XFI,int Data){      
         if (XFI==1)
             setX1(Data);
@@ -69,7 +69,7 @@ public class XF {
         else if (XFI==3)
             setX3(Data);
     }
-    //gets index register with index XFI
+    /**gets index register with index XFI */
     public int getSwitch(int XFI){      
         if (XFI==1)
            return getX1();

@@ -12,7 +12,15 @@ import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.SimConstants;
 
+/**
+ * 
+ * IODevice simulate the Input and Output Device.
+ * 
+ * @author marcoyeung
+ *
+ */
 public class IODevice extends Observable{
+	/**logger to log message to file  */
 	private final static Logger logger = Logger.getLogger(IODevice.class);
 
 	/** either IN, OUT or CHK IO instructions */

@@ -81,7 +81,7 @@ import edu.gwu.cs6461.sim.util.TextAreaAppender;
  *
  * 
  * @author marcoyeung
- * 
+ * @Revised   Apr 5, 2014 - 10:11:50 AM   
  */
 public class MainSimFrame extends JFrame implements Observer {
 
@@ -89,10 +89,12 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * object to logging purpose
 	 */
 	private final static Logger logger = Logger.getLogger(MainSimFrame.class);
+	/**logger for Console printer */
 	private final static Logger simConsole = Logger.getLogger("simulator.console");
 
 	/**
 	 * lowest and higtest bit for switches
+	 * support 20 bits
 	 */
 	private static final int HIGHESTBIT = 19;
 	private static final int LOWESTBIT = 0;
@@ -772,7 +774,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			String newElementString = padSpace(key, 9) + val;
 			if (vals.length == 3) {
 				comment = vals[2];
-				newElementString = padSpace(newElementString,45) +  comment;
+				newElementString = padSpace(newElementString,35) +  comment;
 			}
 
 			// Check if the Element has contained the address

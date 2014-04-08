@@ -1,5 +1,10 @@
 package edu.gwu.cs6461.sim.common;
 
+
+/**
+ * Constants used in the simulator
+ * @author marcoyeung
+ * */
 public class SimConstants {
 	public static final int WORD_SIZE = 20;
 	public static final int WORD_MIN_VALUE = -524288;
