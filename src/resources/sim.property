@@ -1,10 +1,19 @@
+################################################################################
 #simulator GUI related settings
+################################################################################
 sim.gui.windowtitle=CS6461 Computer System Simulator - Part III
 sim.gui.width=850
 sim.gui.height=800
 sim.gui.resizable=true
-#
-##
+## textcompletion for IO input
+sim.gui.ioinput.textcompletion.1.hints=program1.txt
+sim.gui.ioinput.textcompletion.2.hints=program2.txt
+sim.gui.ioinput.textcompletion.3.hints=program3.txt
+sim.gui.ioinput.textcompletion.4.hints=program4.txt
+sim.gui.ioinput.textcompletion.5.hints=bin-program1.txt
+################################################################################
+# memory and cache
+################################################################################
 #advanced setting
 #number of memory banking
 sim.mem.numberofbank=8
@@ -15,12 +24,12 @@ sim.mem.cache.linesize=4
 #Disable/Enable to use cache in simulator 
 sim.mem.cache.enabled=true
 #
-#simplied implementation, this message could be in memory
+#simplied implementation, message for Machine Fault
 sim.mem.fault.0.msg=FAULT: Invalid memory address
 sim.mem.fault.1.msg=FAULT: Invalid Trap code
 sim.mem.fault.2.msg=FAULT: Incorrect operation code has encountered
 #
-#simplied implementation, this message could be in memory
+#simplied implementation, message for Trap instruction
 sim.mem.trap.3.msg=TRAP INSTRUCTION: Simulator has performed trap instruction, now return.
 #
 #reminder: need to change in the deployment package!!
@@ -29,15 +38,9 @@ sim.programfilepath=bin
 #Simulator PC starting point
 sim.program.startingpoint=51
 #
-##
-sim.gui.ioinput.textcompletion.1.hints=program1.txt
-sim.gui.ioinput.textcompletion.2.hints=program2.txt
-sim.gui.ioinput.textcompletion.3.hints=program3.txt
-sim.gui.ioinput.textcompletion.4.hints=program4.txt
-sim.gui.ioinput.textcompletion.5.hints=bin-program1.txt
-#################################################################################
+################################################################################
 #Simulator ROM
-#################################################################################
+################################################################################
 sim.mem.reserved.0.rom=00000000000000001000  # Trap instruction handler @8
 sim.mem.reserved.1.rom=00000000000000000110  # Machine Fault handler    @6
 sim.mem.reserved.2.rom={0}                   # PC  - Trap instruction 
