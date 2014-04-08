@@ -69,10 +69,14 @@ public class TEST2 implements AutoCloseable {
 		int result = 3/2;
 		System.out.println(result);
 	}
+	
+	private void testShift() {
+		int a = 80;
+		System.out.println( a>>1);
+
+	}
 	public static void main(String[] args) throws Exception {
-		System.out.println(Convertor.getSignedBinFromInt(6, 20));
-		System.out.println(Convertor.getSignedValFromBin("00000000000011001000",20));
-		new TEST2().testIO();
+		new TEST2().testShift();
 	}
 
 	@Override
