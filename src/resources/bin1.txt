@@ -1,22 +1,22 @@
 INSTR:51
 00110100000011111001     #jump to main function
 00000101000000110001     #zero out R1
-00001001000001011010     #empty space in address 90 for temp stortage(of pointers,values)
+00001001000000101000     #empty space in address 40 for temp stortage(of pointers,values)
 00001001000000101001     #empty space in address 41 for temp stortage(of pointers,values)
 00001001000000101010     #empty space in address 42 for temp stortage(of pointers,values)
 00001000000000101000     #store digits array pointer into address 40
 00001000000000101001     #store digits array pointer into address 41(to pass to create integer subroutine)
 00000101000000101000     #load the pointer into R1
 11110100000000000000     #Insert integer from keyboard into R0
-00011100000000001101     #check if the character is carriage return(enter) by subtracting 13 from it, R0-13=0 then char=carriage return
+00011100000000001010     #check if the character is (enter) by subtracting 10 from it, R0-10=0 then char=carriage return
 00000110000000110001     #zero out R2
 00001000000000101010     #save current R0 value in address 42
 00000110000000101010     #pass the value from address 42 to R2
 00000100000000101001     #pass pointer to start of digit array to R0 (to save as arugment pointer for subroutinue call)
-00010101000000101001     #check if digit array is empty and user pressed enter by subtracting current pointer from intial pointer if =0 then digit array empty
-00101001000011100011     #if digits array is empty tell user to re-enter a valid number
-00101001000000111011     #and restart user input loop
-00101010000000101100     #else exit the loop and go to subroutine to collect the digits into a final integer
+00000000000000000000     #check if digit array is empty and user pressed enter by subtracting current pointer from intial pointer if =0 then digit array empty
+00000000000000000000     #if digits array is empty tell user to re-enter a valid number
+00000000000000000000     #and restart user input loop
+00101010000001011110     #else exit the loop and go to subroutine to collect the digits into a final integer
 00000101000000101000     #load back digit array pointer to R1
 00000100000000101010     #load the value of R0 back from address 42
 00011000000000001101     #and return the character to original ascii number by adding 13
@@ -184,7 +184,7 @@ INSTR:51
 00000110001000110010     #load a character from the string array into R2
 11111010000000000001     #print out the character to console printer
 00010110000000001010     #check to see if character in R2 is new line character(indicating end of the string)
-00101110000011100111     #if not newline continue loop
+00000000000000000000     #if not newline continue loop
 00111100000000000000     #else exit and return to calling routine
 00001000000000110010     #store pointer to character array in address 50
 00000101000000110010     #load the string array pointer from address 50 into R1
@@ -294,162 +294,163 @@ INSTR:51
 00001100000000100101     #load address 37 into R0(to pass as arugment list to print subroutine)
 00111000000001101000     #call print subroutine to print user number
 00001000000000100101     #store pointer to error string into address 37
-00000110000001100011     #zero out R2
+00000101000000100101     #load the pointer into R1
+00000110000000110001     #zero out R2
 00011010000000011110     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001101100     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100101     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110011     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100101     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000000100000     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001101001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001101110     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110011     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100101     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110010     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110100     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000000100000     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000000100000     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110110     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001101100     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001101001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100100     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000000100000     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100011     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001101000     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110010     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100001     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100011     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110100     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001100101     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000001110010     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
-00000110000001100011     #zero out R2
+00000110000000110001     #zero out R2
 00011010000000001010     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer

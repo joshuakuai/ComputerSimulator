@@ -942,14 +942,15 @@ public class Control {
 			}
 		}
 		PC.setData(MAR.getData());
-		logger.debug("PC JMP=" + PC.getData());
+		logger.debug("PC JSR=" + PC.getData());
 
 	}
 	/**
 	 *  gets the return address from register 4 and puts in PC
 	 */
 	public void RFS() {
-		RFtable.setR0(IRobject.getImmed());
+		//Removed, R0 is used to return the result directly from subroutine as immediate only holds 256 max
+		//RFtable.setR0(IRobject.getImmed());
 		PC.setData(RFtable.getR3());
 	}
 	/**
@@ -1085,10 +1086,11 @@ public class Control {
 			ch = inputDevice.getData(true);
 			
 			RFtable.setSwitch(IRobject.getRFI1(), ch);
-			PC.setData(PC.getData()+1);
+			
 		} else {
 			logger.warn("[IN]Unknown device id: "+ dId);
 		}
+		PC.setData(PC.getData()+1);
 	}
 	
 	private void trapInstructionHandler() {
