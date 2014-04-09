@@ -1,0 +1,5 @@
+JMP 249            #jump to main function
+#UserInput(2):
+LDR r1,49        #zero out R1
+STR r1,90        #empty space in address 90 for temp stortage(of pointers,values)
+STR r1,41        #empty space in address 41 for temp stortage(of pointers,values)

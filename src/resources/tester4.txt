@@ -1,6 +1,6 @@
 # test program
 #start to define instructions
-INSTR:100
+INSTR:50
 00000101000011001000 #load data from memory 200 to R01
 00000000000000000000 #HLT
 00001001000011001010 #store R01 into memory 202

@@ -5,257 +5,182 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import edu.gwu.cs6461.sim.common.OpCode;
-
-
+import edu.gwu.cs6461.sim.util.Convertor;
 
 public class MicroToBinary {
 
-	public static String binary="";
+	private static String instrStr = "{0}{1}{2}{3}{4}{5}";
+	private static String instrStrIO = "{0}{1}{2}{3}{4}";
+	private static String instrStrDATA = "{0}";
+	private static String instrStrTwo = "{0}{1}";
+
+	/*			"JGE R1,X1,255i",
+			"LDR R1,X1,200i",
+			"STR R1,X1,200i",
+			"LDX X1,200",
+			"STX X1,200i",*/
+	private String[] instrs = { 
+			"LDX X3,101",    	//load memory advance to x3
+			"LDR R0,X1,101", 	//testing
+			"LDR R3,X1,102",  	//load number of character to get in R3
+			"IN R1,0",       	//Perform IN
+			"OUT R1,1",  		//Perform OUT
+			"STR R1,X3,105",	//store IN character into Memory
+			"SIR R3,1",			//Decrease counter by 1
+			"AIR R0,1",			//increase counter by 1
+			"STR R0,X0,101",    //
+			"STR R3,X0,102",    //
+			"JGE R3,X0,51",		//jump to IN to get another character
+			"EOP ",
+			"DATA 105,100",
+			"DATA 0,101",
+			"DATA 3,102"  //
+			
+	};
+	private static Map<String, OpCode>allOpCode =new HashMap<>();
+
+	static {
+		for (OpCode code: OpCode.values()) {
+			allOpCode.put(code.name(), code);
+		}
+	}
+
+	private String[] parseInstr(String instr) {
+		/*StringTokenizer st = new StringTokenizer(instr, ",");
+		String[]res = new String[st.countTokens()];
+		for (int j = 0; st.hasMoreTokens(); j++) {
+			res[j] = st.nextToken();
+		}*/
+
+		String[] res2 = instr.split("[,]");
+
+		return res2;
+	}
+
+	private void convertBinaryInstr(){
+		for(String it: instrs) {
+			doGetBinaryInstr(it);
+		}
+	}
+	private String doGetBinaryInstr(String it) {
+
+		String code = "";
+		String microCode ="";
+		String[] operand;
+		OpCode oCode =null;
+		String bInstr = "";
+		int id = it.indexOf(" ");
+		if (id > 0) {
+			code = it.substring(0,id);
+			oCode = allOpCode.get(code);
+			microCode = it.substring(id);
+			operand = parseInstr(microCode.trim());
+
+			switch (oCode) {
+			case SIR: case AIR:
+				bInstr = MessageFormat.format(instrStrTwo, 
+						oCode.getbStr(),reg(operand[0])+ "0000" +
+						Convertor.getBinFromInt(Integer.parseInt(operand[1]), 8));
+				break;
+			case EOP:
+				bInstr = MessageFormat.format(instrStrDATA, 
+						oCode.getbStr()+ Convertor.padZero("0", 14));
+				break;
+			case DATA:
+				bInstr = MessageFormat.format(instrStrDATA, 
+						Convertor.getBinFromInt(Integer.parseInt(operand[0]), 20));
+				break;
+			case IN:case OUT:
+				bInstr = MessageFormat.format(instrStrIO, oCode.getbStr(),
+						reg(operand[0]),
+						"00",
+						"000000",
+						binMemAdd(operand[1], 4));
+				break;
+			case LDX:case STX:
+				bInstr = MessageFormat.format(instrStr, oCode.getbStr(),
+						"00",
+						ireg(operand[0]),
+						iort(operand[1],"i")
+						,iort(operand[1],"t"),
+						binMemAdd(operand[1], 8));
+
+				break;
+			case LDR: case STR:case LDA:
+			case JGE:
+				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
+						reg(operand[0]),
+						ireg(operand[1]),
+						iort(operand[2],"i")
+						,iort(operand[2],"t"),
+						binMemAdd(operand[2], 8));
+				break;
+			default:
+				break;
+			}
+			if (!bInstr.equals("")) {
+				System.out.println(bInstr + "      #" + it);	
+			}
+			bInstr="";
+		}
+
+		return "";
+	}
+
+
 	public static void main(String[] args) throws Exception {
 
-		new MicroToBinary().startUp();
+		MicroToBinary bin = new MicroToBinary();
+		bin.convertBinaryInstr();
 
 	}
-	private static void startUp() throws Exception {
-
-		System.out.println(new File(".").getAbsoluteFile());
 
 
-		BufferedReader in = new BufferedReader(new FileReader("bin/binary.txt"));
-		String text = "";
-		String input="";
-		//		PrintWriter out = new PrintWriter(new FileWriter("bin.txt"));
-		BufferedWriter out = new BufferedWriter(new FileWriter("bin.txt"));
+	private String binMemAdd(String add, int len) {
+		String[] parts = add.split("[it]");
 
-		out.write("Hello ");
-		out.newLine();
-		out.write("world");
-		out.newLine();
-
-		while ((text = in.readLine()) !=null) {			
-			// text = in.readLine();
-			if(text.charAt(0)!='#'){
-				System.out.println(text);
-				input=text;
-			}
-
-
-			//String input="IN  r2,2			#comment something something";
-			String comment = input.substring(input.indexOf('#'));
-			input = input.replaceAll("\\s+","");
-
-			String line=input.substring(0, 12);
-			//System.out.println(input);
-			//System.out.println(line);
-			if(line.contains("EOP")){
-				binary+="110111";
-				binary+="000000000000";
-			}
-			else if(line.contains("LDR")){
-				binary+="000001";
-				normal(line);
-			}		
-			else if(line.contains("STR")){
-				binary+="000010";
-				normal(line);
-			}	
-			else if(line.contains("LDA")){
-				binary+="000011";
-				normal(line);
-			}
-			else if(line.contains("JZ")){
-				binary+="001010";
-				normal(line);
-			}
-			else if(line.contains("JNE")){
-				binary+="001011";
-				normal(line);
-			}
-			else if(line.contains("JMP")){
-				binary+="001101";
-				binary+="0000";
-				JUMPing(line);
-			}
-			else if(line.contains("JSR")){
-				binary+="001110";
-				binary+="0000";
-				JUMPing(line);			
-			}
-			else if(line.contains("RFS")){
-				binary+="001111";
-				binary+="00000000000000";			
-			}
-			else if(line.contains("SOB")){
-				binary+="010000";
-				normal(line);
-			}
-			else if(line.contains("JGE")){
-				binary+="010001";
-				normal(line);
-			}
-			else if(line.contains("AMR")){
-				binary+="000100";
-				normal(line);
-			}
-			else if(line.contains("SMR")){
-				binary+="000101";
-				normal(line);
-			}
-			else if(line.contains("AIR")){
-				binary+="000110";
-				normal(line);
-			}
-			else if(line.contains("SIR")){
-				binary+="000111";
-				normal(line);
-			}
-			////////////////////////////////////
-
-			else if(line.contains("DVD")){
-				binary+="010101";
-				binary+=Register(line.substring(3, 5));
-				binary+=Register(line.substring(6, 8));
-				binary+="0000000000";
-			}
-			else if(line.contains("MLT")){
-				binary+="010100";
-				binary+=Register(line.substring(3, 5));
-				binary+=Register(line.substring(6, 8));
-				binary+="0000000000";
-			}
-			else if(line.contains("NOT")){
-				binary+="011001";
-				binary+=Register(line.substring(3, 5));		
-				binary+="000000000000";
-
-			}
-			else if(line.contains("IN")){
-				binary+="111101";
-				binary+=Register(line.substring(3, 5));
-				binary+="00000000";
-				binary+="000";
-				binary+=line.substring(5, 6);
-
-			}
-			else if(line.contains("OUT")){
-				binary+="111110";
-				binary+=Register(line.substring(3,5));
-				binary+="00000000";
-				binary+="000";
-				binary+=line.substring(5, 6);
-			}
-			binary+="     "+comment;
-			//System.out.println(binary);
-			out.write(binary);
-			out.newLine();
-			out.flush();
-			binary="";
-
-
-		}
-		//close file
-		in.close();
-		out.close();
-	}
-
-	//////////////////////////////////////////////
-	////////////////////////////////////////////
-	public static void normal(String line){
-		int address=0;
-		String temp="";
-		binary+=Register(line.substring(3, 5));
-		System.out.println(line.substring(3, 5));
-		binary+="00";
-		int i = line.indexOf(',');
-		i++;
-		while (line.charAt(i)!=73 && line.charAt(i)!='#'){			
-			temp+= line.charAt(i);
-			i++;
-		}
-		if(line.charAt(i)=='I'){
-			binary+="1";
-			binary+="0";
-			address=Integer.parseInt(temp.substring(0, temp.indexOf(',')));
-			binary+=Address(address);
-		}
-		else{
-			binary+="0";
-			binary+="0";		
-			System.out.println(temp);
-			address=Integer.parseInt(temp);
-			binary+=Address(address);
-		}
+		int address = Integer.parseInt(parts[0]);
+		String memBin = Convertor.getBinFromInt(address, len+1);
+		memBin=memBin.substring(memBin.length()-len);
+		return memBin;
 
 	}
-	public static void JUMPing(String line){
-		int address=0;
-		String temp="";
-		binary+=Register(line.substring(3, 5));
-		System.out.println(line.substring(3, 5));
-		binary+="00";
-		int i = 3;
-
-		while (line.charAt(i)!=73 && line.charAt(i)!='#'){			
-			temp+= line.charAt(i);
-			i++;
+	private String iort(String add, String key) {
+		int id = add.indexOf(key);
+		if (id >0) {
+			return "1";
 		}
-		if(line.charAt(i)=='I'){
-			binary+="1";
-			binary+="0";
-			address=Integer.parseInt(temp.substring(0, temp.indexOf(',')));
-			binary+=Address(address);
-		}
-		else{
-			binary+="0";
-			binary+="0";		
-			System.out.println(temp);
-			address=Integer.parseInt(temp);
-			binary+=Address(address);
-		}
-
+		return "0";
 	}
-	public static String Register(String Reg){
-		String binary1="";
-		if(Reg.equals("r0"))
+	private String reg(String Reg){
+		String binary1="00";
+		if(Reg.equalsIgnoreCase("r0"))
 			binary1="00";
-		else if(Reg.equals("r1"))
+		else if(Reg.equalsIgnoreCase("r1"))
 			binary1="01";
-		else if(Reg.equals("r2"))
+		else if(Reg.equalsIgnoreCase("r2"))
 			binary1="10";
-		else if(Reg.equals("r3"))
+		else if(Reg.equalsIgnoreCase("r3"))
 			binary1="11";
 		return binary1;
 	}
-	public void IndexRegister(String index){
-		if(index=="x0")
-			binary+="00";
-		if(index=="x1")
-			binary+="01";
-		if(index=="x2")
-			binary+="10";
-		else if(index=="x3")
-			binary+="11";
+	private String ireg(String index){
+		String binary1="00";
+		if(index.equalsIgnoreCase("x0"))
+			binary1="00";
+		if(index.equalsIgnoreCase("x1"))
+			binary1="01";
+		if(index.equalsIgnoreCase("x2"))
+			binary1="10";
+		else if(index.equalsIgnoreCase("x3"))
+			binary1="11";
+		return binary1;
 	}
-	public void Indirect(String Ind){
 
-	}
-	public void Trace(String trace){
-
-	}
-	public static String Address(int address){
-		String adr=Integer.toString(address, 2);
-		String finalAddress="";
-		if(adr.length()<8){
-			int length =  8-adr.length();
-			for(int i=0; i<length;i++){
-				finalAddress+="0";
-			}
-			finalAddress+=adr;
-		}
-		else
-			finalAddress=adr;
-		return finalAddress;
-	}
 }

@@ -78,7 +78,7 @@ public class Convertor {
 	}
 	
 	/**padding Zero in-front of string for alignment purpose*/
-	private static String padZero(String val, int length){
+	public static String padZero(String val, int length){
 		if (val==null || "".equals(val) || val.length() >= length) {
 			return val;
 		}

@@ -58,6 +58,7 @@ import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.MachineFault;
 import edu.gwu.cs6461.sim.common.MachineStatus;
 import edu.gwu.cs6461.sim.common.OpCode;
+import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.IOCmdException;
 import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.GriddedPanel;
@@ -914,8 +915,7 @@ public class MainSimFrame extends JFrame implements Observer {
 							simConsole.info("Simulator started....");
 
 						} catch (Exception e) {
-							logger.error(
-									"failed while initializing simulator.", e);
+							logger.error("failed while initializing simulator.", e);
 						}
 					}
 				}).start();
@@ -1186,7 +1186,7 @@ public class MainSimFrame extends JFrame implements Observer {
 						if (HardwarePart.fromName(k) == HardwarePart.MEMORY) {
 							// memory value passed in with 'address, content');
 							// presume the content is passed in one by one
-							String[] mVal = v.split(",");
+							String[] mVal = v.split("["+SimConstants.MEM_MSG_DELIMITER +"]");
 							if (mVal.length == 2) {
 								loadToControl(k, mVal[0], mVal[1]);
 							} else if(mVal.length >= 3){
@@ -1201,6 +1201,7 @@ public class MainSimFrame extends JFrame implements Observer {
 							logger.debug("input request from hardware:" + v + " activate the keyboard for input." );
 							captureKeyEvent = true;
 							txtIOInput.setBackground(Color.YELLOW);
+							txtIOInput.setText("");
 						} else {
 							loadToControl(k, v);
 						}

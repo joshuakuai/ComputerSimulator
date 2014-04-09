@@ -1,0 +1,15 @@
+LDX X3,101    	//load memory advance to x3
+LDR R0,X1,101 	//testing
+LDR R3,X1,102  	//load number of character to get in R3
+IN R1,0       	//Perform IN
+OUT R1,1  		//Perform OUT
+STR R1,X3,105	//store IN character into Memory
+SIR R3,1		//Decrease counter by 1
+AIR R0,1		//increase counter by 1
+STR R0,X0,101    //
+STR R3,X0,102    //
+JGE R3,X0,51	//jump to IN to get another character
+EOP
+DATA 105,100
+DATA 0,101
+DATA 3,102   //

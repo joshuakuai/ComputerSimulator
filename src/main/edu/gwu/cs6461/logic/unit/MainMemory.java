@@ -15,6 +15,7 @@ import edu.gwu.cs6461.sim.bridge.HardwareData;
 import edu.gwu.cs6461.sim.bridge.Observable;
 import edu.gwu.cs6461.sim.common.HardwarePart;
 import edu.gwu.cs6461.sim.common.MemoryType;
+import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
 import edu.gwu.cs6461.sim.util.PropertiesParser;
@@ -229,10 +230,11 @@ public class MainMemory extends Observable{
 		HardwareData hardwareData = new HardwareData();
 		if (comment!=null && !"".equals(comment.trim())) {
 			hardwareData.put(HardwarePart.MEMORY.getName(),
-					Integer.toString(address) + "," + data +","+comment);
+					Integer.toString(address) + SimConstants.MEM_MSG_DELIMITER 
+					+ data +SimConstants.MEM_MSG_DELIMITER+comment);
 		} else {
 			hardwareData.put(HardwarePart.MEMORY.getName(),
-					Integer.toString(address) + "," + data);
+					Integer.toString(address) + SimConstants.MEM_MSG_DELIMITER + data);
 		}
 
 		this.notifyObservers(hardwareData);

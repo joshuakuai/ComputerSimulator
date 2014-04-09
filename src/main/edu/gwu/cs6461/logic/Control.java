@@ -1145,7 +1145,7 @@ public class Control {
 	private void trapInstructionHandler() {
 		MSR.setData(MachineStatus.TrapInstruction.getCode());
 		//PC point to next instruction
-		Mem.setData(SimConstants.TRAP_PC_STORE, PC.getData() +1, PC.getSize());
+		Mem.setData(SimConstants.TRAP_PC_STORE, PC.getData() + 1, PC.getSize());
 		Mem.setData(SimConstants.TRAP_MSR_STORE, MSR.getData(), MSR.getSize());
 		
 		try {

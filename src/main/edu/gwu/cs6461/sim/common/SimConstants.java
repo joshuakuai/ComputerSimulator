@@ -17,7 +17,7 @@ public class SimConstants {
 	public static final String FILE_INSTRUCTION_HEAD = "INSTR";
 	public static final String FILE_DATA_HEAD = "DATA";
 	public static final String FILE_COMMENT = "#";
-	
+	public static final String MEM_MSG_DELIMITER = "|";
 	
 	public static final int MEMORY_ADDRESS_LIMIT = 8192;
 	public static final int MEMORY_ADDRESS_SPACE = 13;
@@ -28,4 +28,6 @@ public class SimConstants {
 	public static final int TRAP_MSR_STORE = 3;
 	public static final int FAULT_PC_STORE = 4;
 	public static final int FAULT_MSR_STORE = 5;
+	
+	
 }

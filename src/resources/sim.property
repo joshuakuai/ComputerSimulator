@@ -3,13 +3,13 @@
 ################################################################################
 sim.gui.windowtitle=CS6461 Computer System Simulator - Part III
 sim.gui.width=850
-sim.gui.height=800
+sim.gui.height=1000
 sim.gui.resizable=true
 ## textcompletion for IO input
-sim.gui.ioinput.textcompletion.1.hints=program1.txt
-sim.gui.ioinput.textcompletion.2.hints=program2.txt
-sim.gui.ioinput.textcompletion.3.hints=program3.txt
-sim.gui.ioinput.textcompletion.4.hints=program4.txt
+sim.gui.ioinput.textcompletion.1.hints=tester5.txt
+sim.gui.ioinput.textcompletion.2.hints=tester2.txt
+sim.gui.ioinput.textcompletion.3.hints=tester3.txt
+sim.gui.ioinput.textcompletion.4.hints=tester4.txt
 sim.gui.ioinput.textcompletion.5.hints=bin-program1.txt
 ################################################################################
 # memory and cache

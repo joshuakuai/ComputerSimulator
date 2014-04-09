@@ -39,6 +39,7 @@ public enum OpCode {
 	OUT(62,"111110"),
 //	CHK(63,"111111"),
 	DATA(99,"000000-"),
+	EOP(55,"110111",false),
 	NOTEXIST(-1,"-1111111",false);
 	
 	/**determine whether this opcode can be display in front-end Gui*/

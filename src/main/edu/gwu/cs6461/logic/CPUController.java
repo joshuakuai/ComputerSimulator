@@ -121,7 +121,7 @@ public class CPUController extends Thread {
 			suspendflag = true;
 		}
 		
-		String inforString = String.format("Simulator is suspended. current PC: %d",registerContainer.PC.getData());
+		String inforString = String.format("suspended PC: %d",registerContainer.PC.getData());
 		simConsole.info(inforString);
 		super.suspend();
 	}
@@ -131,7 +131,7 @@ public class CPUController extends Thread {
 	 */
 	public void Resume() {
 		suspendflag = false;
-		simConsole.info("Simulator is resumed.");
+		simConsole.info("resumed.");
 		super.resume();
 	}
 
