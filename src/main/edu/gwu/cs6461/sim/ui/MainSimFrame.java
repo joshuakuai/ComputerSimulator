@@ -1201,7 +1201,7 @@ public class MainSimFrame extends JFrame implements Observer {
 							logger.debug("input request from hardware:" + v + " activate the keyboard for input." );
 							captureKeyEvent = true;
 							txtIOInput.setBackground(Color.YELLOW);
-							txtIOInput.setText("");
+//							txtIOInput.setText("");
 						} else {
 							loadToControl(k, v);
 						}
