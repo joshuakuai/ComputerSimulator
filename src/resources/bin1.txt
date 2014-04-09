@@ -50,7 +50,7 @@ INSTR:51
 00000111000000110001     #empty R0 (address 49 contains zero)
 00011011000011111110     #put 254 in R0
 01100111000000000000     #turn R0 into -255
-00001011001000101000     #put -255 in the next digit space in the array to indicate end of array
+00001011001000101000     #put -255 in the next digit space in the array to indicate end of array 
 00110100000000111000     #go back to user input loop
 00000101000000110001     #zero out R1
 00001000000000101000     #store pointer to integer in address 40
