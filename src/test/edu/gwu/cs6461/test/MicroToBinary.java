@@ -1,14 +1,10 @@
 package edu.gwu.cs6461.test;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.util.Convertor;
@@ -64,9 +60,25 @@ public class MicroToBinary {
 	}
 
 	private void convertBinaryInstr(){
-		for(String it: instrs) {
-			doGetBinaryInstr(it);
+		
+		try (BufferedReader bw = new BufferedReader(
+				new FileReader("bin/tester5-microcode.txt"))) {
+
+			String tmp;
+			
+			while ((tmp = bw.readLine()) != null) {
+				System.out.println(tmp);
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		
+		
+//		for(String it: instrs) {
+//			doGetBinaryInstr(it);
+//		}
 	}
 	private String doGetBinaryInstr(String it) {
 
