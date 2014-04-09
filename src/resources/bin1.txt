@@ -111,7 +111,7 @@ INSTR:51
 00000111000000101100     #load return address from address 44 back into R3
 00111100000000000000     #return back to calling routine
 00000101000000110001     #zero out R1
-00000000000000000000     #empty space in address 41 for temp stortage(of pointers values)
+00001001000000101001     #empty space in address 41 for temp stortage(of pointers values)
 00001001000000011011	 #load 0 in address 27 as first pointer to integer array element
 00001000000000101000     #store pointer to distance array into address 40
 00000101001000101000	 #load pointer to integer array into R1
@@ -129,7 +129,7 @@ INSTR:51
 00001001000000101000     #Store next element pointer into memory address 40
 00011111000000000001     #the first two elements are preloaded so one less loop counter is needed
 00010110001000101000     #subtract previous element from next element
-010001 10000010111011     #if R1>=0 go to SecondCondition
+01000110000010111011     #if R1>=0 go to SecondCondition
 00000110000000101100	 #load smallest element back into R2 for next round of comparison
 00000100000000011011	 #load the value in address 27 into R0 to return the closest integer position
 00011001000000000001     #increment distance array pointer by one
