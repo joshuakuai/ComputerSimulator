@@ -89,6 +89,20 @@ public class Convertor {
 		
 		return val;
 	}
+
+	/**padding space for aligning the string */
+	public static String padSpace(String key, int space) {
+
+		if (key == null && "".equals(key)) {
+			return "";
+		}
+		int sp = space - key.length();
+		for (int i = 0; i <= sp; i++) {
+			key += " ";
+		}
+		return key;
+	}
+	
 	
 	public static String getBinFromInt(int iVal, int numOfBit) {
 		return getSignedBinFromInt(iVal, numOfBit);

@@ -1087,6 +1087,9 @@ public class MainSimFrame extends JFrame implements Observer {
 		if (isStart) {
 			cpuController.loadROM();
 		}
+		
+		outHaldr = null;
+		
 		// try {
 		// lstModel.clear();
 		// for (int j = 0; j < 2048; j++) {
@@ -1355,7 +1358,7 @@ public class MainSimFrame extends JFrame implements Observer {
 					break;
 				}
 				result = result + (char) val;
-//				logger.debug("chars received : " + result);
+				logger.debug("chars received : " + result);
 			}
 			if (val == '\n') {
 				simConsole.info(result);

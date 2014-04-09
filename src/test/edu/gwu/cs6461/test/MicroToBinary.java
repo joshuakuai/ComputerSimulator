@@ -1,12 +1,15 @@
 package edu.gwu.cs6461.test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import edu.gwu.cs6461.sim.common.OpCode;
+import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.util.Convertor;
 
 public class MicroToBinary {
@@ -61,15 +64,46 @@ public class MicroToBinary {
 
 	private void convertBinaryInstr(){
 		
-		try (BufferedReader bw = new BufferedReader(
-				new FileReader("bin/tester5-microcode.txt"))) {
 
+		try (BufferedReader br= new BufferedReader(
+				new FileReader("bin/tester5-microcode.txt"));
+				BufferedWriter bw = new BufferedWriter(
+						new FileWriter("src/resources/tester5-binary.txt")); ) {
+
+			int idx = 0;
 			String tmp;
-			
-			while ((tmp = bw.readLine()) != null) {
-				System.out.println(tmp);
+			String codePart="";
+			String binInstr = "";
+			while ((tmp = br.readLine()) != null) {
+				if (tmp.startsWith(SimConstants.FILE_INSTRUCTION_HEAD) ||
+						tmp.startsWith(SimConstants.FILE_DATA_HEAD+":") ||
+						tmp.startsWith(SimConstants.FILE_COMMENT) ) {
+					bw.write(tmp);
+					bw.newLine();
+					continue;
+				}
+				
+				codePart = tmp;
+				idx = codePart.indexOf(SimConstants.FILE_COMMENT);
+				if (idx > 0) {
+					codePart = codePart.substring(0, idx);
+				}
+				
+				binInstr = doGetBinaryInstr(codePart);
+				
+				if ("".equals(binInstr)) {
+					bw.write(tmp);
+					System.out.println(tmp);
+				} else {
+					tmp=tmp.replaceFirst(SimConstants.FILE_COMMENT, "");
+					binInstr = binInstr + Convertor.padSpace(" ", 5)+SimConstants.FILE_COMMENT + tmp; 
+					bw.write(binInstr);
+					
+					System.out.println(binInstr);
+				}
+				bw.newLine();
+				bw.flush();
 			}
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -91,8 +125,8 @@ public class MicroToBinary {
 		if (id > 0) {
 			code = it.substring(0,id);
 			oCode = allOpCode.get(code);
-			microCode = it.substring(id);
-			operand = parseInstr(microCode.trim());
+			microCode = it.substring(id).trim();
+			operand = parseInstr(microCode);
 
 			switch (oCode) {
 			case SIR: case AIR:
@@ -124,8 +158,7 @@ public class MicroToBinary {
 						binMemAdd(operand[1], 8));
 
 				break;
-			case LDR: case STR:case LDA:
-			case JGE:
+			case LDR: case STR:case LDA: case JGE:
 				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
 						reg(operand[0]),
 						ireg(operand[1]),
@@ -136,13 +169,12 @@ public class MicroToBinary {
 			default:
 				break;
 			}
-			if (!bInstr.equals("")) {
-				System.out.println(bInstr + "      #" + it);	
-			}
-			bInstr="";
+//			if (!bInstr.equals("")) {
+//				System.out.println(bInstr + "      #" + it);	
+//			}
 		}
 
-		return "";
+		return bInstr;
 	}
 
 
