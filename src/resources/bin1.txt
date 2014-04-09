@@ -1,15 +1,12 @@
 INSTR:51
 00110100000011111001     #jump to main function
-00000101000000110001     #zero out R1
 00001011000000101100	 #store return address in address 44
-00001001000000101000     #empty space in address 40 for temp stortage(of pointers values)
-00001001000000101001     #empty space in address 41 for temp stortage(of pointers values)
 00001000000000101000     #store digits array pointer into address 40
 00001000000000101001     #store digits array pointer into address 41(to pass to create integer subroutine)
 00000101000000101000     #load the pointer into R1
 11110100000000000000     #Insert integer from keyboard into R0
 00011100000000001010     #check if the character is (enter) by subtracting 10 from it  R0-10=0 then char=carriage return
-00000110000000110001     #zero out R2
+00000110000000110001 	 #zero out R2
 00001000000000101010     #save current R0 value in address 42
 00000110000000101010     #pass the value from address 42 to R2
 00000100000000101001     #pass pointer to start of digit array to R0 (to save as arugment pointer for subroutinue call)
@@ -21,6 +18,7 @@ INSTR:51
 00011100000000110000     #subtract 48 to convert ascii to digit  eg 48-48=0 so user input character is zero
 00001000000000101011	 #store r0 into address 43
 00000111000000101011	 #load the value into R3
+00101000000001100000	 #the character is integer "0" go to save number into memory subroutine
 00011100000000000001     #if it is not zero than subtract 1 same as 49-49=0 therefore the digit is 1
 00101000000001100000     #the character is integer "1" go to save number into memory subroutine
 00011100000000000001     #subtract one from R0
@@ -39,8 +37,10 @@ INSTR:51
 00101000000001100000     #the character is integer "8" go to save number into memory subroutine
 00011100000000000001     #subtract one from R0
 00101000000001100000     #the character is integer "9" go to save number into memory subroutine
-00101100000011100011     #inform the user what they entered is not a digit and they should enter a valid digit character
-00110100000000111011     #continue loop
+00101100000001011011     #inform the user what they entered is not a digit and they should enter a valid digit character
+00101000000001011100	 #jump to continue loop
+00111000000011100011	 #jump to error string
+00110100000000111000     #continue loop
 00111000000011000111     #go to create integer subroutine
 00000111000000101100     #put back return address into R3 from address 44
 00111100000000000000     #return to calling routine  R0 contains integer after returning from create integer subroutine
@@ -51,18 +51,17 @@ INSTR:51
 00011011000011111110     #put 254 in R0
 01100111000000000000     #turn R0 into -255
 00001011001000101000     #put -255 in the next digit space in the array to indicate end of array
-00110100000000111011     #go back to user input loop
+00110100000000111000     #go back to user input loop
 00000101000000110001     #zero out R1
-00001001000000101000     #empty space in address 40 for temp stortage(of pointers values)
-00001001000000101001     #empty space in address 41 for temp stortage(of pointers values)
-00001001000000101010     #empty space in address 42 for temp stortage(of pointers values)
-00001000001000101000     #store pointer to integer in address 40
-00011000000000000001     #add one to R0 to get digits array pointer(which was stored in the next address space after integer pointer)
-00001000001000101001     #store digits array pointer into address 41
+00001000000000101000     #store pointer to integer in address 40
+00000101001000101000	 #load pointer to integer array into R1
+00001001000000101000	 #store the pointer in address 40
+00000101000000100001	 #load digits array pointer into R1
+00001001000000101001     #store digits array pointer into address 41
 00001011000000101010     #store Return address in address 42
 00000111000000101001     #load pointer to digits array into R3
 00000100000000110001     #zero out R0
-00011000000000001010     #put 10 in R0
+00011100000000100110	 #put -38 in R0 (******to fix new line put -38 in r0 so that it is -38+48)
 00001000001000101001     #put new line character in start of digit array to know we reached the end of printing in reverse
 00000100001000101000     #load integer into R0
 00011011000000000001     #increment pointer
@@ -71,13 +70,14 @@ INSTR:51
 00011010000000001010     #put 10 in R2
 01010100100000000000     #divide by 10 to get first digit as reminder e.g. 713/10  R0=71 R1=3
 00001001001000101001     #store reminder ie digit into digit array
-00101100000001110101     #if r0 is not zero that means the integer still has more digits to convert
+00101100000001110100     #if r0 is not zero that means the integer still has more digits to convert
 00000101001000101001     #Load the left most digit eg 713 leftmost digit is 7....etc
+00011001000000110000	 #add 48 to the digit to get its ascii value black
 11111001000000000001     #Print Digit
 00011101000000001010     #check for newline character if R1-10=0 exit loop and Return
 00011111000000000001     #decrement the pointer to print next leftmost digit
 00001011000000101001     #store new pointer in address 41
-00101101000001111100	 #else if not new line continue print loop
+00101101000001111011	 #else if not new line continue print loop
 00000111000000101010     #Load return address into R3 from address 42
 00111100000000000000     #Return to calling function
 00000101000000110001     #zero out R1
@@ -111,41 +111,41 @@ INSTR:51
 00000111000000101100     #load return address from address 44 back into R3
 00111100000000000000     #return back to calling routine
 00000101000000110001     #zero out R1
-00001001000000101000     #empty space in address 40 for temp stortage(of pointers values)
-00001001000000101001     #empty space in address 41 for temp stortage(of pointers values)
-00001001000000101010     #empty space in address 42 for temp stortage(of pointers values)
-00001001000000101011     #empty space in address 43 for temp stortage(of pointers values)
+00000000000000000000     #empty space in address 41 for temp stortage(of pointers values)
+00001001000000011011	 #load 0 in address 27 as first pointer to integer array element
 00001000000000101000     #store pointer to distance array into address 40
 00000101001000101000	 #load pointer to integer array into R1
 00001001000000101000	 #store the pointer in address 40
+00001001000000011100	 #back up pointer into address 28
 00011000000000000001     #add one to R0 to get loop counter address
 00001000000000101001     #store loop counter address into address 41
 00001011000000101010     #store return address(R3) into address 42
 00000111001000101001     #Load loop counter into R3
 00001011000000101001     #store loop counter value in address 41
 00000110001000101000     #load first element from distance array
+00001010000000101100	 #store in address 44 incase it is the smallest
 00000100000000110001     #zero out R0
 00011001000000000001     #increment distance array pointer by one
 00001001000000101000     #Store next element pointer into memory address 40
 00011111000000000001     #the first two elements are preloaded so one less loop counter is needed
 00010110001000101000     #subtract previous element from next element
-01000110000010110111     #if R1>=0 go to FirstCondition
-00110100000011000010     #else the first element is smaller
-00000110001000101000     #load second distance integer into R2 (as smallest distance) for next round of comparison
-00001011000000101011     #backup current loop counter(R3) into address 43
-00010111000000101001     #subtract current loop counter R3 from original loop counter address 41
-01100111000000000000     #result is negative so we convert it back to positve by NOT
-00011011000000000001     #add the missing one after using NOT instruction
-00001011000000101100     #save the value in address 44
-00000100000000101100     #load the value in address 44 into R0 to get the closest integer position
-00000111000000101011     #return current loop counter(address 43) back into R3
+010001 10000010111011     #if R1>=0 go to SecondCondition
+00000110000000101100	 #load smallest element back into R2 for next round of comparison
+00000100000000011011	 #load the value in address 27 into R0 to return the closest integer position
 00011001000000000001     #increment distance array pointer by one
 00001001000000101000     #Store next element pointer into memory address 40
 00110100000011000100     #go to next loop increment
+00000110001000101000     #load second distance integer into R2 (as smallest distance) for next round of comparison
+00000110000000101100	 #save new smallest element
+00001001000000011010	 #backup current integer array pointer
+00010101000000011100	 #subtract current integer array pointer from initial integer array pointer eg(651-650=1 ie second element in array)
+00001001000000011011	 #store new integer element pointer into address 27
+00000101000000011010	 #load back current integer array pointer
+00000100000000011011	 #load the value in address 27 into R0 to return the closest integer position
 00011001000000000001     #increment distance array pointer by one
-00001001000000101000     #Store next element pointer into memory address 161
+00001001000000101000     #Store next element pointer into memory address 40
 01000011000010110100     #continue loop
-00000111000000101010     #put return address back into R3 from address 159
+00000111000000101010     #put return address back into R3 from address 42
 00111100000000000000     #return to calling function and R0 has the element position in integer array of closest integer to user selected number
 00000101000000110001     #zero out R1
 00001001000000101000     #empty space in address 40 for temp stortage(of pointers values)
@@ -183,8 +183,8 @@ INSTR:51
 00001001000000110010     #store new pointer
 00000110001000110010     #load a character from the string array into R2
 11111010000000000001     #print out the character to console printer
-00010110000000001010     #check to see if character in R2 is new line character(indicating end of the string)
-00000000000000000000     #if not newline continue loop
+00011110000000001010     #check to see if character in R2 is new line character(indicating end of the string) 
+00101110000011100111      #if not newline continue loop
 00111100000000000000     #else exit and return to calling routine
 00001000000000110010     #store pointer to character array in address 50
 00000101000000110010     #load the string array pointer from address 50 into R1
@@ -217,18 +217,19 @@ INSTR:51
 00001000000000100101     #empty space in address 37 for temp stortage(of pointers values)
 00001000000000100110     #empty space in address 38 for temp stortage(of pointers values)
 00001000000000100111     #empty space in address 39 for temp stortage(of pointers values)
+00001000000000110000	 #empty space in address 48 for closest number
 00000100000000101111     #load back R0 from address 47
 00011000000000110010     #add 50 to R0
 00001000000000101101     #R0=900 put this in address 45 as pointer to User Number Message
 00011000000000110010     #add 50 to R0
 00001000000000101110     #R0=950 put this in address 46 as pointer to Error Message
-00011011000001011010	 #add 90 to R3
+00011011000001011101	 #add 93 to R3 *****
 00001011000000100111	 #store R3 into address 39
-10100100110000100111	 #load 90 into X3
+10100100110000100111	 #load 93 into X3
 00111000110011111111	 #jump to subroutine for loading error string into memory
 00000100000000100001     #load digits array pointer into R0(as arugment to pass to user input subroutine)
 00000100000000110001	 #zero out R0
-00011000000000100110	 #add 38 to R0
+00011000000000100110	 #add 38 to R0 *******
 00001000000000100110     #store R0 into address 38
 10100100010000100110	 #load 38 into X1
 00111000000000110100     #jump to user input subroutine
@@ -237,7 +238,7 @@ INSTR:51
 00001001000000100101     #store pointer from R1 into temp space address 37
 00000110000000011110     #LDR loop counter in R2
 00000111000000110001     #zero out R3
-00011011000000110100	 #add 52 to R3
+00011011000000110100	 #add 52 to R3 **********
 00001011000000100111	 #store R3 into address 39
 10100100100000100111	 #load 52 into X2
 00000100000000100001     #load digits array pointer into R0(as arugment to pass to user input subroutine)	
@@ -256,7 +257,7 @@ INSTR:51
 00000110000000011110     #LDR loop counter in R2
 00001100000000100101     #load address 37 into R0(to pass as arugment to print subroutine)
 00001010000000100111     #store current loop counter in temp space 39
-00111000000001101000     #call PrintInteger and pass to it integer array(address 31) and digits array locations(address 33)
+00111000000001101000     #call PrintInteger and pass to it integer array(address 550) and digits array locations(address 750)
 00000101000000100101     #load current integer array pointer into R1 from address 37
 00011001000000000001     #increment pointer by one
 00001001000000100101     #store new pointer(R3) into address 37
@@ -281,22 +282,24 @@ INSTR:51
 00111000000010100010     #go to closest number subroutine
 00010000000000011111     #add integer array position to array address pointer to get memory location of the integer
 00001000000000110000     #STR closest number(R0) into address 48
-00000100000000100100     #load pointer to user number into R0
+00000100000000110001	 #zero out R0
+00011000000000100100	 #add 36 to R0
 00001000000000100101     #store R0 into address 37
 00000100000000100001     #load digits array pointer into R0
 00001000000000100110     #store R0 into address 38
 00001100000000100101     #load address 37 into R0(to pass as arugment list to print subroutine)
 00111000000001101000     #call print subroutine to print user number
-00000100000000110000     #load pointer to user number into R0
+00000100000000110000     #load user number into R0
 00001000000000100101     #store R0 into address 37
 00000100000000100001     #load digits array pointer into R0
 00001000000000100110     #store R0 into address 38
 00001100000000100101     #load address 37 into R0(to pass as arugment list to print subroutine)
 00111000000001101000     #call print subroutine to print user number
+11011100000000000000     #end of the program
 00001000000000100101     #store pointer to error string into address 37
 00000101000000100101     #load the pointer into R1
 00000110000000110001     #zero out R2
-00011010000000011110     #put a character in R2
+00011010000001010000     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00011001000000000001     #increment character array pointer
 00001001000000100101     #store new pointer
@@ -454,4 +457,3 @@ INSTR:51
 00011010000000001010     #put a character in R2
 00001010001000100101     #store the character in the character array space in memory
 00111100000000000000     #return to calling function
-11011100000000000000     #end of the program
