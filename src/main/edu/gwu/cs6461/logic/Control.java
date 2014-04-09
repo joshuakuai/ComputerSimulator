@@ -279,6 +279,7 @@ public class Control {
 	/**End of program instruction handling */
 	public void EOP(){
 		//TODO simulator should force to restart simulator
+		//TODO remove the PC advance in the next phase
 		PC.setData(instrStartingPos);
 	}
 
@@ -1089,7 +1090,7 @@ public class Control {
 			int ch = RFtable.getSwitch(IRobject.getRFI1());
 
 			outputDevice.putData(ch, true);
-			outputDevice.putData('\n',true);
+//			outputDevice.putData('\n',true);
 		} else if (DeviceType.fromId(dId) == DeviceType.DirectOut ) {
 
 			MachineStatus mstatus = MachineStatus.fromCode(MSR.getData());

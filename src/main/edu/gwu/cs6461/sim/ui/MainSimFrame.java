@@ -969,6 +969,7 @@ public class MainSimFrame extends JFrame implements Observer {
 			logger.debug("program file "+filePath+" is loaded");
 			simConsole.info("program file "+cmd+" is loaded");
 			cpuController.registerContainer.PC.setData(instrStartingPos);
+			txtIOInput.setText("");
 		} else {
 			logger.debug("profile file is not loaded");
 		}
