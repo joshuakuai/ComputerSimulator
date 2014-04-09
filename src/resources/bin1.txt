@@ -50,7 +50,7 @@ INSTR:51
 00000111000000110001     #empty R0 (address 49 contains zero)
 00011011000011111110     #put 254 in R0
 01100111000000000000     #turn R0 into -255
-00001011001000101000     #put -255 in the next digit space in the array to indicate end of array 
+00001011001000101000     #put -255 in the next digit space in the array to indicate end of array
 00110100000000111000     #go back to user input loop
 00000101000000110001     #zero out R1
 00001000000000101000     #store pointer to integer in address 40
@@ -136,7 +136,7 @@ INSTR:51
 00001001000000101000     #Store next element pointer into memory address 40
 00110100000011000100     #go to next loop increment
 00000110001000101000     #load second distance integer into R2 (as smallest distance) for next round of comparison
-00000110000000101100	 #save new smallest element
+00001010000000101100	 #save new smallest element
 00001001000000011010	 #backup current integer array pointer
 00010101000000011100	 #subtract current integer array pointer from initial integer array pointer eg(651-650=1 ie second element in array)
 00001001000000011011	 #store new integer element pointer into address 27
@@ -227,11 +227,11 @@ INSTR:51
 00001011000000100111	 #store R3 into address 39
 10100100110000100111	 #load 93 into X3
 00111000110011111111	 #jump to subroutine for loading error string into memory
-00000100000000100001     #load digits array pointer into R0(as arugment to pass to user input subroutine)
 00000100000000110001	 #zero out R0
 00011000000000100110	 #add 38 to R0 *******
 00001000000000100110     #store R0 into address 38
 10100100010000100110	 #load 38 into X1
+00000100000000100001     #load digits array pointer into R0(as arugment to pass to user input subroutine)
 00111000000000110100     #jump to user input subroutine
 00001000000000011110     #R0 has the pointer to the result integer  store it as the loop counter in address 30
 00000101000000011111     #load pointer to integer array into R1
