@@ -1194,9 +1194,11 @@ public class MainSimFrame extends JFrame implements Observer {
 								loadToControl(k, mVal[0], mVal[1], mVal[2]);
 							}
 						} else if (HardwarePart.fromName(k) == HardwarePart.OUTPUT) {
-							logger.debug("output request from hardware :" + v + " creating handler.");
 							
-							new printOutHandler();
+							if (outHaldr == null || !outHaldr.isAlive()) {
+								outHaldr = new PrintOutHandler();
+								logger.debug("output request from hardware :" + v + " creating handler.");
+							}
 							
 						} else if (HardwarePart.fromName(k) == HardwarePart.INPUT) {
 							logger.debug("input request from hardware:" + v + " activate the keyboard for input." );
@@ -1330,31 +1332,41 @@ public class MainSimFrame extends JFrame implements Observer {
 	 * Handle OUT IO event from hardware so that message
 	 * can be printed in console printer
 	 * */
-    private class printOutHandler implements Runnable {
+    private class PrintOutHandler implements Runnable {
     	
-    	public printOutHandler() {
-			new Thread(this,"printerConsole").start();
+    	Thread self;
+    	public PrintOutHandler() {
+    		self = new Thread(this,"printerConsole");
+    		self.start();
 		}
+    	private boolean isAlive() {
+    		if (self!=null) {
+				return self.isAlive();
+			}
+    		return false;
+    	}
     	
-    	@Override
-    	public void run() {
-    		int val=0;
-    		while(true) {
-    			val = cpuController.getOuputDeviceData();
-    			if (val == '\n') {
+		@Override
+		public void run() {
+			int val = 0;
+			while (true) {
+				val = cpuController.getOuputDeviceData();
+				if (val == '\n') {
 					break;
 				}
-    			result = result + (char)val;
-    		}
-    		if (val == '\n') {
-    			simConsole.info(result);
-    			result="";
+				result = result + (char) val;
+//				logger.debug("chars received : " + result);
 			}
-    		
-//    		int val = cpuController.getOuputDeviceData();
-//    		simConsole.info((char)val);
-    	}
+			if (val == '\n') {
+				simConsole.info(result);
+				result = "";
+			}
+
+			// int val = cpuController.getOuputDeviceData();
+			// simConsole.info((char)val);
+		}
     } //
     /**holding OUT char for console printer*/
     private String result ="";
+    private PrintOutHandler outHaldr=null;
 }
