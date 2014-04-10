@@ -365,11 +365,13 @@ public class MainSimFrame extends JFrame implements Observer {
 		JSplitPane spMemConsoleIO = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				createConsolePanel(), createIOConsolePanel());
 		spMemConsoleIO.setDividerSize(8);
+		spMemConsoleIO.setDividerLocation(500);
 		spMemConsoleIO.setContinuousLayout(true);
 		spMemConsoleIO.resetKeyboardActions();
 		spMemConsoleIO.setOneTouchExpandable(true);
 
 		JSplitPane spMemConsole = new JSplitPane(JSplitPane.VERTICAL_SPLIT, jmem,spMemConsoleIO);
+		spMemConsole.setDividerLocation(300);
 		spMemConsole.setDividerSize(8);
 		spMemConsole.setContinuousLayout(true);
 		spMemConsole.setOneTouchExpandable(true);

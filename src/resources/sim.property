@@ -3,7 +3,7 @@
 ################################################################################
 sim.gui.windowtitle=CS6461 Computer System Simulator - Part III
 sim.gui.width=850
-sim.gui.height=1000
+sim.gui.height=900
 sim.gui.resizable=true
 ## textcompletion for IO input
 sim.gui.ioinput.textcompletion.1.hints=tester5.txt

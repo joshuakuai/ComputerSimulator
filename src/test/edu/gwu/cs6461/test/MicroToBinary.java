@@ -18,30 +18,8 @@ public class MicroToBinary {
 	private static String instrStrIO = "{0}{1}{2}{3}{4}";
 	private static String instrStrDATA = "{0}";
 	private static String instrStrTwo = "{0}{1}";
+	private static String instrStrThree = "{0}{1}{2}";
 
-	/*			"JGE R1,X1,255i",
-			"LDR R1,X1,200i",
-			"STR R1,X1,200i",
-			"LDX X1,200",
-			"STX X1,200i",*/
-	private String[] instrs = { 
-			"LDX X3,101",    	//load memory advance to x3
-			"LDR R0,X1,101", 	//testing
-			"LDR R3,X1,102",  	//load number of character to get in R3
-			"IN R1,0",       	//Perform IN
-			"OUT R1,1",  		//Perform OUT
-			"STR R1,X3,105",	//store IN character into Memory
-			"SIR R3,1",			//Decrease counter by 1
-			"AIR R0,1",			//increase counter by 1
-			"STR R0,X0,101",    //
-			"STR R3,X0,102",    //
-			"JGE R3,X0,51",		//jump to IN to get another character
-			"EOP ",
-			"DATA 105,100",
-			"DATA 0,101",
-			"DATA 3,102"  //
-			
-	};
 	private static Map<String, OpCode>allOpCode =new HashMap<>();
 
 	static {
@@ -66,9 +44,9 @@ public class MicroToBinary {
 		
 
 		try (BufferedReader br= new BufferedReader(
-				new FileReader("bin/tester5-microcode.txt"));
+				new FileReader("bin/tester6-microcode.txt"));
 				BufferedWriter bw = new BufferedWriter(
-						new FileWriter("src/resources/tester5-binary.txt")); ) {
+						new FileWriter("src/resources/tester6-binary.txt")); ) {
 
 			int idx = 0;
 			String tmp;
@@ -129,6 +107,37 @@ public class MicroToBinary {
 			operand = parseInstr(microCode);
 
 			switch (oCode) {
+			case TRAP:case HLT:
+				bInstr = MessageFormat.format(instrStrThree, 
+						oCode.getbStr(),"000000",
+						Convertor.getBinFromInt(Integer.parseInt(operand[0]), 8));
+				break;
+			case LDX:case STX:
+				bInstr = MessageFormat.format(instrStr, oCode.getbStr(),
+						"00",
+						ireg(operand[0]),
+						iort(operand[1],"i")
+						,iort(operand[1],"t"),
+						binMemAdd(operand[1], 8));
+
+				break;
+			case LDR: case STR:case LDA: case JGE:case JZ:case JNE:
+				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
+						reg(operand[0]),
+						ireg(operand[1]),
+						iort(operand[2],"i")
+						,iort(operand[2],"t"),
+						binMemAdd(operand[2], 8));
+				break;
+			case JCC:
+				String t = Integer.toBinaryString(Integer.parseInt(operand[0]));
+				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
+						t.substring(t.length()-2),
+						ireg(operand[1]),
+						iort(operand[2],"i")
+						,iort(operand[2],"t"),
+						binMemAdd(operand[2], 8));
+				break;
 			case SIR: case AIR:
 				bInstr = MessageFormat.format(instrStrTwo, 
 						oCode.getbStr(),reg(operand[0])+ "0000" +
@@ -148,23 +157,6 @@ public class MicroToBinary {
 						"00",
 						"000000",
 						binMemAdd(operand[1], 4));
-				break;
-			case LDX:case STX:
-				bInstr = MessageFormat.format(instrStr, oCode.getbStr(),
-						"00",
-						ireg(operand[0]),
-						iort(operand[1],"i")
-						,iort(operand[1],"t"),
-						binMemAdd(operand[1], 8));
-
-				break;
-			case LDR: case STR:case LDA: case JGE:
-				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
-						reg(operand[0]),
-						ireg(operand[1]),
-						iort(operand[2],"i")
-						,iort(operand[2],"t"),
-						binMemAdd(operand[2], 8));
 				break;
 			default:
 				break;
