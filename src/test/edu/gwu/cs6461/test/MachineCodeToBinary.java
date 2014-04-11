@@ -12,13 +12,14 @@ import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.util.Convertor;
 
-public class MicroToBinary {
+public class MachineCodeToBinary {
 
 	private static String instrStr = "{0}{1}{2}{3}{4}{5}";
 	private static String instrStrIO = "{0}{1}{2}{3}{4}";
 	private static String instrStrDATA = "{0}";
 	private static String instrStrTwo = "{0}{1}";
 	private static String instrStrThree = "{0}{1}{2}";
+	private static String instrStrSeven = "{0}{1}{2}{3}{4}{5}{6}";
 
 	private static Map<String, OpCode>allOpCode =new HashMap<>();
 
@@ -28,21 +29,22 @@ public class MicroToBinary {
 		}
 	}
 
-	private String[] parseInstr(String instr) {
-		/*StringTokenizer st = new StringTokenizer(instr, ",");
-		String[]res = new String[st.countTokens()];
-		for (int j = 0; st.hasMoreTokens(); j++) {
-			res[j] = st.nextToken();
-		}*/
+	/**************************************************************************/
+	//	Main
+	/**************************************************************************/
+	public static void main(String[] args) throws Exception {
 
-		String[] res2 = instr.split("[,]");
+		MachineCodeToBinary bin = new MachineCodeToBinary();
+		bin.convertBinaryInstr();
 
-		return res2;
 	}
-
+	
+	
+	/**
+	 * 
+	 * 
+	 * */
 	private void convertBinaryInstr(){
-		
-
 		try (BufferedReader br= new BufferedReader(
 				new FileReader("bin/tester6-microcode.txt"));
 				BufferedWriter bw = new BufferedWriter(
@@ -73,7 +75,7 @@ public class MicroToBinary {
 					bw.write(tmp);
 					System.out.println(tmp);
 				} else {
-					tmp=tmp.replaceFirst(SimConstants.FILE_COMMENT, "");
+					tmp=tmp.replaceFirst(SimConstants.FILE_COMMENT, " ");
 					binInstr = binInstr + Convertor.padSpace(" ", 5)+SimConstants.FILE_COMMENT + tmp; 
 					bw.write(binInstr);
 					
@@ -107,12 +109,12 @@ public class MicroToBinary {
 			operand = parseInstr(microCode);
 
 			switch (oCode) {
-			case TRAP:case HLT:
+			case TRAP:case HLT: case RFS:
 				bInstr = MessageFormat.format(instrStrThree, 
 						oCode.getbStr(),"000000",
 						Convertor.getBinFromInt(Integer.parseInt(operand[0]), 8));
 				break;
-			case LDX:case STX:
+			case LDX:case STX: case JMP: case JSR:
 				bInstr = MessageFormat.format(instrStr, oCode.getbStr(),
 						"00",
 						ireg(operand[0]),
@@ -121,7 +123,8 @@ public class MicroToBinary {
 						binMemAdd(operand[1], 8));
 
 				break;
-			case LDR: case STR:case LDA: case JGE:case JZ:case JNE:
+			case LDR: case STR:case LDA: case JGE:case JZ:case JNE:case SOB:
+			case AMR: case SMR:
 				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
 						reg(operand[0]),
 						ireg(operand[1]),
@@ -140,8 +143,25 @@ public class MicroToBinary {
 				break;
 			case SIR: case AIR:
 				bInstr = MessageFormat.format(instrStrTwo, 
-						oCode.getbStr(),reg(operand[0])+ "0000" +
+						oCode.getbStr(), reg(operand[0])+ "0000" +
 						Convertor.getBinFromInt(Integer.parseInt(operand[1]), 8));
+				break;
+			case MLT: case DVD: case TRR:case AND: case ORR: 
+				bInstr = MessageFormat.format(instrStrTwo, 
+						oCode.getbStr(), reg(operand[0])+reg(operand[1])+ "00" +
+						Convertor.padZero("0", 8));
+				break;
+			case NOT:
+				bInstr = MessageFormat.format(instrStrTwo, 
+						oCode.getbStr(), reg(operand[0])+"0000" +
+						Convertor.padZero("0", 8));
+				break;
+			case SRC: case RRC:
+				String aorl = operand[2].equalsIgnoreCase("l")?"1":"0";
+				String lorr = operand[3].equalsIgnoreCase("l")?"1":"0";
+				bInstr = MessageFormat.format(instrStrSeven, 
+						oCode.getbStr(), reg(operand[0]),"00",aorl,lorr,"000",
+						binMemAdd(operand[1], 5));
 				break;
 			case EOP:
 				bInstr = MessageFormat.format(instrStrDATA, 
@@ -158,6 +178,15 @@ public class MicroToBinary {
 						"000000",
 						binMemAdd(operand[1], 4));
 				break;
+				
+			case FADD:case FSUB:case VADD:case VSUB:case CNVRT:case LDFR:case STFR:
+				bInstr = MessageFormat.format(instrStr, oCode.getbStr(), 
+						reg(operand[0]),
+						ireg(operand[1]),
+						iort(operand[2],"i")
+						,iort(operand[2],"t"),
+						binMemAdd(operand[2], 8));
+				break;
 			default:
 				break;
 			}
@@ -168,15 +197,6 @@ public class MicroToBinary {
 
 		return bInstr;
 	}
-
-
-	public static void main(String[] args) throws Exception {
-
-		MicroToBinary bin = new MicroToBinary();
-		bin.convertBinaryInstr();
-
-	}
-
 
 	private String binMemAdd(String add, int len) {
 		String[] parts = add.split("[it]");
@@ -217,6 +237,17 @@ public class MicroToBinary {
 		else if(index.equalsIgnoreCase("x3"))
 			binary1="11";
 		return binary1;
+	}
+	private String[] parseInstr(String instr) {
+		/*StringTokenizer st = new StringTokenizer(instr, ",");
+		String[]res = new String[st.countTokens()];
+		for (int j = 0; st.hasMoreTokens(); j++) {
+			res[j] = st.nextToken();
+		}*/
+
+		String[] res2 = instr.split("[,]");
+
+		return res2;
 	}
 
 }
