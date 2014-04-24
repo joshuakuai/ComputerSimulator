@@ -1,8 +1,9 @@
 package edu.gwu.cs6461.test;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,11 +76,38 @@ public class TEST2 implements AutoCloseable {
 		System.out.println( a>>1);
 
 	}
-	public static void main(String[] args) throws Exception {
+
+	private void testFloat() {
 		System.out.println(Convertor.getSignedValFromBin("00001000001000101000", 20));
-		System.out.println(Convertor.getSignedBinFromInt(16467, 20));
+		System.out.println(Convertor.getSignedBinFromInt(-1, 20));
+		System.out.println(Convertor.getSignedBinFromInt(63, 7));
+
+//		System.out.println(Integer.toBinaryString(Float.floatToIntBits(11.12346f)));
+
+	}
+	/**
+	 * http://stackoverflow.com/questions/756430/how-do-i-convert-a-decimal-fraction-to-binary-in-java
+	 * @param number
+	 * @return
+	 */
+	private static String convert(double number) {
+	    int n = 10;  // constant?
+	    BigDecimal bd = new BigDecimal(number);
+	    BigDecimal mult = new BigDecimal(2).pow(n);
+	    bd = bd.multiply(mult);
+	    BigInteger bi = bd.toBigInteger();
+	    StringBuilder str = new StringBuilder(bi.toString(2));
+	    while (str.length() < n+1) {  // +1 for leading zero
+	        str.insert(0, "0");
+	    }
+	    str.insert(str.length()-n, ".");
+	    System.out.println(str);
+	    return str.toString();
+	}
+	public static void main(String[] args) throws Exception {
 		
-		new TEST2().testShift();
+//		new TEST2().testFloat();
+		new TEST2().convert(21.472);
 	}
 
 	@Override

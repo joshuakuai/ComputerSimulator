@@ -9,6 +9,7 @@ package edu.gwu.cs6461.logic;
 import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.sim.common.DeviceType;
+import edu.gwu.cs6461.sim.common.OpCode;
 
 /**
  * Decode the IR instructions into the various part opcode r x address I T immed
@@ -18,7 +19,7 @@ public class Decode {
 	private final static Logger logger = Logger.getLogger(Decode.class);
 	
 	 /**store Operator code in int format */
-	private int OpCode = 0;
+	private int code = 0;
 	
 	/**the base of instruction, default is base 2: binary*/
 	private int base = 2;
@@ -48,26 +49,26 @@ public class Decode {
 	/**depending on the opcode the functions decided which decode function to use to break down
 	the instruction */
 	public void decodeSwitch(IR IRobject) {
-		OpCode = Integer.parseInt(IRobject.getIRstring().substring(0, 6), base);
-		IRobject.setOpCode(OpCode);
-		logger.debug("OpCode=" + edu.gwu.cs6461.sim.common.OpCode.fromCode(OpCode));
-		if (OpCode == 1 || OpCode==2 || OpCode==3||OpCode==4||OpCode==5||OpCode==10||OpCode==11||OpCode==16||OpCode==17)
+		code = Integer.parseInt(IRobject.getIRstring().substring(0, 6), base);
+		IRobject.setOpCode(code);
+		logger.debug("OpCode=" + OpCode.fromCode(code));
+		if (code == OpCode.LDR.getCode() || code==2 || code==3||code==4||code==5||code==10||code==11||code==16||code==17)
 			function1(IRobject);
-		else if (OpCode == 41 || OpCode==42 ||OpCode==13||OpCode==14)
+		else if (code == 41 || code==42 ||code==13||code==14)
 			function3(IRobject);
-		else if (OpCode == 6||OpCode==7)
+		else if (code == 6||code==7)
 			function4(IRobject);
-		else if(OpCode == 20 || OpCode==21 || OpCode==22 || OpCode==23 || OpCode==24 || OpCode==25)
+		else if(code == 20 || code==21 || code==22 || code==23 || code==24 || code==25)
 			function5(IRobject);
-		else if(OpCode==31 || OpCode==32)
+		else if(code==31 || code==32)
 			function6(IRobject);
-		else if(OpCode==15)
+		else if(code==15)
 			function7(IRobject);		
-		else if(OpCode==12)
+		else if(code==12)
 			function8(IRobject);
-		else if (OpCode== 61 || OpCode== 62)
+		else if (code== 61 || code== 62)
 			ioInstructions(IRobject);
-		else if (OpCode == 30) {
+		else if (code == 30) {
 			trapInstructions(IRobject);
 		}
 			

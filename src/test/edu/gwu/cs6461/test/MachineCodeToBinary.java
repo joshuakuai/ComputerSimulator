@@ -12,6 +12,12 @@ import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.util.Convertor;
 
+/**
+ * 
+ * 
+ * @author marcoyeung
+ * @Revised   Apr 11, 2014 - 11:13:34 AM  
+ */
 public class MachineCodeToBinary {
 
 	private static String instrStr = "{0}{1}{2}{3}{4}{5}";
