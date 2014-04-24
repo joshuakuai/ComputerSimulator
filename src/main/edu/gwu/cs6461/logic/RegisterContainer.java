@@ -43,6 +43,11 @@ public class RegisterContainer {
 	/** Class to hold multiplication result */
 	public Multiply Multi = new Multiply(40,"Multi");
 	
+	/** define floating point register 0*/
+	public Register FR0 = new Register(HardwarePart.FR0.getBit(),HardwarePart.FR0.getName());
+	/** define floating point register 1*/
+	public Register FR1 = new Register(HardwarePart.FR1.getBit(),HardwarePart.FR1.getName());
+	
 	/**Deregister Observer for all registers*/
 	void clearAllRegistersObserver(){
 		PC.clear();
@@ -54,6 +59,8 @@ public class RegisterContainer {
     	MAR.clear();
     	MDR.clear();
     	MSR.clear();
+    	FR0.clear();
+    	FR1.clear();
 	}
 	
 	/**Register Observer for all registers*/
@@ -67,5 +74,7 @@ public class RegisterContainer {
 		MAR.register(obs);
 		MDR.register(obs);
 		MSR.register(obs);
+    	FR0.register(obs);
+    	FR1.register(obs);
 	}
 }

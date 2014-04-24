@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -142,8 +143,14 @@ public class MainSimFrame extends JFrame implements Observer {
 	private JTextField txtCC = new JTextField(10); // condition code //UNDERFLOW
 													// or
 	private JTextField txtIR = new JTextField(20); // current instruction
-	private JTextField txtPC = new JTextField(13); // address of next
-													// instruction
+	private JTextField txtPC = new JTextField(13); // address of next instruction
+	
+	private JLabel lblFR0 = new JLabel(HardwarePart.FR0.getName());
+	private JLabel lblFR1 = new JLabel(HardwarePart.FR1.getName());
+	private JTextField txtFR0 = new JTextField(20);
+	private JTextField txtFR1 = new JTextField(20);
+
+	
 	/**define Control panel button for simulator run */
 	private JButton btnHalt = new JButton("Halt");
 	private JButton btnRun = new JButton("Run");
@@ -198,6 +205,11 @@ public class MainSimFrame extends JFrame implements Observer {
 	/**activate / deactivate IN IODevice*/
 	private boolean captureKeyEvent = false;
 
+	/** Engineer console for internal simulator registers or hardwares */
+	private JFrame engConsoleFrame;
+	
+	
+	private PropertiesParser prop;
 	/**
 	 * Constructor:init GUI component; register GUi component event listeners
 	 */
@@ -206,7 +218,7 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		setTitle(title);
 
-		PropertiesParser prop = PropertiesLoader.getPropertyInstance();
+		prop = PropertiesLoader.getPropertyInstance();
 		instrStartingPos = prop.getIntProperty("sim.program.startingpoint",100);
 				
 		
@@ -253,8 +265,27 @@ public class MainSimFrame extends JFrame implements Observer {
 		mFile.add(iExit);
 		iExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,
 				InputEvent.ALT_MASK));
+		
+		JMenuItem jmConsole = new JMenuItem("Engineer Console");
+		jmConsole.setMnemonic('e');
+		jmConsole.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+				InputEvent.ALT_MASK));
+		jmConsole.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				popupEngineerConsole();
+			}
+		});
+		JMenu mView = new JMenu("View");
+		mView.setMnemonic('V');
+		mView.add(jmConsole);
+		
+		
 		JMenuBar menu = new JMenuBar();
 		menu.add(mFile);
+		menu.add(mView);
+		
 		setJMenuBar(menu);
 		iExit.addActionListener(new ActionListener() {
 
@@ -307,16 +338,31 @@ public class MainSimFrame extends JFrame implements Observer {
 		JPanel regSwPanel = new JPanel();
 		JPanel regPanel = new JPanel();
 		regPanel.setLayout(new BoxLayout(regPanel, BoxLayout.X_AXIS));
-//		FlowLayout fl = new FlowLayout();
-//		fl.setAlignment(FlowLayout.RIGHT);
-//		regPanel.setLayout(fl);
-		 
-		JPanel a = createGeneralRPanel();
-		regPanel.add(a);
-		a  = createIndexRPanel();
-		regPanel.add(a);
-		a = createMiscRPanel();
-		regPanel.add(a);
+
+		//general + index + floating
+		JPanel jpMainRegisters = new JPanel();
+		jpMainRegisters.setLayout(new GridBagLayout());
+		GridBagConstraints mc = new GridBagConstraints();
+		mc.gridx = 0;
+		mc.gridy = 0;
+		jpMainRegisters.add(createGeneralRPanel(),mc);
+		mc.gridx = 1;
+		mc.gridy = 0;
+		jpMainRegisters.add(createIndexRPanel(),mc);
+		mc.gridx = 0;
+		mc.gridy = 1;
+		mc.gridwidth = 2;
+		mc.anchor = GridBagConstraints.FIRST_LINE_START;
+		jpMainRegisters.add(createFloatingPointRPanel(),mc);
+		
+		JPanel jpTmp;// = createGeneralRPanel();
+//		regPanel.add(jpTmp);
+//		jpTmp  = createIndexRPanel();
+//		regPanel.add(jpTmp);
+		regPanel.add(jpMainRegisters);
+		
+		jpTmp = createMiscRPanel();
+		regPanel.add(jpTmp);
 
 		regSwPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -533,6 +579,23 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		return wrap;
 	}
+	
+	private JPanel createFloatingPointRPanel() {
+		GriddedPanel gPanel = new GriddedPanel();
+		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "Floating Point"));
+
+		gPanel.addComponent(lblFR0, 0, 0);
+		gPanel.addComponent(txtFR0, 0, 1);
+		gPanel.addComponent(lblFR1, 1, 0);
+		gPanel.addComponent(txtFR1, 1, 1);
+
+		FlowLayout fl = new FlowLayout();
+		JPanel wrap = new JPanel();
+		wrap.setLayout(fl);
+		wrap.add(gPanel);
+		fl.setAlignment(FlowLayout.LEFT);
+		return wrap;
+	}
 
 	/**Create general register panel*/
 	private JPanel createGeneralRPanel() {
@@ -741,6 +804,10 @@ public class MainSimFrame extends JFrame implements Observer {
 			txtX2.setText(val);
 		} else if (dName == HardwarePart.X3) {
 			txtX3.setText(val);
+		} else if (dName == HardwarePart.FR0) {
+			txtFR0.setText(val);
+		} else if (dName == HardwarePart.FR1) {
+			txtFR1.setText(val);
 		} else if (dName == HardwarePart.MAR) {
 			txtMAR.setText(val);
 		} else if (dName == HardwarePart.MDR) {
@@ -853,7 +920,12 @@ public class MainSimFrame extends JFrame implements Observer {
 			cpuController.registerContainer.PC.setData(data);
 		} else if (dName == HardwarePart.IR) {
 			cpuController.registerContainer.IRobject.setIRstring(val);
+		} else if (dName == HardwarePart.FR0) {
+			cpuController.registerContainer.FR0.setData(data);
+		} else if (dName == HardwarePart.FR1) {
+			cpuController.registerContainer.FR1.setData(data);
 		}
+		
 	}
 
 	/**reinitialize the hardware components */
@@ -1027,6 +1099,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtX1.setEditable(b);
 		txtX2.setEditable(b);
 		txtX3.setEditable(b);
+		txtFR0.setEditable(b);
+		txtFR1.setEditable(b);
 		txtMAR.setEditable(b);
 		txtMBR.setEditable(b);
 		txtMSR.setEditable(b);
@@ -1046,6 +1120,8 @@ public class MainSimFrame extends JFrame implements Observer {
 		txtX1.setText("");
 		txtX2.setText("");
 		txtX3.setText("");
+		txtFR0.setText("");
+		txtFR1.setText("");
 		txtMAR.setText("");
 		txtMBR.setText("");
 		txtMSR.setText("");
@@ -1117,6 +1193,9 @@ public class MainSimFrame extends JFrame implements Observer {
 
 		String sel = (String) cboSwithOptions.getSelectedItem();
 		if (HardwarePart.fromName(sel) == HardwarePart.MEMORY) {
+			for (int i = 0; i < 20; i++) {
+				lblBinPosInfo[i].setForeground(Color.BLACK);
+			}
 			lblBinPosInfo[6].setForeground(Color.BLUE);
 			lblBinPosInfo[7].setForeground(Color.BLUE);
 			lblBinPosInfo[8].setForeground(Color.GREEN);
@@ -1124,8 +1203,17 @@ public class MainSimFrame extends JFrame implements Observer {
 			lblBinPosInfo[10].setForeground(Color.GRAY);
 			lblBinPosInfo[11].setForeground(Color.MAGENTA);
 
+		} else if (HardwarePart.fromName(sel) == HardwarePart.FR0 || 
+					HardwarePart.fromName(sel) == HardwarePart.FR1) {
+				lblBinPosInfo[0].setForeground(Color.BLACK);
+				for (int i = 1; i < 8; i++) {
+					lblBinPosInfo[i].setForeground(Color.MAGENTA);
+				}
+				for (int i = 8; i < 20; i++) {
+					lblBinPosInfo[i].setForeground(Color.BLUE);
+				}
 		} else {
-			for (int i = 6; i < 12; i++) {
+			for (int i = 0; i < 20; i++) {
 				lblBinPosInfo[i].setForeground(Color.BLACK);
 			}
 		}
@@ -1374,4 +1462,32 @@ public class MainSimFrame extends JFrame implements Observer {
     /**holding OUT char for console printer*/
     private String result ="";
     private PrintOutHandler outHaldr=null;
+    
+    
+    
+    protected void clearConsole() {
+    	engConsoleFrame=null;
+    }
+    
+    /**
+     * tips
+     * http://stackoverflow.com/questions/309023/how-to-bring-a-window-to-the-front
+     * */
+    private void popupEngineerConsole() {
+    	if (engConsoleFrame==null) {
+    		String title = prop.getStringProperty("sim.gui.engconsole.title");
+    		
+    		engConsoleFrame = new EngConsoleFrame(this,title);
+    		engConsoleFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+    		engConsoleFrame.setResizable(false);
+    		engConsoleFrame.setVisible(true);
+    	} else {
+    		logger.debug("Eng. console already started");
+    		if(engConsoleFrame.getState()!=Frame.NORMAL) { engConsoleFrame.setState(Frame.NORMAL); }
+    		engConsoleFrame.toFront();
+    		engConsoleFrame.requestFocus();
+    	}
+    	
+    }
+    
 }

@@ -77,7 +77,9 @@ public class Register extends Observable{
 		}
 		
 		HardwareData hardwareData = new HardwareData();
-		if (HardwarePart.IR.getName().equals(this.name)) {
+		if (HardwarePart.IR.getName().equals(this.name)  ||
+				HardwarePart.FR0.getName().equals(this.name)||
+				HardwarePart.FR1.getName().equals(this.name)) {
 			hardwareData.put(this.name, Integer.toBinaryString(0x100000 | newData).substring(1));
 		} else {
 			hardwareData.put(this.name, Integer.toString(getData()));

@@ -1,3 +1,4 @@
+
 ################################################################################
 #simulator GUI related settings
 ################################################################################
@@ -12,6 +13,7 @@ sim.gui.ioinput.textcompletion.3.hints=tester3.txt
 sim.gui.ioinput.textcompletion.4.hints=tester4.txt
 sim.gui.ioinput.textcompletion.5.hints=bin-program1.txt
 sim.gui.ioinput.textcompletion.5.hints=bin1.txt
+sim.gui.engconsole.title=Engineer Console
 ################################################################################
 # memory and cache
 ################################################################################
