@@ -291,7 +291,7 @@ public class FloatPoint {
 		expBin = Convertor.padZero(expBin,FLOAT_EXPONENT_SIZE); //ensure the length
 		String signStr = (sign == -1 ? "1" : "0");
 		String expNotation = signStr +expBin+mantissa;
-		String tmp = signStr +"|"+ expBin+"|"+mantissa;
+//		String tmp = signStr +"|"+ expBin+"|"+mantissa;
 //		System.out.println("Floating: " + tmp);
 		
 		return expNotation;
@@ -349,6 +349,8 @@ public class FloatPoint {
 		if (exp > 0 ) {
 			sb.insert(exp, ".");
 			sb.insert(0,impliedBit);
+		} else if (exp == 0) {
+			sb.insert(0,impliedBit+".");	
 		} else {
 			sb.insert(0,impliedBit);
 			for (int i = 0; i < (exp*-1) -1; i++) {
