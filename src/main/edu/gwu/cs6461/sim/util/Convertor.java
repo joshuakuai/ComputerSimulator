@@ -51,6 +51,15 @@ public class Convertor {
 
 		return 0;
 	}
+	/**
+	 * only for value not greater than int(32bits)
+	 *  
+	 * @param binVal
+	 * @return
+	 */
+	public static int getIntFromBin(String binVal) {
+		return getSignedValFromBin(binVal, 0);
+	}
 
 	/**
 	 * Return two's complement value in String form with the length specified
@@ -89,6 +98,18 @@ public class Convertor {
 		
 		return val;
 	}
+	
+	public static String padZeroAfter(String val, int length){
+		if (val==null || "".equals(val) || val.length() >= length) {
+			return val;
+		}
+		int padLen = length-val.length();
+		for (int i = 0; i < padLen; i++) {
+			val = val + "0";
+		} 
+		
+		return val;
+	}
 
 	/**padding space for aligning the string */
 	public static String padSpace(String key, int space) {
@@ -103,11 +124,31 @@ public class Convertor {
 		return key;
 	}
 	
-	
+	/**
+	 * Return signed binary string
+	 * */
 	public static String getBinFromInt(int iVal, int numOfBit) {
 		return getSignedBinFromInt(iVal, numOfBit);
 		
 	}
+	/**
+	 * 
+	 * Return unsigned binary of the decimal value 
+	 * */
+	public static String decimalToBinary(int n){
+		StringBuilder sb = new StringBuilder();
+
+		if (n==0) return "0";
+		int d = 0;
+		while (n > 0){
+			d = n % 2;
+			n /= 2;
+			sb.append(d);
+		}
+		sb = sb.reverse();
+		return sb.toString();
+	}
+	
 	
 	/**split the bit into array */
 	public static String[] bitToArray(String bit) {
@@ -137,5 +178,19 @@ public class Convertor {
 		
 		return str;
 	} // end method display	
+	
+	
+    public static char[] toCharBitArray(long value, int size)
+    {
+        char bits[] = new char[size];
+
+        // Convert each bit from right to left.
+        for (int i = size-1; i >= 0; --i) {
+            bits[i] = (value & 1) == 0 ? '0' : '1';
+            value >>>= 1;
+        }
+
+        return bits;
+    }
 	
 }

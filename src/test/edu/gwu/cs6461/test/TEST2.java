@@ -8,8 +8,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import sun.io.Converters;
 import edu.gwu.cs6461.sim.common.MachineFault;
 import edu.gwu.cs6461.sim.util.Convertor;
+import edu.gwu.cs6461.sim.util.FloatPoint;
 
 public class TEST2 implements AutoCloseable {
 
@@ -104,12 +106,161 @@ public class TEST2 implements AutoCloseable {
 	    System.out.println(str);
 	    return str.toString();
 	}
-	public static void main(String[] args) throws Exception {
+	private void testFloatingUtil() {
+		FloatPoint ee = new FloatPoint(0.315f);
 		
-//		new TEST2().testFloat();
-		new TEST2().convert(21.472);
+		System.out.println("-------------------------------");
+		System.out.println(ee.exponentBits());
+		System.out.println(ee.mantissaBits());
+		System.out.println(ee.biasedExponent());
+		System.out.println(ee.floatValue());
+		System.out.println(ee.signBit());
+		System.out.println(ee.unbiasedExponent());
+	}
+	
+
+	
+	/**
+	 * http://stackoverflow.com/questions/21797437/binary-to-decimal-java-converter
+	 *  has bug
+	 *  
+	 *  @deprecated
+	 * @param s
+	 * @return
+	 */
+	public static String decimalToBinary(int n){
+		StringBuilder sb = new StringBuilder();
+
+		if (n==0) return "0";
+		int d = 0;
+		while (n > 0){
+			d = n % 2;
+			n /= 2;
+			sb.append(d);
+		}
+		sb = sb.reverse();
+		return sb.toString();
+	}
+	
+	
+	
+	
+	
+	void doTestPart4() throws Exception {
 	}
 
+	
+	public static void main(String[] args) throws Exception {
+		new TEST2().doTestPart4();
+	}	
+	
+	
+	
+	
+	
+	
+
+	@Deprecated
+	float bintoFloat(String str) {
+
+		double output = 0f;
+		for (int i = 0; i < str.length(); i++) {
+			if (str.charAt(i) == '1')
+				output = output + (float)Math.pow(2, str.length() - 1 - i);
+
+		}
+		return (float)output;
+	}
+	
+	/**
+	 * http://www.java2novice.com/java-interview-programs/binary-to-decimal/
+	 * @param binary
+	 * @return
+	 */
+	private int getDecimalFromBinary(int binary){
+
+		int decimal = 0;
+		int power = 0;
+		while(true){
+			if(binary == 0){
+				break;
+			} else {
+				int tmp = binary%10;
+				decimal += tmp*Math.pow(2, power);
+				binary = binary/10;
+				power++;
+			}
+		}
+		return decimal;
+	}
+	
+	/**
+	 * http://www.java-forums.org/advanced-java/11924-float-double-binary.html
+	 * http://stackoverflow.com/questions/9320522/how-to-convert-32-bit-mantissa-ieee754-to-decimal-number-using-java
+	 * Prentice Hall - Java Number Cruncher - The Java Programmer's Guide to Numerical Computing - 2002.chm
+	 */
+	void convertFloat2() {
+		
+		System.out.println(Convertor.getSignedValFromBin("10000101", 1));
+		
+        float f = -121.6875f;//-118.625f;
+        f= 0.375f;  //0.317f from 64 bit intel assembly   0.375f from chm book
+        f=41.275f;
+        f=-4.75f;
+        int intBits = Float.floatToIntBits(f);
+        int rawIntBits = Float.floatToRawIntBits(f);
+        System.out.printf("f = %f  intBits = %d  " +
+                          "rawIntBits = %d%n", f, intBits, rawIntBits);
+        
+        float toFloat = Float.intBitsToFloat(intBits);
+        System.out.printf("toFloat = %f%n", toFloat);
+        
+        /********************************************************************/
+        String binaryForm = Convertor.getSignedBinFromInt(intBits, 32);
+        System.out.println(binaryForm);
+        
+        char bits[] = Convertor.toCharBitArray(Float.floatToIntBits(f), 32);
+        System.out.println(new String(bits));
+        
+        /********************************************************************/
+        String theSign = binaryForm.substring(0,1);
+        int theSignVal = theSign.equals("0") ? 1:-1;
+        String theExponent = binaryForm.substring(1,9);
+        int theExponentVal = Convertor.getSignedValFromBin(theExponent, 9);
+        String theMantissa = binaryForm.substring(9,32);
+        int theMantissaVal = Convertor.getSignedValFromBin(theMantissa, 24);
+        System.out.printf("binarySign     = %s%nbinaryExponent = %s%n" +
+                "binaryMantissa = %s%n", theSign + ", " + theSignVal,
+                 theExponent + ", "+theExponentVal, theMantissa + ", "+theMantissaVal);
+        /********************************************************************/
+        
+        int sign     = intBits & 0x80000000;
+        int exponent = intBits & 0x7f800000;
+        int exp = exponent>>23;
+        int mantissa = intBits & 0x007fffff;
+        int man = mantissa |= 0x00800000;
+        
+        System.out.println( man * Math.pow(2, exp-127) );
+        System.out.printf("sign = %d  exponent = %d  mantissa = %d%n", sign, exponent, mantissa);
+        
+        String binarySign = Integer.toBinaryString(sign);
+        String binaryExponent = Integer.toBinaryString(exponent);
+        String binaryMantissa = Integer.toBinaryString(mantissa);
+        System.out.printf("binarySign     = %s%nbinaryExponent = %s%n" +
+                          "binaryMantissa = %s%n", binarySign,
+                           binaryExponent, binaryMantissa);
+	}
+	
+	void convertFloat(float val) {
+		
+		System.out.println(Convertor.getBinFromInt(118, 8));
+		System.out.println(Convertor.getSignedValFromBin("11011010100000000000000", 23));
+		
+//		System.out.println(Float.floatToIntBits(val));
+//		System.out.println(Integer.toBinaryString(Float.floatToIntBits(val)));
+	}
+	
+	
 	@Override
 	public void close() throws Exception {
 		

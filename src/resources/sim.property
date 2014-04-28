@@ -2,7 +2,7 @@
 ################################################################################
 #simulator GUI related settings
 ################################################################################
-sim.gui.windowtitle=CS6461 Computer System Simulator - Part III
+sim.gui.windowtitle=CS6461 Computer System Simulator - Part IV
 sim.gui.width=850
 sim.gui.height=900
 sim.gui.resizable=true
