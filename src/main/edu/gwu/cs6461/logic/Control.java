@@ -74,7 +74,8 @@ public class Control {
 	
 	/**singleton object for holding simulator properties */
 	PropertiesParser prop = PropertiesLoader.getPropertyInstance();
-	
+	/**index table for float registers*/
+	private FR FRtable =null;
 	/**simulator initial program counter, default to 100, but it can be read from property file */
 	int instrStartingPos=100;
 	public Control() {
@@ -114,6 +115,7 @@ public class Control {
 		RES = registerContainer.RES;
 		RES2 = registerContainer.RES2;
 		Multi = registerContainer.Multi;
+		FRtable = registerContainer.FRtable;
 	}
 
 	/**Perform instruction fetch from main memory with PC */
@@ -166,9 +168,9 @@ public class Control {
 				|| code == 23 || code == 24 || code == 25 || code == 31
 				|| code == 32 || code == 10 || code == 11 || code == 12
 				|| code == 13 || code == 14 || code == 15 || code == 16
-				|| code == 17 || code == 0 || code == 55 ||
-				code == 61 || code == 62 || code == 30) {
-
+				|| code == 17 || code == 0 || code == 55 
+				||code == 61 || code == 62 || code == 30 || code == 33
+				||code == 34 || code == 35 || code == 36 || code == 37 || code==50 || code==51) {
 			if (code == 1)
 				LDR();
 			else if (code == 2)
@@ -219,6 +221,10 @@ public class Control {
 				SOB();
 			else if (code == 17)
 				JGE();
+			else if (code == 50)
+				LDFR();
+			else if (code == 51)
+				STFR();
 			else if (code == 0) {
 				HLT();
 			}else if(code == 55){
@@ -1172,7 +1178,41 @@ public class Control {
 			e.printStackTrace();
 		}
 	}
+	/**
+	 *  load float register from memory
+	 */
+	public void LDFR() {
+		this.calculateEAOffset();
+
+		this.calculateEAIndirect();
+		// Using the FRI index the setSwitch function decides in which float register
+		// to put the value of MDR in
+		FRtable.setSwitch(IRobject.getFRI(), MDR.getData());
+		PC.setData(PC.getData() + 1);
+	}
 
 
+	/**
+	 *  store float register to memory
+	 */
+	public void STFR() {
+		this.calculateEAOffset();
 
+		// if indirect is set put the memory value at MAR in MDR and then pass
+		// MDR value
+		// to MAR then use MAR address to store General register into memory
+		if (IRobject.getIndirect() == 1) {
+			try {
+				MDR.setData(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				logger.error(
+						"failed to get data from memory: " + e.getMessage(), e);
+			}
+			MAR.setData(MDR.getData());
+			Mem.setData(MAR.getData(), FRtable.getSwitch(IRobject.getFRI()));
+		} else
+			Mem.setData(MAR.getData(), FRtable.getSwitch(IRobject.getFRI()));
+
+		PC.setData(PC.getData() + 1);
+	}
 }

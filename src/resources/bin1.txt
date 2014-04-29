@@ -208,9 +208,9 @@ INSTR:51
 00011000000001100100     #add 100 to R0
 00001000000000100001     #R0=750 put this in address 33 as pointer to digits array
 00011000000011111111     #add 255 to R0
-00001000000000100010     #R0=800 put this in address 34 as pointer to Integer Total number Message
+00001000000000100010     #R0=1005 put this in address 34 as pointer to Integer Total number Message
 00011000000011111111     #add 255 to R0
-00001000000000100011     #R0=850	put this in address 35 as pointer to Insert Integers Message
+00001000000000100011     #R0=1260	put this in address 35 as pointer to Insert Integers Message
 00001000000000101111     #store R0 into address 47
 00000100000000110001     #zero out(empty out) R0
 00001000000000100100     #empty space in address 36 for user selected number(that will use to find closest number)
@@ -220,9 +220,9 @@ INSTR:51
 00001000000000110000	 #empty space in address 48 for closest number
 00000100000000101111     #load back R0 from address 47
 00011000000011111111     #add 255 to R0
-00001000000000101101     #R0=900 put this in address 45 as pointer to User Number Message
+00001000000000101101     #R0=1515 put this in address 45 as pointer to User Number Message
 00011000000011111111     #add 255 to R0
-00001000000000101110     #R0=950 put this in address 46 as pointer to Error Message
+00001000000000101110     #R0=1770 put this in address 46 as pointer to Error Message
 00011011000001100011	 #add 99 to R3 *****
 00001011000000100111	 #store R3 into address 39
 10100100110000100111	 #load 99 into X3

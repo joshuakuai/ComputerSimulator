@@ -45,6 +45,8 @@ public class Decode {
 	private int deviceID = 0;
 	/**Condition code for transfer instructions*/
 	private int cc=0;
+	/** Float Registers index*/
+	private int FRI=0;
 	
 	/**depending on the opcode the functions decided which decode function to use to break down
 	the instruction */
@@ -68,11 +70,12 @@ public class Decode {
 			function8(IRobject);
 		else if (code== 61 || code== 62)
 			ioInstructions(IRobject);
-		else if (code == 30) {
+		else if (code == 30) 
 			trapInstructions(IRobject);
-		}
-			
-		
+		else if(code == 33 || code==34 || code==50 || code==51)
+			floats(IRobject);
+		else if(code ==35 || code==36 || code==37)
+			function1(IRobject);
 	}
 	/**
 	 * Generic functions to decode instructions
@@ -194,5 +197,21 @@ public class Decode {
 	public void trapInstructions(IR IRobject) {
 		int trapCode = Integer.parseInt(IRobject.getIRstring().substring(12, 20), base);
 		IRobject.setTrapCode(trapCode);
+	}
+	public void floats(IR IRobject){
+		FRI = Integer.parseInt(IRobject.getIRstring().substring(6, 8), base);
+		IRobject.setFRI(FRI);
+		logger.debug("FRI=" + FRI);
+		XFI = Integer.parseInt(IRobject.getIRstring().substring(8, 10), base);
+		IRobject.setXFI(XFI);
+		logger.debug("XFI=" + XFI);
+		Indirect = Integer.parseInt(IRobject.getIRstring().substring(10, 11),
+				base);
+		IRobject.setIndirect(Indirect);
+		logger.debug("Indirect=" + Indirect);
+		Address = Integer.parseInt(IRobject.getIRstring().substring(12, 20),
+				base);
+		IRobject.setAddress(Address);
+		logger.debug("Address=" + Address);
 	}
 }

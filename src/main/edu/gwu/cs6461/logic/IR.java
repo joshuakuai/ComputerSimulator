@@ -47,6 +47,8 @@ public class IR extends Register {
 	private int trapCode=0;
 	/**Condition code for transfer instructions*/	
 	private int cc=0;
+	/**Float Registers index*/
+	private int FRI =0;
 	
 	/** Constructor */
 	IR(int size, String IR) {
@@ -116,6 +118,9 @@ public class IR extends Register {
 	public int getTrapCode() {
 		return trapCode;
 	}
+	public int getFRI(){
+		return FRI;
+	}
 
 	/*
 	 * *****Set functions**********************
@@ -176,6 +181,9 @@ public class IR extends Register {
 
 	public void setTrapCode(int trapCode) {
 		this.trapCode = trapCode;
+	}
+	public void setFRI(int fri){
+		FRI=fri;
 	}
 
 	/**

@@ -9,7 +9,7 @@ public class TEST_FP {
 //		System.out.println(Convertor.padZeroAfter(dinb, 12));
 //		System.out.println(Math.pow(2, -5));
 		
-		float ff = 1.02f;//0.1015625f;//2.625f;// -4.75f;//10.6875f; // 3.15f;//0.40625f;//39887.5625f;//
+		float ff = 2.02f;//0.1015625f;//2.625f;// -4.75f;//10.6875f; // 3.15f;//0.40625f;//39887.5625f;//
 		
 		FloatPoint fp = new FloatPoint(ff);
 		System.out.println("-------------------------------");
@@ -25,6 +25,7 @@ public class TEST_FP {
 		
 		
 		try {
+			
 			fp = new FloatPoint(fp.signBit(),fp.exponentBits(),fp.mantissaBits());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

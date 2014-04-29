@@ -29,6 +29,7 @@ public class RegisterContainer {
 	/**register file for index registers*/
 	public XF XFtable = new XF();
 	
+	public FR FRtable = new FR();
 	/**Memory address register*/
 	public Register MAR = new Register(HardwarePart.MAR.getBit(),HardwarePart.MAR.getName());
 	/**Memory data register*/
@@ -54,6 +55,7 @@ public class RegisterContainer {
 		IRobject.clear();
 		RFtable.clearObserver();
 		XFtable.clearObserver();
+		FRtable.clearObserver();
 		CC.clear();
 		MFR.clear();
     	MAR.clear();
@@ -71,6 +73,7 @@ public class RegisterContainer {
 		IRobject.register(obs);
 		RFtable.setRegisterObserver(obs);
 		XFtable.setRegisterObserver(obs);
+		FRtable.setRegisterObserver(obs);
 		MAR.register(obs);
 		MDR.register(obs);
 		MSR.register(obs);
