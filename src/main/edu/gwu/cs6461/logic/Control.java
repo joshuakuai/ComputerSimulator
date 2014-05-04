@@ -76,6 +76,8 @@ public class Control {
 	PropertiesParser prop = PropertiesLoader.getPropertyInstance();
 	/**index table for float registers*/
 	private FR FRtable =null;
+	
+	private FloatALU FALU= null;
 	/**simulator initial program counter, default to 100, but it can be read from property file */
 	int instrStartingPos=100;
 	public Control() {
@@ -116,6 +118,7 @@ public class Control {
 		RES2 = registerContainer.RES2;
 		Multi = registerContainer.Multi;
 		FRtable = registerContainer.FRtable;
+		FALU = registerContainer.FALU;
 	}
 
 	/**Perform instruction fetch from main memory with PC */
@@ -225,6 +228,16 @@ public class Control {
 				LDFR();
 			else if (code == 51)
 				STFR();
+			else if (code ==37)
+				CNVRT();
+			else if( code==33)
+				FADD();
+			else if (code == 34)
+				FSUB();
+			else if (code == 35)
+				VADD();
+			else if (code == 36)
+				VSUB();
 			else if (code == 0) {
 				HLT();
 			}else if(code == 55){
@@ -1187,7 +1200,8 @@ public class Control {
 		this.calculateEAIndirect();
 		// Using the FRI index the setSwitch function decides in which float register
 		// to put the value of MDR in
-		FRtable.setSwitch(IRobject.getFRI(), MDR.getData());
+		
+		FRtable.setSwitch(IRobject.getFRI(), FALU.BinaryToFloat(MDR.getData()));
 		PC.setData(PC.getData() + 1);
 	}
 
@@ -1198,9 +1212,8 @@ public class Control {
 	public void STFR() {
 		this.calculateEAOffset();
 
-		// if indirect is set put the memory value at MAR in MDR and then pass
-		// MDR value
-		// to MAR then use MAR address to store General register into memory
+		// if indirect is set put the memory value of MAR in MDR and then pass
+		// MDR value to MAR then use MAR address to store General register into memory
 		if (IRobject.getIndirect() == 1) {
 			try {
 				MDR.setData(Mem.getDataFromMem(MAR.getData()));
@@ -1209,10 +1222,126 @@ public class Control {
 						"failed to get data from memory: " + e.getMessage(), e);
 			}
 			MAR.setData(MDR.getData());
-			Mem.setData(MAR.getData(), FRtable.getSwitch(IRobject.getFRI()));
+			Mem.setData(MAR.getData(), FALU.FloatToBinary(FRtable.getSwitch(IRobject.getFRI())));
 		} else
-			Mem.setData(MAR.getData(), FRtable.getSwitch(IRobject.getFRI()));
+			Mem.setData(MAR.getData(), FALU.FloatToBinary(FRtable.getSwitch(IRobject.getFRI())));
 
 		PC.setData(PC.getData() + 1);
+	}
+	public void CNVRT(){
+		MAR.setData(IRobject.getAddress());
+		try {
+			MDR.setData(Mem.getDataFromMem(MAR.getData()));
+		} catch (MemoryException e) {
+			logger.error("failed to get data from memory: " + e.getMessage(), e);
+		}
+		
+		this.calculateEAOffset();
+		this.calculateEAIndirect();
+		
+		
+		if(IRobject.getRFI1()==0){
+			RFtable.setSwitch(IRobject.getRFI1(), FALU.ConvertToFixedNumber(MDR.getData()));
+		}
+		else{
+			FRtable.setSwitch(IRobject.getFRI(), FALU.BinaryToFloat(MDR.getData()));
+		}		
+		PC.setData(PC.getData() + 1);
+	}
+	public void FADD(){
+		this.calculateEAOffset();
+		this.calculateEAIndirect();
+		float addFloats=FALU.ADD(FRtable.getSwitch(IRobject.getFRI()), FALU.BinaryToFloat(MDR.getData()));
+		FRtable.setSwitch(IRobject.getFRI(), addFloats );
+		PC.setData(PC.getData() + 1);
+	}
+	public void FSUB(){
+		this.calculateEAOffset();
+		this.calculateEAIndirect();
+		float subFloats=FALU.SUB(FRtable.getSwitch(IRobject.getFRI()), FALU.BinaryToFloat(MDR.getData()));
+		FRtable.setSwitch(IRobject.getFRI(), subFloats);
+		PC.setData(PC.getData() + 1);
+	}
+	public void VADD(){
+		int loopCounter= RFtable.getSwitch(IRobject.getRFI1());
+		///get vector 1
+		this.calculateEAOffset();
+		this.calculateEAIndirect();
+		int addressOne= MDR.getData();
+		///get vector 2
+		try {
+			MDR.setData(Mem.getDataFromMem(MAR.getData()+1));
+		} catch (MemoryException e) {
+			machineFaultHandler(MachineFault.IllegalMemoryAddress);
+			logger.error(
+					"failed to get data from memory: " + e.getMessage(), e);
+		}
+		int addressTwo=MDR.getData();
+		float op1=0.0f,op2=0.0f;
+		//////////////////Vector Loop////////////////////
+		while(loopCounter>0){
+			try {
+				MAR.setData(addressOne);
+				op1=FALU.BinaryToFloat(Mem.getDataFromMem(MAR.getData()));
+				MAR.setData(addressTwo);
+				op2=FALU.BinaryToFloat(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				machineFaultHandler(MachineFault.IllegalMemoryAddress);
+				logger.error(
+						"failed to get data from memory: " + e.getMessage(), e);
+			}
+			
+			float floatADD =  FALU.ADD(op1, op2);
+			int finalFloat = FALU.FloatToBinary(floatADD);
+			MAR.setData(addressOne);
+			Mem.setData(MAR.getData(), finalFloat);
+			
+			addressOne+=1;
+			addressTwo+=1;
+			loopCounter-=1;
+		}
+		/////////////////////////////////////////		
+		PC.setData(PC.getData() + 1);		
+	}
+	public void VSUB(){
+		int loopCounter= RFtable.getSwitch(IRobject.getRFI1());
+		///get vector 1
+		this.calculateEAOffset();
+		this.calculateEAIndirect();
+		int addressOne= MDR.getData();
+		///get vector 2
+		try {
+			MDR.setData(Mem.getDataFromMem(MAR.getData()+1));
+		} catch (MemoryException e) {
+			machineFaultHandler(MachineFault.IllegalMemoryAddress);
+			logger.error(
+					"failed to get data from memory: " + e.getMessage(), e);
+		}
+		int addressTwo=MDR.getData();
+		float op1=0.0f,op2=0.0f;
+		//////////////////Vector Loop////////////////////
+		while(loopCounter>0){
+			try {
+				MAR.setData(addressOne);
+				op1=FALU.BinaryToFloat(Mem.getDataFromMem(MAR.getData()));
+				MAR.setData(addressTwo);
+				op2=FALU.BinaryToFloat(Mem.getDataFromMem(MAR.getData()));
+			} catch (MemoryException e) {
+				machineFaultHandler(MachineFault.IllegalMemoryAddress);
+				logger.error(
+						"failed to get data from memory: " + e.getMessage(), e);
+			}
+			
+			float floatSUB =  FALU.SUB(op1, op2);
+			int finalFloat = FALU.FloatToBinary(floatSUB);
+			MAR.setData(addressOne);
+			Mem.setData(MAR.getData(), finalFloat);
+			
+			addressOne+=1;
+			addressTwo+=1;
+			loopCounter-=1;
+		}
+		/////////////////////////////////////////		
+		PC.setData(PC.getData() + 1);		
 	}
 }

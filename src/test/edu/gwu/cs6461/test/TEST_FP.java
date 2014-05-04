@@ -9,18 +9,19 @@ public class TEST_FP {
 //		System.out.println(Convertor.padZeroAfter(dinb, 12));
 //		System.out.println(Math.pow(2, -5));
 		
-		float ff = 2.02f;//0.1015625f;//2.625f;// -4.75f;//10.6875f; // 3.15f;//0.40625f;//39887.5625f;//
+		float ff = -2.02f;//0.1015625f;//2.625f;// -4.75f;//10.6875f; // 3.15f;//0.40625f;//39887.5625f;//
 		
 		FloatPoint fp = new FloatPoint(ff);
 		System.out.println("-------------------------------");
 		System.out.println(ff);
 		System.out.println(fp.exponentForm());
-		System.out.println(fp.exponentBits());
-		System.out.println(fp.mantissaBits());
+		System.out.println("sign bit="+fp.signBit());
+		System.out.println("exponent="+fp.exponentBits());
+		System.out.println("mantissa="+fp.mantissaBits());
 		System.out.println(fp.unbiasedExponent());
 		System.out.println(fp.biasedExponent());
 		System.out.println(fp.floatValue());
-		System.out.println(fp.signBit());
+		
 		System.out.println("-------------------------------");		
 		
 		
@@ -31,6 +32,7 @@ public class TEST_FP {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		;
 		float value = fp.floatValue();
 		System.out.println(value);
 

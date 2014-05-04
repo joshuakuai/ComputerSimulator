@@ -23,36 +23,36 @@ public class FR {
     
     /***get functions
      */
-     public String getFR0(){
+     public float getFR0(){
          return FR0.getData();
      }
-     public String getFR1(){
+     public float getFR1(){
          return FR1.getData();
      }
     
      /****set functions
      */
-     public void setFR0(int FR){
+     public void setFR0(float FR){
          FR0.setData(FR);
      }
-     public void setFR1(int FR){
+     public void setFR1(float FR){
     	 System.out.println("************** "+FR);
          FR1.setData(FR);
      }
      
      /** takes the index (FRI) of the float register and puts the passed value(Data) into it */
-     public void setSwitch(int FRI,int Data){
+     public void setSwitch(int FRI,float Data){
          if (FRI==0)
              setFR0(Data);
          else if (FRI==1)
              setFR1(Data);        
      }
      /**takes the index (FRI) and returns the value of that float register */
-     public String getSwitch(int FRI){
+     public float getSwitch(int FRI){
          if (FRI==0)
             return getFR0();
          else if (FRI==1)
             return getFR1();         
-        return "-1";
+        return 0.0f;
      }
 }

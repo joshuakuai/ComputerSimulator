@@ -202,7 +202,7 @@ public class ALU extends Observable {
 		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);	
 	}
 	
-	/**method to handle 2s complementation multiplication*/
+	/**method to handle 2s complement multiplication*/
 	public void multiply(int opt1, int opt2, Register CC, Multiply Multi){
 		long resultMLT=0;		
 		//the multiplication result is 40bit so we had to use long for it
@@ -221,7 +221,7 @@ public class ALU extends Observable {
 		
 		Multi.setResult(resultMLT);
 	}
-	/**set the codition code register and update its value in the GUI*/
+	/**set the condition code register and update its value in the GUI*/
 	public void setCC(int Value, Register CC) {
 		CC.setData(Value);
 
