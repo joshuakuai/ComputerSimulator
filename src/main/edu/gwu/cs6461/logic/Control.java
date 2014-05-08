@@ -1240,11 +1240,12 @@ public class Control {
 		this.calculateEAIndirect();
 		
 		
-		if(IRobject.getRFI1()==0){
+		if(IRobject.getXFI()==0){
 			RFtable.setSwitch(IRobject.getRFI1(), FALU.ConvertToFixedNumber(MDR.getData()));
 		}
 		else{
-			FRtable.setSwitch(IRobject.getFRI(), FALU.BinaryToFloat(MDR.getData()));
+			float intToFloat = (float)MDR.getData();
+			FRtable.setSwitch(IRobject.getFRI(), intToFloat);
 		}		
 		PC.setData(PC.getData() + 1);
 	}
