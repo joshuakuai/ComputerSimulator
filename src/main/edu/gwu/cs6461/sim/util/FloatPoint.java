@@ -347,6 +347,12 @@ public class FloatPoint {
 		String impliedBit = "1";
 		
 		if (exp > 0 ) {
+			int space =exp-FLOAT_MANTISSA_SIZE; 
+			if (space >0) {
+				String a="0";
+				a = Convertor.padZeroAfter(a, space);
+				sb.append(a);
+			}
 			sb.insert(exp, ".");
 			sb.insert(0,impliedBit);
 		} else if (exp == 0) {
