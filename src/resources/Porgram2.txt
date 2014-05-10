@@ -1,0 +1,482 @@
+AIR R0, 300          #Base location
+STR R0, X0, 171       #Store to the 170
+AIR R0, 96           #Increase Index function address
+STR R0, X0, 190
+AIR R0, 4            #Reset index function address
+STR R0, X0, 191
+AIR R0, 5            #Print word function address
+STR R0, X0, 192
+AIR R0, 8            #Get input function address
+STR R0, X0, 193
+AIR R0, 10           #Compare words function address
+STR R0, X0, 194
+AIR R0, 11           #Empty cache function address
+STR R0, X0, 195
+AIR R0, 14           #Set string match message function address
+STR R0, X0, 196
+AIR R0, 68           #Set check match function address
+STR R0, X0, 197
+AIR R2, 255          #Set welcome message location 
+STR R2, X0, 203      
+AIR R2, 255          #Set words list locations
+STR R2, X0, 204
+AIR R2, 20           #Set substring match words indicator list location
+STR R2, X0, 205
+AIR R2, 20           #Set words list location
+STR R2, X0, 206       
+STR R2, X0, 204[I]    #Store the first location into the list locations
+SMR R2, X0, 206       #Empty the R2
+AIR R2, 80           #Set character ‘P’ WELCOME MESSAGE
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 28           #Set character ‘l’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 7            #Set character ‘e’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 4            #Set character ‘a’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 18           #Set character ‘s’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 14           #Set character ‘e’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 69           #Set character space
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 73           #Set character ‘i’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 5            #Set character ‘n’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 2            #Set character ‘p’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 5            #Set character ‘u’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 1            #Set character ‘t’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 84           #Set character space
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 17           #Set character ‘1’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 1            #Set character ‘0’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 16           #Set character space
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 87           #Set character ‘w’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 8            #Set character ‘o’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 3            #Set character ‘r’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 14           #Set character ‘d’
+STR R2, X1, 203[I]
+JSR R0, 190[I]       #Increase index
+AIR R2, 15           #Set character ‘s’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 105          #Set character ‘\n’
+STR R2, X1, 203[I]
+JSR X0, 191[I]       #Reset index
+SIR R2, 10           #Empty the R2
+LDR R3, X0, 171       #Load the program start location 
+AIR R3, 255          #Set main funcion location
+AIR R3, 43       
+STR R3, X0, 172      
+JMP X0, 172[I]       #Jump to main function
+AIR R1, 1             #INCREASE INDEX FUNCTION
+STR R1, X0, 200      
+LDX R1, X0, 200
+RFS
+LDR R1, X0, 200      #REST INDEX FUNCTION
+SMR R1, X0, 200      #Empty the content of R1
+STR R1, X0, 200      #Store the 0 index back to the memory
+LDX R1, X0, 200      #Load the 0 index value into X1
+RFS
+STR R3, X0, 170      #PRINT THE MESSAGE FUNCTION
+JSR R0, 191[I]      #Reset index
+LDR R2, X1, 201[I]   #Load character LOCATION FP1
+OUT R2,1            #Print the character to the console
+JSR X0, 190[I]      #Increase index
+SIR R2, 10          #Check if finish
+LDR R3, X0, 171      #If finish, then jump to the end
+AIR R3, X0, 123      #Set the end location
+STR R3, X0, 172      
+JZ R2, X0, 172[I]    #Jump to LOCATION FP2
+LDR R3, X0, 171
+AIR R3, 111         #Set the loop begin location 
+STR R3, X0, 172    
+JMP X0, 172[I]      #Jump to LOCATION FP1
+LDR R3, X0, 170      #Resume the return address LOCATION FP2
+RFS               
+STR R3, X0, 170     #GET A WORD FUNCTION
+JSR X0, 191[I]     #Reset index
+LDR R2, X2, 204[I]  #Load word list begin location to R2 using X2 offset
+STR R2, X0, 201     #Store the word list begin location into 201
+IN R0, 0           #LOCATION FG1
+STR R0, X1, 201[I]  #Store the character to the current word location
+SIR R0, 10         #Check if it is ‘\n’
+JSR X0, 190[I]     #Increase the character index
+LDR R3, X0, 171
+AIR R3, 141     #Set the loop end location 
+STR R3, X0, 172    
+JZ R0, X0, 172[I]   #Jump to LOCATION FG2 if input ‘\n’
+LDR R3, X0, 171
+AIR 3, 129     #Set the loop begin location 
+STR R3, X0, 172    
+JMP X0, 172[I]     #Read next character, jump to LOCATION FG1
+LDR R3, X0, 170     #Resume the return address LOCATION FG2
+RFS
+STR R3, X0, 170     #COMPARE TWO WORDS FUNCTION
+JSR X0, 191[I]     #Reset index
+LDR R2, X1, 201[I]  #Get first word’s character LOCATION FC1
+SMR R2, X1, 202[I]  #Compare the two character
+LDR R3, X0, 171
+AIR R3, 160     #Set the next location Handle 
+STR R3, X0, 172    
+JZ R2, X0, 172[I]   #Jump to LOCATION FC2
+LDR R3, X0, 171
+AIR R3, 165     #Set the set first word location 
+STR R3, X0, 172    
+JRE R2, X0, 172[I]  #If first one is bigger, jump to Location FC3
+LDR R0, X0, 202     #else load the second word’s location into R0
+LDR R3, X0, 171
+AIR R3, 166     #Set return location 
+STR R3, X0, 172    
+JMP X0, 172[I]     #Jump to LOCATION FC4
+JSR X0, 190[I]     #Increase the character index LOCATION FC2
+LDR R3, X0, 171
+AIR R3, 145     #Set next loop location 
+STR R3, X0, 172    
+JMP X0, 172[I]     #Got back and check next character Jump to LOCATION FC1
+LDR R0, X0, 201     #Load the first word’s location into R0 LOCATION FC3
+LDR R3, X0, 170     #Resume the return address LOCATION FC4
+RFS
+LDR R0, X0, 100     #EMPTY CACHE FUNCTION
+LDR R1, X0, 100
+LDR R2, X0, 100
+LDR R3, X0, 100
+LDX R1, X0, 100
+LDX R2, X0, 100
+LDX R3, X0, 100
+LDR R3, X0, 202        #Empty 202 and 201
+LDR R2, X0, 201        
+SMR R3, X0, 202  
+SMR R2, X0, 201          
+STR R3, X0, 202    
+STR R2, X0, 201 
+RFS
+AIR R2, 73           #Set character ‘I’ SET SUBSTRING MESSAGE FUNCTION
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 37           #Set character ‘n’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 2            #Set character ‘p’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 5            #Set character ‘u’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 1            #Set character ‘t’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 84           #Set character space
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 83           #Set character ‘s’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 1            #Set character ‘t’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 2            #Set character ‘r’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 9            #Set character ‘i’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 5            #Set character ‘n’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 7            #Set character ‘g’
+STR R2, 1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 71           #Set character space
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 84           #Set character ‘t’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 5            #Set character ‘o’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+SIR R2, 79           #Set character space
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 77           #Set character ‘m’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 12           #Set character ‘a’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 19           #Set character ‘t’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 17           #Set character ‘c’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+AIR R2, 5            #Set character ‘h’
+STR R2, X1, 203[I]
+JSR X0, 190[I]       #Increase index
+SIR R2, 94           #Set character ‘\n’
+STR R2, X1, 203[I]
+JSR X0, 191[I]       #Reset index
+SIR R2, 10           #Empty the R2
+RFS
+STR R3, X0, 170       #CHECK WORD CONTAINS SUBSTRING FUNCTION
+JSR X0, 191[I]       #Reset index
+LDR R2, X1, 205[I]    #LOCATION CC1
+SIR R2, 10
+LDR R3, X0, 171
+AIR R3, X0, 255       #Set success location 
+AIR R3, X0, 38
+STR R3, X0, 172    
+JZ R2, X0, 172[I]     #Jump to LOCATION CC4
+LDR R2, X0, 201[I]    #Get first word’s character
+SMR R2, X1, 205[I]    #Compare the two character
+LDR R3, X0, 171
+AIR R3, 255       #Set deal with not equal location
+AIR R3, 19 
+STR R3, X0, 172    
+JNE R2, X0, 172[I]    #Jump to LOCATION CC2
+JSR X0, 190[I]       #If the same Increase index number and check again
+LDR R2, X0, 201       #Set the first word to next character
+AIR R2, 1        
+STR R2, X0, 201
+LDR R3, X0, 171
+AIR R3, X0, 252       #Set next loop location 
+STR R3, X0, 172    
+JMP X0, 172[I]       #Jump to LOCATION CC1
+JSR X0, 191[I]       #Reset index LOCATION CC2
+LDR R2, X0, 201[I]    #Check if the first word is reach to the end
+SIR R2, 10
+LDR R3, X0, 171
+AIR R3, X0, 255       #Set failed match location
+AIR R3, X0, 34 
+STR R3, X0, 172    
+JZ R0, X0, 172[I]     #Jump to LOCATION CC3
+LDR R2, X0, 201       #Else set the word to next character
+AIR R2, 1       
+STR R2, X0, 201
+LDR R3, X0, 171
+AIR R3, X0, 252       #Set next loop location 
+STR R3, X0, 172    
+JMP X0, 172[I]       #Jump to LOCATION CC1
+STR R0, X0, 180       #Set the result as 0 LOCATION CC3
+SMR R0, X0, 180
+LDR R3, X0, 170       #Resume the return address
+RFS
+STR R0, X0, 180       #Set the result as 1 LOCATION CC4
+SMR R0, X0, 180
+AIR R0, 1
+LDR R3, X0, 170       #Resume the return address
+RFS
+LDR R2, X0, 203       #Load welcome message location into R2 MAIN FUNCTION
+STR R2, X0 201        #Store the welcome message location into 201
+SMR R2, X0, 203       #Empty the R2
+JSR X0, 192[I]       #Print the welcome message
+JSR X0, 193[I]       #Read a word from user LOCATION M1
+LDR R3, X0, 202          #Load the word index
+AIR R2, 1            #Increase the word index
+STR R2, 202          #Store the new word index
+SIR R2, 10           #Check if finish 10 words
+LDR R3, X0, 171
+AIR R3, 255       #Set next loop location
+AIR R3, 67
+STR R3, X0, 172       
+JZ R2, X0, 247+300    #End this loop if finish input & Jump to Location M2
+SMR R2, X0, 202       #Empty R2
+LDX R2, X0, 202       #Load new word index to X2
+LDR R0, X0, 200       #Load character index
+AMR R0, X0, 201       #Add current character location to get the start location of next word
+STR R0, X2, 204[I]    #Since we have increase the word index, just store next location into word location list
+LDR R3, X0, 171
+AIR R3, 255       #Set next loop location
+AIR R3, 47
+STR R3, X0, 172       
+JMP X0, 172[I]       #Then keep read next word, jump to LOCAIONT M1
+JSR X0, 195[I]       #Empty cache LOCATION M2
+LDR R2, X2, 204[I]    #Load word list begin location to R2 using X2 offset LOCATION M3
+STR R2, X0, 201       #Store the word list begin location into 201
+JSR X0, 192[I]       #Print the word
+LDR R2, X0, 202          #Load the word index
+AIR R2, 1            #Increase the word index
+STR R2, X0, 202          #Store the new word index
+SIR R2, 10           #Check if finish 10 words
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 87
+STR R3, X0, 172       
+JZ R2, X0, 172[I]     #End this loop if finish input & jump to LOCATION M4
+SMR R3, X0, 202       #Empty R3
+LDX R2, X0, 202       #Load new word index to X2
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 68
+STR R3, X0, 172       
+JMP X0, 172[I]       #Then keep read next word & jump to LOCATION M3
+JSR X0, 195[I]       #Empty cache LOCATION M4
+AIR R2, 9            #Set loop number for each big loop
+STR R2, X0, 180       #Store the loop number into 180
+SIR R2, 8            #Set the index X3 as 1
+STR R2, X0, 181      
+LDX R3, X0, 181
+SIR R2, 1            #Empty the R2
+LDR R2, X0, 181       #Load the word index LOCATION M5
+SMR R2, X0, 180       #Check if finish current loop words
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 136
+STR R3, X0, 172       
+JZ R2, X0, 172[I]     #End this loop if finish compare all words and Jump to LOCATION M7
+LDR R2, X2, 204[I]    #Load word begin location to R2 using X2 offset
+STR R2, X0, 201       #Store the word list begin location into 201
+LDR R2, X0, 181       #Load the word index again
+AIR R2, 1            #Increase the word index
+STR R2, X0, 181       #Store the new word index
+SMR R2, X0, 181       #Empty R2
+LDX R2, X0, 181       #Load new word index to X2
+LDR R2, X2, 204[I]    #Load next word begin location to R2 using X2 offset
+STR R2, X0, 202       #Store the second word begin location into 202
+JSR X0, 194[I]       #Compare the two words, bigger one will be in the R0
+SMR R0, X0, 202       #Check if second number is bigger one
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 135
+STR R3, X0, 172    
+JZ R0, X0, 172[I]     #If so then go to the LOCATION M6 to end the loop
+AMR R0, X0, 202       #Restore the content of R0
+LDR R2, X0,181        #Load the word index again
+SIR R2, 1            #Decrease the word index
+STR R2, 181          #Store the new word index
+SMR R2, X0, 181       #Empty R2
+LDX R2, X0, 181       #Load new word index to X2
+LDR R2, X2, 204[I]    #Load previous word begin location to R2 using X2 offset
+STR R0, X2, 204[I]    #Swap the two words location in list 
+LDR R3, X0,181        #Load the word index  
+AIR R3, X1            #Increase the word index
+STR R3, X181          #Store the new word index
+SMR R3, X0, 181       #Empty R3
+LDX R2, X0, 181       #Load new word index to X2   
+STR R2, X2, 204[I]    
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 94
+STR R3, X0, 172    
+JZ R0, X0, 172[I]     #If finish then go to LOCATION M5
+LDR R2, X0, 180       #LOCATION M7
+SIR R2, 1            #Decrease loop number for each big loop
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 154
+STR R3, X0, 172    
+JZ R0, X0, 172[I]     #Exist the big loop and jump to LOCATION M8
+STR R2, X0, 180       #Store the loop number into 180
+SMR R2, X0, 180       #Empty R2
+AIR R2, 1
+STR R2, X0, 181      
+LDX R3, X0, 181
+SIR R2, 1            #Empty the R2
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 94
+STR R3, X0, 172    
+JMP X0, 172[I]       #Jump to LOCATION M5
+JSR X0, 195[I]       #Empty caches
+LDR R2, X2, 204[I]    #Load word list begin location to R2 using X2 offset LOCATION M9
+STR R2, X0, 201       #Store the word list begin location into 201
+JSR X0, 192[I]       #Print the words
+LDR R2, X0, 202          #Load the word index
+AIR R2, 1            #Increase the word index
+STR R2, X0, 202          #Store the new word index
+SIR R2, 10           #Check if finish 10 words
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 174
+STR R3, X0, 172    
+JZ R2, X0, 172[I]     #End this loop and jump to LOCATION M10
+SMR R2, X0, 202       #Empty R2
+LDX R2, X0, 202       #Load new word index to X2
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 155
+STR R3, X0, 172    
+JMP X0, 172[I]       #Then keep read next word and jump to LOCATION M9
+JSR X0, 191[I]       #Reset index LOCATION M10
+JSR X0, 195[I]       #Empty caches
+JSR X0, 196[I]       #Set the new message
+LDR R2, X0, 203       #Load string match message location into R2
+STR R2, X0 201        #Store the string match message location into 201
+SMR R2, X0, 203       #Empty the R2
+JSR X0, 192[I]       #Print the string match message
+JSR X0, 191[I]       #Reset index
+LDR R2, X2, 205[I]    #Load match string begin location to R2 using X2 offset
+STR R2, X0, 201       #Store the word list begin location into 201
+IN R0, 0             #Read the character from the keyboard in to R0 LOCATION 11
+STR R0, X1, 201[I]    #Store the character to the current word location
+SIR R0, 10           #Check if it is ‘\n’
+JSR X0, 190[I]       #Increase the character index
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 198
+STR R3, X0, 172    
+JZ R0, X0, 172[I]     #End the function if input ‘\n’ and jump to M12
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 184
+STR R3, X0, 172
+JMP X0, 172[I]       #Read next character and jump to M11
+JSR X0, 195[I]       #Empty caches LOCATION M12
+LDR R2, X2, 204[I]    #Load word list begin location to R2 using X2 offset LOCATION 13
+STR R2, X0, 201       #Store the word list begin location into 201
+JSR X0, 197[I]       #Check the word if contains the content
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 210
+STR R3, X0, 172
+JZ R0, X0, 172[I]     #If failed then try to go to next word and jump to M14
+LDR R2, X2, 204[I]    #Load the word again
+STR R2, X0, 201         
+JSR X0, 192[I]       #Print this word
+LDR R2, X0, 202          #Load the word index LOCATION M14
+AIR R2, 1            #Increase the word index
+STR R2, X0, 202          #Store the new word index
+SIR R2, 10           #Check if finish 10 words
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 226
+STR R3, X0, 172
+JZ R2, X0, 172[I]     #End this loop if finish input and jump to M15
+SMR R3, X0, 202       #Empty R3
+LDX R2, X0, 202       #Load new word index to X2
+LDR R3, X0, 171
+AIR R3, 255       
+AIR R3, 199
+STR R3, X0, 172
+JMP X0, 172[I]       #Then keep read next word and jump to M13
+END                 #LOCATION M15

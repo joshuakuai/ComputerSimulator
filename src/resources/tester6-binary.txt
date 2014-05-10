@@ -1,0 +1,51 @@
+INSTR:51
+00010000010001100100      #AMR R0,X1,100	 Add Memory To Register, r = 0..3 
+00010100010001100101      #SMR R0,X1,101	 Subtract Memory From Register, r = 0..3 
+00010101011001100101      #SMR R1,X1,101i	 
+00011011000011001000      #AIR R3,200		 Add Immediate to Register, r = 0..3 
+00011110000000000001      #SIR R2,1		 Subtract  Immediate  from Register, r = 0..3 	
+10100100110001100101      #LDX X3,101    	 Load Index Register from Memory, x = 1..3 
+00000100010001100101      #LDR R0,X1,101 	  Load Register From Memory, r = 0..3   //testing
+00000100011001100101      #LDR R0,X1,101i 	 //testing
+00001101000001100100      #LDA R1,X0,100 	 Load Register with Address, r = 0..3 
+00001000000001100101      #STR R0,X0,101      Store Register To Memory, r = 0..3 
+10101000111011011111      #STX X3,223i       Store Index Register to Memory. X = 1..3 
+10101000110011100000      #STX X3,224		 
+00000110000001100101      #LDR R2,X0,101 	 //testing
+00110100000010010110      #JMP x0,150		  Unconditional Jump To Address
+INSTR:150
+01010010110000000000      #MLT R2,R3		 Multiply Register by Register
+01010111100000000000      #DVD R3,R2		 Divide Register by Register
+01011000010000000000      #TRR R0,R1		 Test the Equality of Register and Register 
+01011101100000000000      #AND R1,R2		 Logical And of Register and Register 
+01100010010000000000      #ORR R2,R1		 Logical Or of Register and Register 
+00000101000001100101      #LDR R1,X0,101 	 //testing 
+01100101000000000000      #NOT R1			
+00000101000001100101      #LDR R1,X0,101 	 //testing
+01111101000100001000      #SRC r1,8,a,l	 Shift Register by Count:SRC r, count, A/L, L/R
+00000101000001100101      #LDR R1,X0,101 	 //testing 
+10000000001000000100      #RRC r0,4,l,r	  Rotate Register by Count:RRC r, count, A/L, L/R
+00000000000000000000      #HLT 0
+00000111000001100111      #LDR R3,X0,103 	 //load up new line
+11110101000000000000      #IN R1,0       	 //Perform IN
+11111001000000000001      #OUT R1,1  		 //Perform OUT
+11111011000000000001      #OUT R3,1  		 //Perform OUT new line must be used to terminate OUT
+01111000000000000011      #TRAP 3
+00101000010001100000      #JZ r0,X1,96   	 Jump If Zero: 
+00101100000001100001      #JNE r0,X0,97	  Jump If Not Equal: 
+00101100001001100001      #JNE r0,X0,97i
+00110011000011101010      #JCC 3,X0,234	  Jump If Condition Code 
+00110100110011100110      #JMP x3,230		 Unconditional Jump To Address 
+00111000101011011011      #JSR x2,219i		 Jump and Save Return Address:
+00111000001011000101      #JSR x0,197i        Check the word if contains the content 
+00111100000010110001      #RFS 177			 Return From Subroutine w/ return code as Immed; implemented ?
+01000001011001100101      #SOB R1,X1,101i	 Subtract One And Branch. R = 0..3
+01000101010001100101      #JGE R1,X1,101	 Jump Greater Than or Equal To
+11011100000000000000      #EOP 
+DATA:100
+00000000000001101001      #DATA 105,100     
+00000000000000110111      #DATA 55,101      
+00000000000000100000      #DATA 32,102      //
+00000000000000001010      #DATA 10,103      // new line
+00000000001010011010      #DATA 666,104     // new line
+

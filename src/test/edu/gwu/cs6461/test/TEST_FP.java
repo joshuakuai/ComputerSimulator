@@ -16,7 +16,6 @@ public class TEST_FP {
 //		ff=Float.parseFloat("1.84444E+19");
 //		ff= Float.parseFloat("9.2222461E18");
 //		ff=0f;
-		
 		FloatPoint fp = new FloatPoint(ff);
 		System.out.println("-------------------------------");
 		System.out.println(ff);

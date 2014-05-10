@@ -1,5 +1,7 @@
 package edu.gwu.cs6461.sim.util;
 
+import java.math.BigDecimal;
+
 import edu.gwu.cs6461.sim.exception.FloatingPointException;
 
 
@@ -18,6 +20,8 @@ public class FloatPoint {
 	public static final int FLOAT_EXPONENT_BIAS = (int)(Math.pow(2,FLOAT_EXPONENT_SIZE-1) -1);
 	public static final int FLOAT_MANTISSA_INDEX = 8;
 	public static final int FLOAT_MANTISSA_SIZE = 12;
+	/**  ~1.8444492E19 */
+	public static final float FLOAT_MAX_VALUE = (float) ((2- Math.pow(2,FLOAT_MANTISSA_SIZE*-1 )) * Math.pow(2, FLOAT_EXPONENT_BIAS) );
 
 	/** sign bit as a string */
 	private String signBit;
@@ -26,7 +30,7 @@ public class FloatPoint {
 	/** fraction bits as a string */
 	private String fractionBits;
 	/** implied bit as a string */
-	private String impliedBit;
+	private String impliedBit="1";
 
 	/** biased exponent value */
 	private int biased;
@@ -50,6 +54,15 @@ public class FloatPoint {
 	public FloatPoint(float value) {
         // Convert the value to a character array of '0' and '1'.
 //		String binVal = Convertor.getSignedBinFromInt(Float.floatToIntBits(value), 32);
+
+		if (value > FLOAT_MAX_VALUE) {
+			floatValue = Float.POSITIVE_INFINITY;
+			return;
+		} else if (value < (-1*FLOAT_MAX_VALUE) ) {
+			floatValue = Float.NEGATIVE_INFINITY;
+			return;
+		}
+		
 		String binVal = floatToBits(value);
 
         floatValue = value;
@@ -71,7 +84,7 @@ public class FloatPoint {
 
         // Convert to the float value.
         floatValue = expNotationToFloat(sign, biasedExp, mantissa);
-
+        
         String binVal = sign+biasedExp+mantissa;
 
         decompose(binVal,
@@ -99,11 +112,12 @@ public class FloatPoint {
 			fraction = Long.parseLong(fractionBits, 2);
 		} catch (NumberFormatException ex) {}
 
-		isZero         = (biased == 0) && (fraction == 0);
-		isDenormalized = (biased == 0) && (fraction != 0);
+		isZero         = (biased == 0) && (fraction == 0);   //CASE ZERO
+		isDenormalized = (biased == 0) && (fraction != 0);   //CASE ?
 		isReserved     = (biased == reserved);
 
 		impliedBit = isDenormalized || isZero || isReserved ? "0" : "1";
+		
 	}
 	
 	private static abstract class Field {
@@ -202,17 +216,25 @@ public class FloatPoint {
 	/*************************************************************************/
 
 	/**
+	 * 
+	 * http://stackoverflow.com/questions/343584/how-do-i-get-whole-and-fractional-parts-from-double-in-jsp-java
+	 * 
 	 * Convert floating fraction portion to binary 
 	 * */
 	private String fractionToBinary(double n, int dp){
 		StringBuilder sb = new StringBuilder();
 		
-		double ff = n - (int) n;
+		double ff;// = n - (long) n;
+		ff = n%1;
+				
 		if (ff == 0) return "0";
 		
 		int d,i=0;
 		double tmp = ff;
-		while (tmp > 0 | i++ < dp) {
+		while (tmp > 0) {
+			if (i++ > dp) {
+				break;
+			}
 			tmp = tmp * 2;
 			d = (int)tmp;
 			tmp = tmp - d;
@@ -275,7 +297,7 @@ public class FloatPoint {
 			sign = -1;
 			ff *= -1;
 		}
-		String dinb=  Convertor.decimalToBinary((int)ff);
+		String dinb=  Convertor.decimalToBinary((long)ff);
 		String fdinb = fractionToBinary(ff, FLOAT_MANTISSA_SIZE);
 		StringBuilder normDinb = new StringBuilder(dinb + "." + fdinb);
 		int exp = normalize(normDinb);
@@ -328,7 +350,10 @@ public class FloatPoint {
 			result = Convertor.getIntFromBin(str);
 		} else {
 			String decPart = str.substring(0, dPos);
-			result = Convertor.getIntFromBin(decPart);
+			if (!decPart.equals("null") ) {
+				result = Long.parseLong(decPart, 2);
+//				result = Convertor.getIntFromBin(decPart);
+			}
 			String fraPart = str.substring(dPos + 1);
 			
 			for (int i = 0; i < fraPart.length(); i++) {
@@ -344,19 +369,21 @@ public class FloatPoint {
 	 * denormalize the exponent notation
 	 * */
 	private void deNormalize(StringBuilder sb, int exp){
-		String impliedBit = "1";
+//		String impliedBit = "1";
 		
 		if (exp > 0 ) {
 			int space =exp-FLOAT_MANTISSA_SIZE; 
 			if (space >0) {
-				String a="0";
+				String a = "0";
 				a = Convertor.padZeroAfter(a, space);
 				sb.append(a);
 			}
 			sb.insert(exp, ".");
-			sb.insert(0,impliedBit);
+			sb.insert(0, impliedBit);
 		} else if (exp == 0) {
-			sb.insert(0,impliedBit+".");	
+			long a = Integer.valueOf(sb.toString());
+			if (a == 0 && exp == 0) impliedBit ="0";   //CASE ZERO
+			sb.insert(0, impliedBit + ".");
 		} else {
 			sb.insert(0,impliedBit);
 			for (int i = 0; i < (exp*-1) -1; i++) {

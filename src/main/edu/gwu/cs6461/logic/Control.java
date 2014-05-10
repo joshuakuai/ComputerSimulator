@@ -1273,6 +1273,7 @@ public class Control {
 	}
 	public void VADD(){
 		int loopCounter= RFtable.getSwitch(IRobject.getRFI1());
+		System.out.println("********%%%%%%%%%*****************="+loopCounter);
 		///get vector 1
 		this.calculateEAOffset();
 		this.calculateEAIndirect();
