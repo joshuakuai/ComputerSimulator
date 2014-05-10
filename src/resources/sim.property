@@ -39,7 +39,7 @@ sim.mem.trap.3.msg=TRAP INSTRUCTION: Simulator has performed trap instruction, n
 #path for simulator to look up program files
 sim.programfilepath=bin
 #Simulator PC starting point
-sim.program.startingpoint=51
+sim.program.startingpoint=255
 #
 ################################################################################
 #Simulator ROM
