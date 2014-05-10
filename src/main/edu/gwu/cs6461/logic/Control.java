@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.logic.unit.IODevice;
 import edu.gwu.cs6461.logic.unit.MMU;
+import edu.gwu.cs6461.sim.common.ALUOperator;
 import edu.gwu.cs6461.sim.common.ConditionCode;
 import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.common.MachineFault;
@@ -17,6 +18,7 @@ import edu.gwu.cs6461.sim.common.MachineStatus;
 import edu.gwu.cs6461.sim.common.OpCode;
 import edu.gwu.cs6461.sim.common.SimConstants;
 import edu.gwu.cs6461.sim.exception.MemoryException;
+import edu.gwu.cs6461.sim.ui.MainSimFrame;
 import edu.gwu.cs6461.sim.util.Convertor;
 import edu.gwu.cs6461.sim.util.PropertiesLoader;
 import edu.gwu.cs6461.sim.util.PropertiesParser;
@@ -148,9 +150,13 @@ public class Control {
 	* into the different parts opcode, r,x,address,[,I] (depending the * instruction)
 	*  
 	*/
-	public void Decode() {
+	public void Decode(MainSimFrame mainFrame) {
 		Decode dec = new Decode();
+		dec.register(mainFrame);
 		dec.decodeSwitch(IRobject);
+		
+		
+		
 	}
 
 	/**
@@ -411,6 +417,8 @@ public class Control {
 		// values)
 		if (RFtable.getSwitch(IRobject.getRFI1()) == 0) {
 			RFtable.setSwitch(IRobject.getRFI1(), IRobject.getImmed());
+			
+			ALU.publishEngineerData("0",Integer.toString(IRobject.getImmed()),"",ALUOperator.Addition.getOpt()  ) ;
 		}
 		// else add the register to the immediate and put back the value in the
 		// register
@@ -1265,6 +1273,7 @@ public class Control {
 	}
 	public void VADD(){
 		int loopCounter= RFtable.getSwitch(IRobject.getRFI1());
+		System.out.println("********%%%%%%%%%*****************="+loopCounter);
 		///get vector 1
 		this.calculateEAOffset();
 		this.calculateEAIndirect();

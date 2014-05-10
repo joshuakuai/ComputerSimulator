@@ -6,11 +6,55 @@ INSTR:51
 10001000000010011000		#FSUB FR0(-1.12) from value in address 152(900) = -901.11
 10010101000010010110		#Convert float in address 150(-2.02) to int(-2) R1=-2
 10010110010010011001		#Convert int in address 153(375555) to float(375555.0) and put in FR0
-11001100000011001001		#STFR FR0 into address 201
-11001000000011001001		#LDFR address 201 into FR0
-00000000000000000000
+11001100000011001001		#STFR FR0(375555.0) into address 201
+11001000000011001001		#LDFR address 201 into FR0 (load the stored float 375555.0 back from memory)
+00000100000000110001		#Empty out R0
+00011000000000000110		#AIR add 6 to R0 (counter for vector)
+00011010000010011010		#AIR add 154 to R2
+00001010000010010001		#STR store R2 to address 145 to be pointer to vector 1 (for addition)
+00011010000000000110		#AIR add 6 to R2 (=160 now)
+00001010000010010010		#STR store R2 to address 146 to be pointer to vector 1 (for addition)
+10001100000010010001		#VADD add vector1 at address 154 to vector1 at address 160
+11001000000010011010		#LDFR address 154 into FR0	(show stored results in vector 1)
+11001000000010011011		#LDFR address 155 into FR0
+11001000000010011100		#LDFR address 156 into FR0
+11001000000010011101		#LDFR address 157 into FR0
+11001000000010011110		#LDFR address 158 into FR0
+11001000000010011111		#LDFR address 159 into FR0
+00000100000000110001		#Empty out R0
+00011000000000000100		#AIR add 4 to R0 (counter for vector)
+00011010000000000110		#AIR add 6 to R2 (=166 now)
+00001010000010010011		#STR store R2 to address 147 to be pointer to vector 1 (for subtraction)
+00011010000000000100		#AIR add 4 to R2 (=170 now)
+00001010000010010100		#STR store R2 to address 148 to be pointer to vector 1 (for subtraction)
+10010000000010010011		#VSUB subtract vector1 at address 166 from vector2 at address 170
+11001000000010100110		#LDFR address 166 into FR0	(show stored results in vector 1)
+11001000000010100111		#LDFR address 167 into FR0
+11001000000010101000		#LDFR address 168 into FR0
+11001000000010101001		#LDFR address 169 into FR0
+11011100000000000000     	#EOP
 DATA:150
 11000000000000101000     	#float number -2.02
 00111110110011001100		#float number 0.9
 01001000110000100000		#float number 900.0
-00000000000111110100		#int number 500
+01011011101100000011		#int number 375555
+01000101001110100100		#(154)(START of vector 1 for add)float number 78.569
+01000001011111000010		#float number 5.94
+01001001111101000101		#float number 2001.4
+01000101000100000000		#float number -68.0
+01001011110100100110		#float number 7462.1134
+01010001110001111000		#float number 466445.789
+01001011101000001000		#(160)(START of vector 2 for add)float number 6664.32546
+01000001111111001100		#float number 7.95
+01000100011101001000		#float number 46.568
+11000100110001001111		#float number -56.622
+01001011000101011110		#float number 4446.24
+11001111100000011110		#float number -98799.5
+11001000010011001101     	#(166)(START of vector 1 for subtract)float number -665.65
+01001011100110010010     	#float number 6546.0
+11001000111011101100     	#float number -989.5
+01000100000001000000     	#float number 32.5
+11001100001101010100     	#(170)(START of vector 2 for subtract)float number -9897.5
+01001011110100100010     	#float number	7458.2356
+01001100000010100101     	#float number	8522.23
+01000010100111000000     	#float number	12.875

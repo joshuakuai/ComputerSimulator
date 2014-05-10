@@ -34,6 +34,7 @@ public class SimUILauncher {
 		mFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		mFrame.setSize(width, heigh);
 		mFrame.setVisible(true);
+		mFrame.popupEngineerConsole();
 
 	}
 

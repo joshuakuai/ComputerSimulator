@@ -230,11 +230,11 @@ public class MainMemory extends Observable{
 		HardwareData hardwareData = new HardwareData();
 		if (comment!=null && !"".equals(comment.trim())) {
 			hardwareData.put(HardwarePart.MEMORY.getName(),
-					Integer.toString(address) + SimConstants.MEM_MSG_DELIMITER 
-					+ data +SimConstants.MEM_MSG_DELIMITER+comment);
+					Integer.toString(address) + SimConstants.MSG_TO_GUI_DELIMITER 
+					+ data +SimConstants.MSG_TO_GUI_DELIMITER+comment);
 		} else {
 			hardwareData.put(HardwarePart.MEMORY.getName(),
-					Integer.toString(address) + SimConstants.MEM_MSG_DELIMITER + data);
+					Integer.toString(address) + SimConstants.MSG_TO_GUI_DELIMITER + data);
 		}
 
 		this.notifyObservers(hardwareData);

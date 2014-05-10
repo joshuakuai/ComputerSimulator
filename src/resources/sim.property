@@ -12,7 +12,9 @@ sim.gui.ioinput.textcompletion.2.hints=tester2.txt
 sim.gui.ioinput.textcompletion.3.hints=tester3.txt
 sim.gui.ioinput.textcompletion.4.hints=tester4.txt
 sim.gui.ioinput.textcompletion.5.hints=bin-program1.txt
-sim.gui.ioinput.textcompletion.5.hints=bin1.txt
+sim.gui.ioinput.textcompletion.6.hints=bin1.txt
+sim.gui.ioinput.textcompletion.7.hints=float.txt
+sim.gui.ioinput.textcompletion.8.hints=prog2bin.txt
 sim.gui.engconsole.title=Engineer Console
 ################################################################################
 # memory and cache
@@ -39,7 +41,11 @@ sim.mem.trap.3.msg=TRAP INSTRUCTION: Simulator has performed trap instruction, n
 #path for simulator to look up program files
 sim.programfilepath=bin
 #Simulator PC starting point
+<<<<<<< HEAD
 sim.program.startingpoint=255
+=======
+sim.program.startingpoint=300
+>>>>>>> FETCH_HEAD
 #
 ################################################################################
 #Simulator ROM

@@ -135,11 +135,11 @@ public class Convertor {
 	 * 
 	 * Return unsigned binary of the decimal value 
 	 * */
-	public static String decimalToBinary(int n){
+	public static String decimalToBinary(long n){
 		StringBuilder sb = new StringBuilder();
 
 		if (n==0) return "0";
-		int d = 0;
+		long d = 0;
 		while (n > 0){
 			d = n % 2;
 			n /= 2;

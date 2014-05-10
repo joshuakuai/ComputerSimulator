@@ -8,14 +8,17 @@ package edu.gwu.cs6461.logic;
 
 import org.apache.log4j.Logger;
 
+import edu.gwu.cs6461.sim.bridge.HardwareData;
+import edu.gwu.cs6461.sim.bridge.Observable;
 import edu.gwu.cs6461.sim.common.DeviceType;
 import edu.gwu.cs6461.sim.common.OpCode;
+import edu.gwu.cs6461.sim.common.SimConstants;
 
 /**
  * Decode the IR instructions into the various part opcode r x address I T immed
  * @Revised   Apr 8, 2014 - 1:09:33 AM  
  */
-public class Decode {
+public class Decode extends Observable {
 	private final static Logger logger = Logger.getLogger(Decode.class);
 	
 	 /**store Operator code in int format */
@@ -76,6 +79,8 @@ public class Decode {
 			floats(IRobject);
 		else if(code ==35 || code==36 || code==37)
 			function1(IRobject);
+		
+		publishEngineerData(IRobject);
 	}
 	/**
 	 * Generic functions to decode instructions
@@ -214,4 +219,25 @@ public class Decode {
 		IRobject.setAddress(Address);
 		logger.debug("Address=" + Address);
 	}
+
+	private void publishEngineerData(IR ir) { 
+		HardwareData hardwareData = new HardwareData();
+		String strD= ""; 
+		strD = ir.getOpCode() + SimConstants.MSG_TO_GUI_DELIMITER+ 
+				ir.getRFI1() + SimConstants.MSG_TO_GUI_DELIMITER+
+				ir.getRFI2() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getXFI() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getAddress() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getIndirect() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getImmed() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getDeviceID() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getLeftorRight() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getLogicalorArithmetic() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getCount() + SimConstants.MSG_TO_GUI_DELIMITER;
+
+		hardwareData.put(SimConstants.ECONSOLE_DECODE_MSG, strD);
+		this.notifyObservers(hardwareData);
+	}
+
 }
+

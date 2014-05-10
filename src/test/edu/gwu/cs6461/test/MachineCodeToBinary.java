@@ -51,6 +51,7 @@ public class MachineCodeToBinary {
 	 * 
 	 * */
 	private void convertBinaryInstr(){
+		String codePart="";
 		try (BufferedReader br= new BufferedReader(
 				new FileReader("bin/tester6-microcode.txt"));
 				BufferedWriter bw = new BufferedWriter(
@@ -58,7 +59,6 @@ public class MachineCodeToBinary {
 
 			int idx = 0;
 			String tmp;
-			String codePart="";
 			String binInstr = "";
 			while ((tmp = br.readLine()) != null) {
 				if (tmp.startsWith(SimConstants.FILE_INSTRUCTION_HEAD) ||
@@ -92,6 +92,8 @@ public class MachineCodeToBinary {
 			}
 			
 		} catch (Exception e) {
+			
+			System.out.println("err: " + codePart);
 			e.printStackTrace();
 		}
 		
