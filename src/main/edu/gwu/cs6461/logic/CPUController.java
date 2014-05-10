@@ -100,6 +100,7 @@ public class CPUController extends Thread {
 		registerContainer.clearAllRegistersObserver();
 		inputDevice.clear();
 		outputDevice.clear();
+		ALU.getInstance().clear();
 	}
 
 	/**Register all the observers to hardwares */
@@ -108,7 +109,7 @@ public class CPUController extends Thread {
 		registerContainer.registerObserver(obs);
 		inputDevice.register(obs);
 		outputDevice.register(obs);
-		
+		ALU.getInstance().register(obs);
 	}
 
 	/**
@@ -152,7 +153,7 @@ public class CPUController extends Thread {
 			//Fetch the IR
 			cpuControl.FetchIR();
 						
-			cpuControl.Decode();
+			cpuControl.Decode(mainFrame);
 
 			cpuControl.RunInstruction();
 			

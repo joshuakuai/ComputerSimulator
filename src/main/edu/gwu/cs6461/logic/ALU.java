@@ -6,11 +6,12 @@
 
 package edu.gwu.cs6461.logic;
 
-import java.util.Observable;
+//import java.util.Observable;
 
 import org.apache.log4j.Logger;
 
 import edu.gwu.cs6461.sim.bridge.HardwareData;
+import edu.gwu.cs6461.sim.bridge.Observable;
 import edu.gwu.cs6461.sim.common.ALUFlags;
 import edu.gwu.cs6461.sim.common.ALUOperator;
 import edu.gwu.cs6461.sim.common.ConditionCode;
@@ -199,7 +200,11 @@ public class ALU extends Observable {
 		if ("*".equals(operation.getOpt())){
 			multiply(opt1, opt2, CC,Multi);
 		}
-		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);	
+		logger.debug("opt1:"+ opt1+",opt2:"+ opt2 + ",ret:"+ret);
+		
+		publishEngineerData(Integer.toString(opt1), Integer.toString(opt2),Integer.toString(ret),
+				 operation.getOpt());
+		
 	}
 	
 	/**method to handle 2s complement multiplication*/
@@ -225,9 +230,22 @@ public class ALU extends Observable {
 	public void setCC(int Value, Register CC) {
 		CC.setData(Value);
 
-		HardwareData hardwareData = new HardwareData();
-		hardwareData.put("CC", Integer.toString(Value));
-
-		this.notifyObservers(hardwareData);
+//		HardwareData hardwareData = new HardwareData();
+//		hardwareData.put("CC", Integer.toString(Value));
+//
+//		this.notifyObservers(hardwareData);
 	}
+	
+	protected void publishEngineerData(String... data) { 
+		HardwareData hardwareData = new HardwareData();
+		String strD= ""; 
+		for (String dd : data) {
+			strD = strD + dd + SimConstants.MSG_TO_GUI_DELIMITER; 
+		}
+		if (!"".equals(strD)) {
+			hardwareData.put(SimConstants.ECONSOLE_ALU_MSG, strD);
+			this.notifyObservers(hardwareData);
+		}
+	}
+	
 }

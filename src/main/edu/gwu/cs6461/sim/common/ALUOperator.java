@@ -7,7 +7,8 @@ public enum ALUOperator {
 	Addition("+"),
 	Subtraction("-"),
 	Division("/"),
-	Multiply("*");
+	Multiply("*"),
+	NA("?");
 	
 	private String operator;
 	private ALUOperator(String operator) {
@@ -16,6 +17,16 @@ public enum ALUOperator {
 	
 	public String getOpt() {
 		return operator;
+	}
+	
+	public static ALUOperator fromOpt(String opt) {
+		for (ALUOperator value : ALUOperator.values()) {
+			if (value.getOpt().equals(opt)) {
+				return value;
+			}
+		}
+
+		return NA;
 	}
 	
 }

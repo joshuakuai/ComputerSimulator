@@ -31,22 +31,17 @@ IN R1,0       	#//Perform IN
 OUT R1,1  		#//Perform OUT
 OUT R3,1  		#//Perform OUT new line must be used to terminate OUT
 TRAP 3
-FADD r0,x1,104	#
-FSUB r1,x2,104	#
-VADD r1,x2,104	#
-VSUB r0,x1,103	#
-CNVRT r1,x2,101	#
-LDFR r1,x2,102	#
-STFR r0,x1,103	#
 JZ r0,X1,96   	#Jump If Zero: 
 JNE r0,X0,97	# Jump If Not Equal: 
 JNE r0,X0,97i
 JCC 3,X0,234	# Jump If Condition Code 
 JMP x3,230		#Unconditional Jump To Address 
-JSR x2,219i		#Jump and Save Return Address: 
+JSR x2,219i		#Jump and Save Return Address:
+JSR x0,197i       #Check the word if contains the content 
 RFS 177			#Return From Subroutine w/ return code as Immed; implemented ?
 SOB R1,X1,101i	#Subtract One And Branch. R = 0..3
-JGE R1,X1,101	#Jump Greater Than or Equal To 
+JGE R1,X1,101	#Jump Greater Than or Equal To
+EOP 
 DATA:100
 DATA 105,100    #
 DATA 55,101     #

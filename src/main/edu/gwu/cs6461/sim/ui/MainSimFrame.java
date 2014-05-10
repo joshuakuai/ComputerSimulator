@@ -206,7 +206,7 @@ public class MainSimFrame extends JFrame implements Observer {
 	private boolean captureKeyEvent = false;
 
 	/** Engineer console for internal simulator registers or hardwares */
-	private JFrame engConsoleFrame;
+	private EngConsoleFrame engConsoleFrame;
 	
 	
 	private PropertiesParser prop;
@@ -277,7 +277,7 @@ public class MainSimFrame extends JFrame implements Observer {
 				popupEngineerConsole();
 			}
 		});
-		JMenu mView = new JMenu("View");
+		JMenu mView = new JMenu("Engineer");
 		mView.setMnemonic('V');
 		mView.add(jmConsole);
 		
@@ -429,6 +429,7 @@ public class MainSimFrame extends JFrame implements Observer {
 		resetSimulator(false);
 
 		reSetCPUController();
+		
 	}
 
 	/**create Register panel*/
@@ -1280,7 +1281,7 @@ public class MainSimFrame extends JFrame implements Observer {
 						if (HardwarePart.fromName(k) == HardwarePart.MEMORY) {
 							// memory value passed in with 'address, content');
 							// presume the content is passed in one by one
-							String[] mVal = v.split("["+SimConstants.MEM_MSG_DELIMITER +"]");
+							String[] mVal = v.split("["+SimConstants.MSG_TO_GUI_DELIMITER +"]");
 							if (mVal.length == 2) {
 								loadToControl(k, mVal[0], mVal[1]);
 							} else if(mVal.length >= 3){
@@ -1298,6 +1299,14 @@ public class MainSimFrame extends JFrame implements Observer {
 							captureKeyEvent = true;
 							txtIOInput.setBackground(Color.YELLOW);
 //							txtIOInput.setText("");
+						} else if (SimConstants.ECONSOLE_ALU_MSG.equals(k) || 
+								SimConstants.ECONSOLE_DECODE_MSG.equals(k)) {
+							
+							
+							if (engConsoleFrame!=null) {
+								engConsoleFrame.pushData(k, v);
+							}
+							
 						} else {
 							loadToControl(k, v);
 						}
@@ -1473,11 +1482,12 @@ public class MainSimFrame extends JFrame implements Observer {
      * tips
      * http://stackoverflow.com/questions/309023/how-to-bring-a-window-to-the-front
      * */
-    private void popupEngineerConsole() {
+    protected void popupEngineerConsole() {
     	if (engConsoleFrame==null) {
     		String title = prop.getStringProperty("sim.gui.engconsole.title");
     		
     		engConsoleFrame = new EngConsoleFrame(this,title);
+    		engConsoleFrame.init();
     		engConsoleFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     		engConsoleFrame.setResizable(false);
     		engConsoleFrame.setVisible(true);
