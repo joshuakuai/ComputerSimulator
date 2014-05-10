@@ -1,4 +1,4 @@
-INSTR:51
+INSTR:300
 AMR R0,X1,100	#Add Memory To Register, r = 0..3 
 SMR R0,X1,101	#Subtract Memory From Register, r = 0..3 
 SMR R1,X1,101i	#
