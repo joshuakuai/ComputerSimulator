@@ -1020,9 +1020,10 @@ public class MainSimFrame extends JFrame implements Observer {
 					
 					//Clean up all data in memory and caches
 					MMU.instance().clean();
-					
+					if (engConsoleFrame!=null) {
+						engConsoleFrame.cleanUp();
+					}
 				}
-
 			}
 
 		}

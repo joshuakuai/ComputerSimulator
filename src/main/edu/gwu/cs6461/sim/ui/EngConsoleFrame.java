@@ -79,7 +79,7 @@ public class EngConsoleFrame extends JFrame {
 	private JTextField txtSRCount= new JTextField(20);
 	private JTextField txtLogicArithMode = new JTextField(20);
 	
-	private JButton btnClose  =new JButton("OK");
+	private JButton btnClose  =new JButton("Close");
 
 	private MainSimFrame mainFrame;
 	private String title;
@@ -196,7 +196,11 @@ public class EngConsoleFrame extends JFrame {
 				|| code == OpCode.JCC || code == OpCode.JMP
 				|| code == OpCode.JSR || code == OpCode.RFS
 				|| code == OpCode.SOB || code == OpCode.JGE
-				|| code == OpCode.AMR || code == OpCode.SMR) {
+				|| code == OpCode.AMR || code == OpCode.SMR
+				|| code == OpCode.FADD|| code == OpCode.FSUB
+				|| code == OpCode.VADD || code == OpCode.VSUB
+				|| code == OpCode.CNVRT || code == OpCode.LDFR
+				|| code == OpCode.STFR ) {
 			txtAddress.setText(data[4]);
 		} else 
 			txtAddress.setText("0");
@@ -207,6 +211,15 @@ public class EngConsoleFrame extends JFrame {
 			txtIndirect.setText("");
 		}
 		txtIndexReg.setText(ireg(data[3]));
+	}
+	private String ffReg(String reg){
+		String name ="FR0";
+		if ("0".equals(reg)) {
+			name = "FR0";
+		} else if ("1".equals(reg)) {
+			name = "FR1";
+		}
+		return name;
 	}
 	private String reg(String Reg){
 		String binary1="R0";
@@ -234,7 +247,20 @@ public class EngConsoleFrame extends JFrame {
 	}	
 	private void updateDecodedInstrUI(OpCode op, String... data) {
 		txtOpCode.setText(op.name());
-		txtRef1.setText(reg(data[1]));
+		
+		if (op==OpCode.FADD ||
+				op==OpCode.FSUB ||
+				op==OpCode.VADD ||
+				op==OpCode.VSUB ||
+				op==OpCode.CNVRT||
+				op==OpCode.LDFR||
+				op==OpCode.STFR) {
+			txtRef1.setText(ffReg(data[11]));
+			lblRef1.setText("Floating Register");
+		} else {	txtRef1.setText(reg(data[1]));
+			lblRef1.setText("General Register 1");
+		}
+		
 		if (isUsing2ndGR(op)) {
 			txtRef2.setText(reg(data[2]));
 		} else {
@@ -323,6 +349,25 @@ public class EngConsoleFrame extends JFrame {
 		setComponentEditable(false);
 	}
 
+	
+	protected void cleanUp(){
+		txtAddress.setText("");
+		txtIndirect.setText("");
+		txtIndexReg.setText("");
+		txtOpr1.setText("");
+		txtOpr2.setText("");
+		txtOptor.setText("");
+		txtOpCode.setText("");
+		txtRef1.setText("");
+		txtRef2.setText("");
+		txtIndReg.setText("");
+		txtImmed.setText("");
+		txtDeviceId.setText(""); 
+		txtLeftRightMode.setText("");
+		txtSRCount.setText("");
+		txtLogicArithMode.setText("");
+
+	}
 	private void setComponentEditable(boolean b) {
 		txtAddress.setEditable(b);
 		txtAddress.setBackground(Color.YELLOW);
@@ -360,7 +405,7 @@ public class EngConsoleFrame extends JFrame {
 	/**create Register panel*/
 	private JPanel createALUPanel() {
 		GriddedPanel gPanel = new GriddedPanel();
-		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "ALU"));
+		gPanel.setBorder(new TitledBorder(new EtchedBorder(), "ALU (Integer)"));
 		gPanel.addComponent(lblOpr1, 0, 0);
 		gPanel.addComponent(txtOpr1, 0, 1);
 		gPanel.addComponent(lblOpr2, 1, 0);

@@ -12,10 +12,11 @@ public class TEST_FP {
 //		System.out.println(Convertor.padZeroAfter(dinb, 12));
 //		System.out.println(Math.pow(2, -5));
 		
-		float ff =39887.5625f;//2.625f;//-0.1015625f;//78979f;//-4.75f;//10.6875f; //3.15f;//0.40625f;  //   
+		float ff = 0.40625f;  //78979f;//39887.5625f;//2.625f;//-0.1015625f;//-4.75f;//10.6875f; //3.15f;//   
 //		ff=Float.parseFloat("1.84444E+19");
 //		ff= Float.parseFloat("9.2222461E18");
 //		ff=0f;
+//		ff= -2.2f;
 		FloatPoint fp = new FloatPoint(ff);
 		System.out.println("-------------------------------");
 		System.out.println(ff);
@@ -33,7 +34,7 @@ public class TEST_FP {
 
 			
 			fp = new FloatPoint(fp.signBit(),fp.exponentBits(),fp.mantissaBits());
-//			fp = new FloatPoint("0","1111111","111111111111");
+			fp = new FloatPoint("0","0111111","111111111111");
 			
 		} catch (Exception e) {
 			e.printStackTrace();

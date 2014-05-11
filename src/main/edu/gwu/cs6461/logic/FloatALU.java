@@ -5,6 +5,14 @@ import org.apache.log4j.Logger;
 import edu.gwu.cs6461.sim.bridge.Observable;
 import edu.gwu.cs6461.sim.util.FloatPoint;
 
+
+/***
+ * 
+ * Class for floating point data manipulation
+ * 
+ * @author marcoyeung
+ *
+ */
 public class FloatALU extends Observable{
 	public FloatALU(){
 		
@@ -12,6 +20,9 @@ public class FloatALU extends Observable{
 	/**logger to log message to file*/
 	private final static Logger logger = Logger.getLogger(Register.class);
 		
+	/**
+	 * Convert binary data to decimal floating point number 
+	 * */
 	public float BinaryToFloat(int Data){
 		String bin = Integer.toBinaryString(Data); 
 		FloatPoint fp= new FloatPoint(0.0f);

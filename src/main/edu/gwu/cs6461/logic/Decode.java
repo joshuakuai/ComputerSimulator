@@ -233,7 +233,8 @@ public class Decode extends Observable {
 				+ ir.getDeviceID() + SimConstants.MSG_TO_GUI_DELIMITER
 				+ ir.getLeftorRight() + SimConstants.MSG_TO_GUI_DELIMITER
 				+ ir.getLogicalorArithmetic() + SimConstants.MSG_TO_GUI_DELIMITER
-				+ ir.getCount() + SimConstants.MSG_TO_GUI_DELIMITER;
+				+ ir.getCount() + SimConstants.MSG_TO_GUI_DELIMITER
+				+ ir.getFRI() + SimConstants.MSG_TO_GUI_DELIMITER;
 
 		hardwareData.put(SimConstants.ECONSOLE_DECODE_MSG, strD);
 		this.notifyObservers(hardwareData);

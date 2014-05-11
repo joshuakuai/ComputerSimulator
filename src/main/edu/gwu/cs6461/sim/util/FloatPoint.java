@@ -7,6 +7,36 @@ import edu.gwu.cs6461.sim.exception.FloatingPointException;
 
 /**
  * 
+ * In our implementation, sign (S) takes one bit, where 0 represents positive 
+ * and 1 represents negative number.  The bias to the exponent is 63 ( ).  
+ * The bias will be added to unbiased exponent while performing normalization 
+ * and it will be subtracted from the exponent while performing de-normalization.  
+ * The mantissa, after normalization, has the most significant digit always set to ‘1’; 
+ * in the form 1.bbb, where b is either binary digit (0 or 1).
+ * <BR>
+ *  For instance, to convert 39887.562 to floating point format, first we get 
+ *  the binary version of decimal part, fraction part, and then concatenates 
+ *  them together, which equal to 1001101111001111.1001. After normalization,
+ *  we have 1.0011011110011111001 x 2^15. 
+ * <BR>
+ *  We now obtain the mantissa from this normalized binary, since we have only 
+ *  12 bits for it, therefore, 001101111001 is the mantissa, be aware that “1111001” 
+ *  is lost due to limitation of mantissa. The unbiased exponent is 15, 
+ *  adding bias 63 equal to 78, the binary form of it is 1001110. 
+ *  The final floating point in binary form is 01001110001101111001. 
+ * <BR>
+ *  To convert the binary floating point back to decimal form, we first split
+ *  the binary form into three parts, 01001110001101111001 splits to 0, 1001110, 
+ *  and 001101111001. 1001110 in decimal are 78, subtracting bias 63 equal to 15.  
+ *  001101111001 and 15 are used for de-normalization. We finally have 1001101111001000,
+ *   which convert to decimal equals to 39880.0. We have lost 7.562 due to the size
+ *   of mantissa.
+ * <BR>
+ *  The maximum number that can be presented in our simulator with this format is  
+ *  2* 2^63 = 1.84467E+19, minimum number is 2^-62 = 2.1684E-19.
+ *
+ *verify site
+ * http://www.binaryconvert.com/result_float.html?decimal=051057056056055046053054050s
  * @author marcoyeung
  * @Revised   Apr 26, 2014 - 1:35:17 PM  
  */
